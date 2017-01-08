@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Train Ponctuality</string>
+    <string name="btnMenuInputDeparture">Départ</string>
+    <string name="btnInputArrivalText">Arrivée</string>
+    <string name="btnHistoryText">Historique</string>
+    <string name="btnCancelDeparture">Annuler</string>
+    <string name="txtMissionHint">Code mission</string>
+    <string name="txtLineHint">Ligne</string>
+    <string name="txtDepartureDateHint">Date de départ</string>
+    <string name="txtLocationHint">Gare de départ</string>
+    <string name="txtDepartureTimeHint">Heure de départ</string>
+    <string name="btnSaveDeparture">Partir</string>
+</resources>
