@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 
+import me.arbogast.trainponctuality.DBAccess.TravelDAO;
 import me.arbogast.trainponctuality.Model.Travel;
 import me.arbogast.trainponctuality.R;
 
@@ -32,7 +33,10 @@ public class InputDepartureActivity extends Activity {
     }
 
     public void ValidateDeparture(View view) {
-        Travel departure = new Travel(Utils.parseDate(txtDepartureDate.getText().toString(), txtDepartureTime.getText().toString()), txtLine.getText().toString(), txtMission.getText().toString(), txtDepartureStation.getText().toString());
+        Travel departure = new Travel(Utils.parseDate(Utils.getText(txtDepartureDate), Utils.getText(txtDepartureTime)),
+                Utils.getText(txtLine), Utils.getText(txtMission), Utils.getText(txtDepartureStation));
+
+        new TravelDAO(this).insertDeparture(departure);
         finish();
     }
 

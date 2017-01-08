@@ -16,6 +16,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".GUI.InputDepartureActivity" />
+        <activity android:name=".GUI.InputArrivalActivity" />
+        <activity android:name=".GUI.ShowHistoryActivity"></activity>
     </application>
 
 </manifest>

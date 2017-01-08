@@ -15,7 +15,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginEnd="34dp"
+        android:layout_marginEnd="35dp"
         android:layout_marginBottom="24dp"
         android:id="@+id/btnSaveStart"
         android:onClick="ValidateDeparture" />
@@ -26,7 +26,7 @@
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/btnSaveStart"
         android:layout_alignParentStart="true"
-        android:layout_marginStart="36dp"
+        android:layout_marginStart="35dp"
         android:id="@+id/btnCancelTrainStart"
         android:onClick="CancelInputDeparture" />
 

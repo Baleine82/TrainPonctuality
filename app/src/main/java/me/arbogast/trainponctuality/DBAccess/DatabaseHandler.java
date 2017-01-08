@@ -10,9 +10,9 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class DatabaseHandler extends SQLiteOpenHelper {
 
-    public static final String TRAVEL_CREATE_TABLE = "CREATE TABLE travel (id INTEGER PRIMARY KEY NOT NULL AUTOINCREMENT, " +
-            "departureDate DATE NOT NULL, arrivalDate DATE NOT NULL, line TEXT, mission TEXT, departureStation TEXT NOT NULL, arrivalStation TEXT);";
-    public static final String TRAVEL_DROP_TABLE = "DROP TABLE IF EXISTS travel;";
+    public static final String TRAVEL_CREATE_TABLE = "CREATE TABLE travel (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+            "departureDate DATE NOT NULL, arrivalDate DATE NOT NULL, line TEXT, mission TEXT, departureStation TEXT NOT NULL, arrivalStation TEXT);";
+    // public static final String TRAVEL_DROP_TABLE = "DROP TABLE IF EXISTS travel;";
 
     public DatabaseHandler(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
         super(context, name, factory, version);
@@ -25,7 +25,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL(TRAVEL_DROP_TABLE);
-        onCreate(db);
+        // db.execSQL(TRAVEL_DROP_TABLE);
+        // onCreate(db);
     }
 }

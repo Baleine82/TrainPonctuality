@@ -10,4 +10,9 @@
     <string name="txtLocationHint">Gare de départ</string>
     <string name="txtDepartureTimeHint">Heure de départ</string>
     <string name="btnSaveDeparture">Partir</string>
+    <string name="txtArrivalDateHint">Date d\'arrivée</string>
+    <string name="txtArrivalTimeHint">Heure d\'arrivée</string>
+    <string name="txtLocationArrivalHint">Gare d\'arrivée</string>
+    <string name="btnSaveArrival">Arriver</string>
+    <string name="btnCancelArrival">Annuler</string>
 </resources>

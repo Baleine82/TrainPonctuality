@@ -1,5 +1,8 @@
 package me.arbogast.trainponctuality.GUI;
 
+import android.util.Log;
+import android.widget.EditText;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -10,17 +13,16 @@ import java.util.GregorianCalendar;
  */
 
 public class Utils {
+    private static final String TAG = "Utils";
     private static SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
     private static SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
     private static SimpleDateFormat dateTimeFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 
-    public static String getDate()
-    {
+    public static String getDate() {
         return dateFormat.format(GregorianCalendar.getInstance().getTime());
     }
 
-    public static String getTime()
-    {
+    public static String getTime() {
         return timeFormat.format(GregorianCalendar.getInstance().getTime());
     }
 
@@ -28,8 +30,14 @@ public class Utils {
         try {
             return dateTimeFormat.parse(date + " " + time);
         } catch (ParseException e) {
+            Log.e(TAG, "parseDate: " + date, e);
             e.printStackTrace();
             return GregorianCalendar.getInstance().getTime();
         }
+    }
+
+    public static String getText(EditText e)
+    {
+        return e.getText().toString();
     }
 }
