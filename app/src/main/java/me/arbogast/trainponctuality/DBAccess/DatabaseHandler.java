@@ -11,7 +11,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DatabaseHandler extends SQLiteOpenHelper {
 
     public static final String TRAVEL_CREATE_TABLE = "CREATE TABLE travel (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
-            "departureDate DATE NOT NULL, arrivalDate DATE NOT NULL, line TEXT, mission TEXT, departureStation TEXT NOT NULL, arrivalStation TEXT);";
+            "departureDate DATE NOT NULL, arrivalDate DATE, line TEXT, mission TEXT, departureStation TEXT NOT NULL, arrivalStation TEXT);";
     // public static final String TRAVEL_DROP_TABLE = "DROP TABLE IF EXISTS travel;";
 
     public DatabaseHandler(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {

@@ -33,34 +33,22 @@
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:ems="10"
-        android:id="@+id/txtMission"
-        android:inputType="textCapCharacters"
-        android:hint="@string/txtMissionHint"
-        android:layout_above="@+id/btnSaveStart"
-        android:layout_alignStart="@+id/txtLine"
-        android:layout_marginBottom="86dp" />
-
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:inputType="textPersonName"
         android:ems="10"
         android:id="@+id/txtLine"
         android:hint="@string/txtLineHint"
-        android:layout_marginBottom="62dp"
-        android:layout_above="@+id/txtMission"
-        android:layout_alignStart="@+id/txtLocation" />
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
 
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:inputType="date"
         android:ems="10"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:id="@+id/txtDepartureDate"
-        android:hint="@string/txtDepartureDateHint" />
+        android:id="@+id/txtMission"
+        android:inputType="textCapCharacters"
+        android:hint="@string/txtMissionHint"
+        android:layout_below="@+id/txtLine"
+        android:layout_alignStart="@+id/txtLine" />
 
     <EditText
         android:layout_width="wrap_content"
@@ -69,16 +57,28 @@
         android:ems="10"
         android:id="@+id/txtLocation"
         android:hint="@string/txtLocationHint"
-        android:layout_above="@+id/txtLine"
-        android:layout_alignStart="@+id/txtDepartureDate" />
+        android:layout_below="@+id/txtMission"
+        android:layout_alignStart="@+id/txtMission"
+        android:layout_marginTop="26dp" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="date"
+        android:ems="10"
+        android:id="@+id/txtDepartureDate"
+        android:hint="@string/txtDepartureDateHint"
+        android:layout_below="@+id/txtLocation"
+        android:layout_alignStart="@+id/txtLocation"
+        android:layout_marginTop="26sp"/>
 
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:ems="10"
-        android:layout_below="@+id/txtDepartureDate"
-        android:layout_alignStart="@+id/txtDepartureDate"
         android:id="@+id/txtDepartureTime"
         android:inputType="time"
-        android:hint="@string/txtDepartureTimeHint" />
+        android:hint="@string/txtDepartureTimeHint"
+        android:layout_below="@+id/txtDepartureDate"
+        android:layout_alignStart="@+id/txtDepartureDate" />
 </RelativeLayout>

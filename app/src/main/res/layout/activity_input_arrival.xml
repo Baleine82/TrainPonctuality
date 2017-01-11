@@ -10,16 +10,6 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="me.arbogast.trainponctuality.GUI.InputArrivalActivity">
 
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:inputType="date"
-        android:ems="10"
-        android:id="@+id/txtArrivalDate"
-        android:hint="@string/txtArrivalDateHint"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
-
     <Button
         android:text="@string/btnSaveArrival"
         android:layout_width="wrap_content"
@@ -45,13 +35,23 @@
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:inputType="date"
+        android:ems="10"
+        android:id="@+id/txtArrivalDate"
+        android:hint="@string/txtArrivalDateHint"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:inputType="textPersonName"
         android:ems="10"
         android:id="@+id/txtLocation"
         android:hint="@string/txtLocationArrivalHint"
-        android:layout_marginTop="97dp"
-        android:layout_below="@+id/txtArrivalTime"
-        android:layout_alignStart="@+id/txtArrivalTime" />
+        android:layout_below="@+id/txtArrivalDate"
+        android:layout_alignStart="@+id/txtArrivalDate"
+        android:layout_marginTop="26dp" />
 
     <EditText
         android:layout_width="wrap_content"
@@ -60,7 +60,7 @@
         android:id="@+id/txtArrivalTime"
         android:inputType="time"
         android:hint="@string/txtArrivalTimeHint"
-        android:layout_marginTop="15dp"
-        android:layout_below="@+id/txtArrivalDate"
+        android:layout_marginTop="26dp"
+        android:layout_below="@+id/txtLocation"
         android:layout_alignStart="@+id/txtArrivalDate" />
 </RelativeLayout>
