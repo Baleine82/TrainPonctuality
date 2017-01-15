@@ -13,7 +13,7 @@ import me.arbogast.trainponctuality.Model.Travel;
  * Created by excelsior on 08/01/17.
  */
 
-public class TravelDAO extends DAOBase {
+public class TravelDAO extends DAOBase<Travel> {
     private static final String TAG = "TravelDAO";
 
     public static final String TABLE_NAME = "travel";
@@ -32,22 +32,17 @@ public class TravelDAO extends DAOBase {
         super(pContext);
     }
 
-    public void insertDeparture(Travel t) {
-        openWrite();
-        mDb.insert(TABLE_NAME, null, createValues(t));
+    @Override
+    public String getTableName() {
+        return TABLE_NAME;
     }
 
-    public void update(Travel t) {
-        if (t.getId() <= 0) {
-            Log.w(TAG, "update : Cannot update object with id = 0");
-            return;
-        }
-
-        openWrite();
-        mDb.update(TABLE_NAME, createValues(t), COLUMN_ID + " = ?", new String[]{String.valueOf(t.getId())});
+    @Override
+    protected String getColumnId() {
+        return COLUMN_ID;
     }
 
-    private ContentValues createValues(Travel t) {
+    protected ContentValues createValues(Travel t) {
         ContentValues value = new ContentValues();
         value.put(COLUMN_DEPARTURE_DATE, wrapDateDB(t.getDepartureDate()));
         value.put(COLUMN_DEPARTURE_STATION, t.getDepartureStation());

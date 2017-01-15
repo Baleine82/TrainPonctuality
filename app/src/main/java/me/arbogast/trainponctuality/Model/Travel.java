@@ -9,7 +9,7 @@ import java.util.Date;
  * Created by excelsior on 22/12/16.
  */
 
-public class Travel implements Parcelable {
+public class Travel implements Parcelable, IGetId {
     private Date departureDate;
     private Date arrivalDate;
     private String line;
@@ -84,8 +84,8 @@ public class Travel implements Parcelable {
     }
 
 
-    public long getId() {
-        return id;
+    public String getId() {
+        return Long.toString(id);
     }
 
     public void setId(long id) {

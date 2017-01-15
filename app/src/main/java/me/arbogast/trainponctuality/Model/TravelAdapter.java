@@ -57,7 +57,7 @@ public class TravelAdapter extends ArrayAdapter<Travel> {
         }
 
         Travel t = this.objects.get(position);
-        holder.txtId.setText(Long.toString(t.getId()));
+        holder.txtId.setText(t.getId());
         holder.txtLine.setText(t.getLine());
         holder.txtMission.setText(t.getMissionCode());
         holder.txtDepartureDate.setText(t.getDepartureDate().toString());

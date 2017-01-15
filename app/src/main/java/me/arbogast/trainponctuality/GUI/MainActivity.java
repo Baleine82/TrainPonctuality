@@ -8,6 +8,7 @@ import android.view.View;
 import me.arbogast.trainponctuality.DBAccess.TravelDAO;
 import me.arbogast.trainponctuality.Model.Travel;
 import me.arbogast.trainponctuality.R;
+import me.arbogast.trainponctuality.SncfApi.InitializeSncfData;
 
 public class MainActivity extends Activity {
 
@@ -15,7 +16,9 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-    }
+
+        new InitializeSncfData(getApplicationContext()).execute();
+}
 
     public void InputDepartureClick(View view) {
         if (new TravelDAO(this).selectCurrentTravel() == null) {

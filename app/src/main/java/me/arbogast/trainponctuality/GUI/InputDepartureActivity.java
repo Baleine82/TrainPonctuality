@@ -36,7 +36,7 @@ public class InputDepartureActivity extends Activity {
         Travel departure = new Travel(Utils.parseDate(Utils.getText(txtDepartureDate), Utils.getText(txtDepartureTime)),
                 Utils.getText(txtLine), Utils.getText(txtMission), Utils.getText(txtDepartureStation));
 
-        new TravelDAO(this).insertDeparture(departure);
+        new TravelDAO(this).insert(departure);
         finish();
     }
 
