@@ -27,6 +27,7 @@ import java.util.Date;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import me.arbogast.trainponctuality.DBAccess.CalendarDAO;
 import me.arbogast.trainponctuality.DBAccess.DAOImportBase;
 import me.arbogast.trainponctuality.DBAccess.RoutesDAO;
 import me.arbogast.trainponctuality.DBAccess.StopTimesDAO;
@@ -69,6 +70,7 @@ public class InitializeSncfData extends AsyncTask<URL, Integer, String> {
             InsertData(new File(outputDir, myContext.getString(R.string.sncfTripsFile)), new TripsDAO(myContext), ',', '\"');
             InsertData(new File(outputDir, myContext.getString(R.string.sncfStopsFile)), new StopsDAO(myContext), ',', '\"');
             InsertData(new File(outputDir, myContext.getString(R.string.sncfStopTimesFile)), new StopTimesDAO(myContext), ',', '\"');
+            InsertData(new File(outputDir, myContext.getString(R.string.sncfSCalendarFile)), new CalendarDAO(myContext), ',', '\"');
 
 
         } catch (IOException e) {

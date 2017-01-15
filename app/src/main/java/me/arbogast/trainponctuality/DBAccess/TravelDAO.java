@@ -3,7 +3,9 @@ package me.arbogast.trainponctuality.DBAccess;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import me.arbogast.trainponctuality.Model.Travel;
@@ -43,10 +45,10 @@ public class TravelDAO extends DAOBase<Travel> {
 
     protected ContentValues createValues(Travel t) {
         ContentValues value = new ContentValues();
-        value.put(COLUMN_DEPARTURE_DATE, wrapDateDB(t.getDepartureDate()));
+        value.put(COLUMN_DEPARTURE_DATE, t.getDepartureDate().getTime());
         value.put(COLUMN_DEPARTURE_STATION, t.getDepartureStation());
         if (t.getArrivalStation() != null) {
-            value.put(COLUMN_ARRIVAL_DATE, wrapDateDB(t.getArrivalDate()));
+            value.put(COLUMN_ARRIVAL_DATE, t.getArrivalDate().getTime());
             value.put(COLUMN_ARRIVAL_STATION, t.getArrivalStation());
         }
         value.put(COLUMN_LINE, t.getLine());
@@ -81,8 +83,7 @@ public class TravelDAO extends DAOBase<Travel> {
     }
 
     private Travel getTravel(Cursor c) {
-
-        return new Travel(c.getLong(0), getDateFromDB(c.getString(1)), c.getString(2), getDateFromDB(c.getString(3)), c.getString(4), c.getString(5), c.getString(6));
+        return new Travel(c.getLong(0), new Date(c.getLong(1)), c.getString(2), new Date(c.getLong(3)), c.getString(4), c.getString(5), c.getString(6));
     }
 
     public List<Travel> selectAllTravels() {

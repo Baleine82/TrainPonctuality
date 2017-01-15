@@ -33,4 +33,5 @@
     <string name="sncfTripsFile">trips.txt</string>
     <string name="sncfStopsFile">stops.txt</string>
     <string name="sncfStopTimesFile">stop_times.txt</string>
+    <string name="sncfSCalendarFile">calendar.txt</string>
 </resources>

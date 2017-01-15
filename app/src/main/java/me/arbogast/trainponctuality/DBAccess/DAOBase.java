@@ -7,6 +7,7 @@ import android.util.Log;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -47,31 +48,6 @@ public abstract class DAOBase<T extends IGetId> {
 
     public void close() {
         mDb.close();
-    }
-
-    public SQLiteDatabase getDb() {
-        return mDb;
-    }
-
-
-    private static SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
-    protected String wrapDateDB(Date date) {
-        return dateTimeFormat.format(date);
-    }
-
-    protected Date getDateFromDB(String dateStr) {
-        try {
-            return dateTimeFormat.parse(dateStr);
-        } catch (ParseException e) {
-            Log.e(TAG, "getDateFromDB: Error while parsing date " + dateStr, e);
-            e.printStackTrace();
-            return null;
-        } catch (NullPointerException e) {
-            Log.e(TAG, "getDateFromDB: Error while parsing date " + dateStr, e);
-            e.printStackTrace();
-            return null;
-        }
     }
 
     public void insert(T t) {
