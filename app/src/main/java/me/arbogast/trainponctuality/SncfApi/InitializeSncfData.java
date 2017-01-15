@@ -21,11 +21,18 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import me.arbogast.trainponctuality.DBAccess.DAOImportBase;
 import me.arbogast.trainponctuality.DBAccess.RoutesDAO;
+import me.arbogast.trainponctuality.DBAccess.StopTimesDAO;
+import me.arbogast.trainponctuality.DBAccess.StopsDAO;
+import me.arbogast.trainponctuality.DBAccess.TripsDAO;
+import me.arbogast.trainponctuality.R;
 
 /**
  * Created by excelsior on 14/01/17.
@@ -33,8 +40,6 @@ import me.arbogast.trainponctuality.DBAccess.RoutesDAO;
 
 public class InitializeSncfData extends AsyncTask<URL, Integer, String> {
     private static final String TAG = "InitializeSncfData";
-    private static final String GET_GTFS_URL = "https://ressources.data.sncf.com/api/records/1.0/search/?dataset=sncf-transilien-gtfs";
-    private static final String GET_GTFS_OBJECT_URL = "https://ressources.data.sncf.com/explore/dataset/sncf-transilien-gtfs/files/%1s/download/";
 
     private Context myContext;
 
@@ -46,30 +51,36 @@ public class InitializeSncfData extends AsyncTask<URL, Integer, String> {
     @Override
     protected String doInBackground(URL... params) {
         try {
-            File zipSncfInfo = new File(myContext.getCacheDir(), "sncfData.zip");
-            File outputDir = new File(myContext.getCacheDir(), "outSncf");
-//            String gtfsInfo = getGTFSinfo();
-//            String fileId = getGTFSid(gtfsInfo);
-//
-//            if (fileId == null)
-//                return null;
-//
-//            downloadGTFSfile(fileId, zipSncfInfo.getPath());
+            Date lastUpdate = new Date(myContext.getSharedPreferences(myContext.getString(R.string.sharedPrefs), Context.MODE_PRIVATE).getLong(myContext.getString(R.string.prefsLastUpdateSncf), 0));
+            File zipSncfInfo = new File(myContext.getCacheDir(), myContext.getString(R.string.zipSncf));
+            File outputDir = new File(myContext.getCacheDir(), myContext.getString(R.string.unzipSncf));
+            String gtfsInfo = getGTFSinfo();
+            String fileId = getGTFSid(gtfsInfo, lastUpdate);
 
-//            outputDir.mkdir();
-//            unpackZip(zipSncfInfo, outputDir.getPath());
+            if (fileId == null)
+                return null;
 
-            InsertData(new File(outputDir.getPath(), "routes.txt"), new RoutesDAO(myContext), ',', '\"' );
+            downloadGTFSfile(fileId, zipSncfInfo.getPath());
+
+            outputDir.mkdir();
+            unpackZip(zipSncfInfo, outputDir.getPath());
+
+            InsertData(new File(outputDir, myContext.getString(R.string.sncfRouteFile)), new RoutesDAO(myContext), ',', '\"');
+            InsertData(new File(outputDir, myContext.getString(R.string.sncfTripsFile)), new TripsDAO(myContext), ',', '\"');
+            InsertData(new File(outputDir, myContext.getString(R.string.sncfStopsFile)), new StopsDAO(myContext), ',', '\"');
+            InsertData(new File(outputDir, myContext.getString(R.string.sncfStopTimesFile)), new StopTimesDAO(myContext), ',', '\"');
 
 
         } catch (IOException e) {
             e.printStackTrace();
             Log.e(TAG, "doInBackground: IOException", e);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            Log.e(TAG, "doInBackground: ParseException", e);
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Log.e(TAG, "doInBackground: JSONException", e);
         }
-//        catch (JSONException e) {
-//            e.printStackTrace();
-//            Log.e(TAG, "doInBackground: JSONException", e);
-//        }
 
         return null;
     }
@@ -142,7 +153,7 @@ public class InitializeSncfData extends AsyncTask<URL, Integer, String> {
         InputStream reader = null;
         FileOutputStream resFile = null;
         try {
-            httpclient = (HttpURLConnection) new URL(String.format(GET_GTFS_OBJECT_URL, fileId)).openConnection();
+            httpclient = (HttpURLConnection) new URL(String.format(myContext.getString(R.string.sncfDownloadDataset), fileId)).openConnection();
             httpclient.setRequestMethod("GET");
             reader = httpclient.getInputStream();
             resFile = new FileOutputStream(filename);
@@ -162,19 +173,20 @@ public class InitializeSncfData extends AsyncTask<URL, Integer, String> {
         }
     }
 
-    private String getGTFSid(String gtfsInfo) throws JSONException {
+    private String getGTFSid(String gtfsInfo, Date lastUpdate) throws JSONException, ParseException {
         JSONObject parser = new JSONObject(gtfsInfo);
-        JSONArray records = parser.getJSONArray("records");
+        JSONArray records = parser.getJSONArray(myContext.getString(R.string.sncfGtfsRecord));
 
         for (int i = 0; i < records.length(); i++) {
             JSONObject first = records.getJSONObject(i);
-            String dateUpdate = first.getString("record_timestamp");
-            // TODO Check if date is newer than in db
+            Date dateUpdate = new SimpleDateFormat(myContext.getString(R.string.sncfJsonDateFormat)).parse(first.getString(myContext.getString(R.string.sncfJsonTimestamp)));    // date format is 2017-01-13T07:16:03+00:00
+            if (lastUpdate.compareTo(dateUpdate) <= 0)
+                return null;
 
-            JSONObject file = first.getJSONObject("fields").getJSONObject("file");
-            String fileId = file.getString("id");
-            String fileName = file.getString("filename");
-            if (fileName.equals("gtfs-lines-last.zip"))
+            JSONObject file = first.getJSONObject(myContext.getString(R.string.sncfGtfsFields)).getJSONObject(myContext.getString(R.string.sncfGtfsFile));
+            String fileId = file.getString(myContext.getString(R.string.sncfGtfsId));
+            String fileName = file.getString(myContext.getString(R.string.sncfGtfsFilename));
+            if (fileName.equals(myContext.getString(R.string.sncfGtfsDatasetUsed)))
                 return fileId;
         }
 
@@ -184,7 +196,7 @@ public class InitializeSncfData extends AsyncTask<URL, Integer, String> {
     @NonNull
     private String getGTFSinfo() throws IOException {
         HttpURLConnection httpclient;
-        httpclient = (HttpURLConnection) new URL(GET_GTFS_URL).openConnection();
+        httpclient = (HttpURLConnection) new URL(myContext.getString(R.string.sncfGetGtfsDatasets)).openConnection();
         httpclient.setRequestMethod("GET");
         BufferedReader read = new BufferedReader(new InputStreamReader(httpclient.getInputStream()));
         String line;

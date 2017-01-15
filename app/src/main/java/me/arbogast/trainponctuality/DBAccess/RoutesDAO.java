@@ -12,16 +12,14 @@ import me.arbogast.trainponctuality.Model.Routes;
 public class RoutesDAO extends DAOImportBase<Routes> {
     private static final String TAG = "TravelDAO";
 
-    public static final String TABLE_NAME = "routes";
-    public static final String COLUMN_ID = "route_id";
-    public static final String COLUMN_AGENCY = "agency_id";
-    public static final String COLUMN_SHORT_NAME = "route_short_name";
-    public static final String COLUMN_LONG_NAME = "route_long_name";
-    public static final String COLUMN_DESC = "route_desc";
-    public static final String COLUMN_TYPE = "route_type";
-    public static final String COLUMN_URL = "route_url";
-    public static final String COLUMN_COLOR = "route_color";
-    public static final String COLUMN_TEXT_COLOR = "route_text_color";
+    private static final String TABLE_NAME = "routes";
+    private static final String COLUMN_ID = "route_id";
+    private static final String COLUMN_AGENCY = "agency_id";
+    private static final String COLUMN_SHORT_NAME = "route_short_name";
+    private static final String COLUMN_LONG_NAME = "route_long_name";
+    private static final String COLUMN_TYPE = "route_type";
+    private static final String COLUMN_COLOR = "route_color";
+    private static final String COLUMN_TEXT_COLOR = "route_text_color";
 
     public RoutesDAO(Context pContext) {
         super(pContext);
@@ -34,9 +32,7 @@ public class RoutesDAO extends DAOImportBase<Routes> {
         value.put(COLUMN_AGENCY, t.getAgencyId());
         value.put(COLUMN_SHORT_NAME, t.getShortName());
         value.put(COLUMN_LONG_NAME, t.getLongName());
-        value.put(COLUMN_DESC, t.getDescription());
         value.put(COLUMN_TYPE, t.getType());
-        value.put(COLUMN_URL, t.getUrl());
         value.put(COLUMN_COLOR, t.getColor());
         value.put(COLUMN_TEXT_COLOR, t.getTextColor());
 
@@ -50,9 +46,7 @@ public class RoutesDAO extends DAOImportBase<Routes> {
         value.put(COLUMN_AGENCY, t[1]);
         value.put(COLUMN_SHORT_NAME, t[2]);
         value.put(COLUMN_LONG_NAME, t[3]);
-        value.put(COLUMN_DESC, t[4]);
         value.put(COLUMN_TYPE, t[5]);
-        value.put(COLUMN_URL, t[6]);
         value.put(COLUMN_COLOR, t[7]);
         value.put(COLUMN_TEXT_COLOR, t[8]);
 

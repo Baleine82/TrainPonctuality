@@ -9,26 +9,22 @@ public class Routes implements IGetId {
     private String agencyId;
     private String shortName;
     private String LongName;
-    private String description;
-    private String url;
     private int type;
     private String color;
     private String textColor;
 
-    public Routes(String id, String agencyId, String shortName, String longName, String description, String url, int type, String color, String textColor) {
+    public Routes(String id, String agencyId, String shortName, String longName, int type, String color, String textColor) {
         this.id = id;
         this.agencyId = agencyId;
         this.shortName = shortName;
         this.LongName = longName;
-        this.description = description;
-        this.url = url;
         this.type = type;
         this.color = color;
         this.textColor = textColor;
     }
 
-    public Routes(String id, String agencyId, String shortName, String longName, String description, String url, String type, String color, String textColor) {
-        this(id, agencyId, shortName, longName, description, url, Integer.parseInt(type), color, textColor);
+    public Routes(String id, String agencyId, String shortName, String longName, String type, String color, String textColor) {
+        this(id, agencyId, shortName, longName, Integer.parseInt(type), color, textColor);
     }
 
     public String getId() {
@@ -61,22 +57,6 @@ public class Routes implements IGetId {
 
     public void setLongName(String longName) {
         LongName = longName;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
     }
 
     public int getType() {

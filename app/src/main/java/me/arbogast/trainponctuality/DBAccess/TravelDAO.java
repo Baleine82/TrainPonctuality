@@ -3,7 +3,6 @@ package me.arbogast.trainponctuality.DBAccess;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,14 +15,14 @@ import me.arbogast.trainponctuality.Model.Travel;
 public class TravelDAO extends DAOBase<Travel> {
     private static final String TAG = "TravelDAO";
 
-    public static final String TABLE_NAME = "travel";
-    public static final String COLUMN_ID = "id";
-    public static final String COLUMN_DEPARTURE_DATE = "departureDate";
-    public static final String COLUMN_DEPARTURE_STATION = "departureStation";
-    public static final String COLUMN_ARRIVAL_DATE = "arrivalDate";
-    public static final String COLUMN_ARRIVAL_STATION = "arrivalStation";
-    public static final String COLUMN_LINE = "line";
-    public static final String COLUMN_MISSION = "mission";
+    private static final String TABLE_NAME = "travel";
+    private static final String COLUMN_ID = "id";
+    private static final String COLUMN_DEPARTURE_DATE = "departureDate";
+    private static final String COLUMN_DEPARTURE_STATION = "departureStation";
+    private static final String COLUMN_ARRIVAL_DATE = "arrivalDate";
+    private static final String COLUMN_ARRIVAL_STATION = "arrivalStation";
+    private static final String COLUMN_LINE = "line";
+    private static final String COLUMN_MISSION = "mission";
 
     private static final String SELECT_ALL = "SELECT " + COLUMN_ID + ", " + COLUMN_DEPARTURE_DATE + ", " + COLUMN_DEPARTURE_STATION + ", " +
             COLUMN_ARRIVAL_DATE + ", " + COLUMN_ARRIVAL_STATION + ", " + COLUMN_LINE + ", " + COLUMN_MISSION;

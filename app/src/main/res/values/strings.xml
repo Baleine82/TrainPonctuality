@@ -15,4 +15,22 @@
     <string name="txtLocationArrivalHint">Gare d\'arrivée</string>
     <string name="btnSaveArrival">Arriver</string>
     <string name="btnCancelArrival">Annuler</string>
+    <string name="sncfJsonDateFormat">yyyy-MM-dd\'T\'HH:mm:ssXXX</string>
+    <string name="sncfJsonTimestamp">record_timestamp</string>
+    <string name="sharedPrefs">default</string>
+    <string name="prefsLastUpdateSncf">lastSncfUpdate</string>
+    <string name="sncfGetGtfsDatasets">https://ressources.data.sncf.com/api/records/1.0/search/?dataset=sncf-transilien-gtfs</string>
+    <string name="sncfDownloadDataset">https://ressources.data.sncf.com/explore/dataset/sncf-transilien-gtfs/files/%1s/download/</string>
+    <string name="sncfGtfsRecord">records</string>
+    <string name="sncfGtfsFields">fields</string>
+    <string name="sncfGtfsFile">file</string>
+    <string name="sncfGtfsFilename">filename</string>
+    <string name="sncfGtfsId">id</string>
+    <string name="sncfGtfsDatasetUsed">gtfs-lines-last.zip</string>
+    <string name="zipSncf">sncfData.zip</string>
+    <string name="unzipSncf">outSncf</string>
+    <string name="sncfRouteFile">routes.txt</string>
+    <string name="sncfTripsFile">trips.txt</string>
+    <string name="sncfStopsFile">stops.txt</string>
+    <string name="sncfStopTimesFile">stop_times.txt</string>
 </resources>
