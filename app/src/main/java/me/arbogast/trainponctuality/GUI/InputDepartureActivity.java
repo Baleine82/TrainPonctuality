@@ -1,11 +1,15 @@
 package me.arbogast.trainponctuality.GUI;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import me.arbogast.trainponctuality.DBAccess.TravelDAO;
+import me.arbogast.trainponctuality.Model.Stops;
 import me.arbogast.trainponctuality.Model.Travel;
 import me.arbogast.trainponctuality.R;
 
@@ -13,7 +17,7 @@ public class InputDepartureActivity extends Activity {
 
     private EditText txtDepartureDate;
     private EditText txtDepartureTime;
-    private EditText txtDepartureStation;
+    private TextView txtDepartureStation;
     private EditText txtLine;
     private EditText txtMission;
 
@@ -24,7 +28,7 @@ public class InputDepartureActivity extends Activity {
 
         txtDepartureDate = (EditText) findViewById(R.id.txtDepartureDate);
         txtDepartureTime = (EditText) findViewById(R.id.txtDepartureTime);
-        txtDepartureStation = (EditText) findViewById(R.id.txtLocation);
+        txtDepartureStation = (TextView) findViewById(R.id.txtLocation);
         txtLine = (EditText) findViewById(R.id.txtLine);
         txtMission = (EditText) findViewById(R.id.txtMission);
 
@@ -34,7 +38,7 @@ public class InputDepartureActivity extends Activity {
 
     public void ValidateDeparture(View view) {
         Travel departure = new Travel(Utils.parseDate(Utils.getText(txtDepartureDate), Utils.getText(txtDepartureTime)),
-                Utils.getText(txtLine), Utils.getText(txtMission), Utils.getText(txtDepartureStation));
+                Utils.getText(txtLine), Utils.getText(txtMission), txtDepartureStation.toString());
 
         new TravelDAO(this).insert(departure);
         finish();
@@ -42,5 +46,18 @@ public class InputDepartureActivity extends Activity {
 
     public void CancelInputDeparture(View view) {
         finish();
+    }
+
+    public void showStationList(View view) {
+        Intent showList = new Intent(this, ShowStationListActivity.class);
+        startActivityForResult(showList, 0);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 0 && resultCode == RESULT_OK && data != null) {
+            Stops selected = data.getExtras().getParcelable("stop");
+            txtDepartureStation.setText(selected.getName());
+        }
     }
 }

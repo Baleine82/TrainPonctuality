@@ -4,9 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 import me.arbogast.trainponctuality.Model.Travel;
 
@@ -43,6 +41,10 @@ public class TravelDAO extends DAOBase<Travel> {
         return COLUMN_ID;
     }
 
+    protected String getSelectAllCols() {
+        return SELECT_ALL;
+    }
+
     protected ContentValues createValues(Travel t) {
         ContentValues value = new ContentValues();
         value.put(COLUMN_DEPARTURE_DATE, t.getDepartureDate().getTime());
@@ -74,7 +76,7 @@ public class TravelDAO extends DAOBase<Travel> {
 
         try {
             if (c.moveToFirst())
-                return getTravel(c);
+                return getItem(c);
             else
                 return null;
         } finally {
@@ -82,20 +84,7 @@ public class TravelDAO extends DAOBase<Travel> {
         }
     }
 
-    private Travel getTravel(Cursor c) {
+    protected Travel getItem(Cursor c) {
         return new Travel(c.getLong(0), new Date(c.getLong(1)), c.getString(2), new Date(c.getLong(3)), c.getString(4), c.getString(5), c.getString(6));
-    }
-
-    public List<Travel> selectAllTravels() {
-        openRead();
-        List<Travel> listT = new ArrayList<>();
-        Cursor c = mDb.rawQuery(SELECT_ALL + " from " + TABLE_NAME, null);
-
-        while (c.moveToNext())
-            listT.add(getTravel(c));
-
-        c.close();
-
-        return listT;
     }
 }

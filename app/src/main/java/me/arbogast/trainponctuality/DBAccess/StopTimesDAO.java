@@ -2,6 +2,7 @@ package me.arbogast.trainponctuality.DBAccess;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 
 import me.arbogast.trainponctuality.Model.StopTimes;
 
@@ -63,5 +64,15 @@ public class StopTimesDAO extends DAOImportBase<StopTimes> {
     @Override
     protected String getColumnId() {
         return COLUMN_ID;
+    }
+
+    @Override
+    protected String getSelectAllCols() {
+        return null;
+    }
+
+    @Override
+    protected StopTimes getItem(Cursor c) {
+        return null;
     }
 }

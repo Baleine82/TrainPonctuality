@@ -2,9 +2,9 @@ package me.arbogast.trainponctuality.DBAccess;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 
 import me.arbogast.trainponctuality.Model.CalendarTrip;
-import me.arbogast.trainponctuality.Model.Trips;
 
 /**
  * Created by excelsior on 15/01/17.
@@ -73,5 +73,15 @@ public class CalendarDAO extends DAOImportBase<CalendarTrip> {
     @Override
     protected String getColumnId() {
         return COLUMN_ID;
+    }
+
+    @Override
+    protected String getSelectAllCols() {
+        return null;
+    }
+
+    @Override
+    protected CalendarTrip getItem(Cursor c) {
+        return null;
     }
 }

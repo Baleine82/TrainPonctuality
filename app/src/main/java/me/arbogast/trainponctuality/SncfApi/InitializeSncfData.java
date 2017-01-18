@@ -1,8 +1,8 @@
 package me.arbogast.trainponctuality.SncfApi;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
-import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.opencsv.CSVReader;
@@ -51,17 +51,19 @@ public class InitializeSncfData extends AsyncTask<URL, Integer, String> {
 
     @Override
     protected String doInBackground(URL... params) {
-        try {
-            Date lastUpdate = new Date(myContext.getSharedPreferences(myContext.getString(R.string.sharedPrefs), Context.MODE_PRIVATE).getLong(myContext.getString(R.string.prefsLastUpdateSncf), 0));
-            File zipSncfInfo = new File(myContext.getCacheDir(), myContext.getString(R.string.zipSncf));
-            File outputDir = new File(myContext.getCacheDir(), myContext.getString(R.string.unzipSncf));
-            String gtfsInfo = getGTFSinfo();
-            String fileId = getGTFSid(gtfsInfo, lastUpdate);
+        File zipSncfInfo = new File(myContext.getCacheDir(), myContext.getString(R.string.zipSncf));
+        File outputDir = new File(myContext.getCacheDir(), myContext.getString(R.string.unzipSncf));
 
-            if (fileId == null)
+        try {
+            SharedPreferences prefs = myContext.getSharedPreferences(myContext.getString(R.string.sharedPrefs), Context.MODE_PRIVATE);
+            Date lastUpdate = new Date(prefs.getLong(myContext.getString(R.string.prefsLastUpdateSncf), 0));
+
+            GtfsInfo myInfo = getGTFSinfo();
+
+            if (myInfo.getLastUpdate().compareTo(lastUpdate) <= 0)
                 return null;
 
-            downloadGTFSfile(fileId, zipSncfInfo.getPath());
+            downloadGTFSfile(myInfo.getFileName(), zipSncfInfo.getPath());
 
             outputDir.mkdir();
             unpackZip(zipSncfInfo, outputDir.getPath());
@@ -72,7 +74,9 @@ public class InitializeSncfData extends AsyncTask<URL, Integer, String> {
             InsertData(new File(outputDir, myContext.getString(R.string.sncfStopTimesFile)), new StopTimesDAO(myContext), ',', '\"');
             InsertData(new File(outputDir, myContext.getString(R.string.sncfSCalendarFile)), new CalendarDAO(myContext), ',', '\"');
 
-
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putLong(myContext.getString(R.string.prefsLastUpdateSncf), myInfo.getLastUpdate().getTime());
+            editor.apply();
         } catch (IOException e) {
             e.printStackTrace();
             Log.e(TAG, "doInBackground: IOException", e);
@@ -82,6 +86,15 @@ public class InitializeSncfData extends AsyncTask<URL, Integer, String> {
         } catch (JSONException e) {
             e.printStackTrace();
             Log.e(TAG, "doInBackground: JSONException", e);
+        } finally {
+            if (zipSncfInfo.exists())
+                zipSncfInfo.delete();
+            if (outputDir.exists()) {
+                for (File file : outputDir.listFiles()) {
+                    file.delete();
+                }
+                outputDir.delete();
+            }
         }
 
         return null;
@@ -100,6 +113,8 @@ public class InitializeSncfData extends AsyncTask<URL, Integer, String> {
             reader.readNext();
             String[] nextLine;
             bdd.beginTransaction(true);
+
+            bdd.truncate();
             while ((nextLine = reader.readNext()) != null) {
                 bdd.insert(nextLine);
             }
@@ -175,28 +190,7 @@ public class InitializeSncfData extends AsyncTask<URL, Integer, String> {
         }
     }
 
-    private String getGTFSid(String gtfsInfo, Date lastUpdate) throws JSONException, ParseException {
-        JSONObject parser = new JSONObject(gtfsInfo);
-        JSONArray records = parser.getJSONArray(myContext.getString(R.string.sncfGtfsRecord));
-
-        for (int i = 0; i < records.length(); i++) {
-            JSONObject first = records.getJSONObject(i);
-            Date dateUpdate = new SimpleDateFormat(myContext.getString(R.string.sncfJsonDateFormat)).parse(first.getString(myContext.getString(R.string.sncfJsonTimestamp)));    // date format is 2017-01-13T07:16:03+00:00
-            if (lastUpdate.compareTo(dateUpdate) <= 0)
-                return null;
-
-            JSONObject file = first.getJSONObject(myContext.getString(R.string.sncfGtfsFields)).getJSONObject(myContext.getString(R.string.sncfGtfsFile));
-            String fileId = file.getString(myContext.getString(R.string.sncfGtfsId));
-            String fileName = file.getString(myContext.getString(R.string.sncfGtfsFilename));
-            if (fileName.equals(myContext.getString(R.string.sncfGtfsDatasetUsed)))
-                return fileId;
-        }
-
-        return null;
-    }
-
-    @NonNull
-    private String getGTFSinfo() throws IOException {
+    private GtfsInfo getGTFSinfo() throws JSONException, ParseException, IOException {
         HttpURLConnection httpclient;
         httpclient = (HttpURLConnection) new URL(myContext.getString(R.string.sncfGetGtfsDatasets)).openConnection();
         httpclient.setRequestMethod("GET");
@@ -206,6 +200,23 @@ public class InitializeSncfData extends AsyncTask<URL, Integer, String> {
         while ((line = read.readLine()) != null) {
             fullData.append(line);
         }
-        return fullData.toString();
+
+        JSONObject parser = new JSONObject(fullData.toString());
+        JSONArray records = parser.getJSONArray(myContext.getString(R.string.sncfGtfsRecord));
+
+        for (int i = 0; i < records.length(); i++) {
+            GtfsInfo data = new GtfsInfo();
+
+            JSONObject first = records.getJSONObject(i);
+            data.setLastUpdate(new SimpleDateFormat(myContext.getString(R.string.sncfJsonDateFormat)).parse(first.getString(myContext.getString(R.string.sncfJsonTimestamp))));    // date format is 2017-01-13T07:16:03+00:00
+
+            JSONObject file = first.getJSONObject(myContext.getString(R.string.sncfGtfsFields)).getJSONObject(myContext.getString(R.string.sncfGtfsFile));
+            data.setFileId(file.getString(myContext.getString(R.string.sncfGtfsId)));
+            data.setFileName(file.getString(myContext.getString(R.string.sncfGtfsFilename)));
+            if (data.getFileName().equals(myContext.getString(R.string.sncfGtfsDatasetUsed)))
+                return data;
+        }
+
+        return null;
     }
 }

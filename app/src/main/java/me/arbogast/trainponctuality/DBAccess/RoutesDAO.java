@@ -2,6 +2,7 @@ package me.arbogast.trainponctuality.DBAccess;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 
 import me.arbogast.trainponctuality.Model.Routes;
 
@@ -61,5 +62,15 @@ public class RoutesDAO extends DAOImportBase<Routes> {
     @Override
     protected String getColumnId() {
         return COLUMN_ID;
+    }
+
+    @Override
+    protected String getSelectAllCols() {
+        return null;
+    }
+
+    @Override
+    protected Routes getItem(Cursor c) {
+        return null;
     }
 }

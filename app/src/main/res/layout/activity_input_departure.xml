@@ -50,16 +50,16 @@
         android:layout_below="@+id/txtLine"
         android:layout_alignStart="@+id/txtLine" />
 
-    <EditText
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:inputType="textPersonName"
         android:ems="10"
         android:id="@+id/txtLocation"
-        android:hint="@string/txtLocationHint"
+        android:text="@string/txtLocationHint"
         android:layout_below="@+id/txtMission"
         android:layout_alignStart="@+id/txtMission"
-        android:layout_marginTop="26dp" />
+        android:layout_marginTop="26dp"
+        android:onClick="showStationList" />
 
     <EditText
         android:layout_width="wrap_content"

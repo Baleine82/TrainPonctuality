@@ -18,7 +18,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String TRIPS_CREATE_TABLE = "CREATE TABLE trips (id VARCHAR(26) PRIMARY KEY NOT NULL, route_id CHAR(12) NOT NULL, " +
             "service_id CHAR(4) NOT NULL, trip_headsign VARCHAR(8) NOT NULL, direction_id INTEGER NOT NULL, block_id INTEGER)";
     private static final String STOPS_CREATE_TABLE = "CREATE TABLE stops (id VARCHAR(20) PRIMARY KEY NOT NULL, name TEXT NOT NULL, " +
-            "latitude DOUBLE, longitude DOUBLE, location_type INTEGER, parent_station VARCHAR(20)";
+            "latitude DOUBLE, longitude DOUBLE, location_type INTEGER, parent_station VARCHAR(20))";
     private static final String STOP_TIMES_CREATE_TABLE = "CREATE TABLE stop_times (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
             "trip_id VARCHAR(30) NOT NULL, arrival_time LONG NOT NULL, departure_time LONG NOT NULL, stop_id VARCHAR(20) NOT NULL, " +
             "sequence INTEGER NOT NULL, pickup_type INTEGER NOT NULL, dropoff_type INTEGER NOT NULL)";

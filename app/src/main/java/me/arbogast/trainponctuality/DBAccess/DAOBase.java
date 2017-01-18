@@ -2,16 +2,13 @@ package me.arbogast.trainponctuality.DBAccess;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Locale;
+import java.util.ArrayList;
+import java.util.List;
 
-import me.arbogast.trainponctuality.GUI.Utils;
 import me.arbogast.trainponctuality.Model.IGetId;
 
 /**
@@ -86,6 +83,10 @@ public abstract class DAOBase<T extends IGetId> {
 
     protected abstract String getColumnId();
 
+    protected abstract String getSelectAllCols();
+
+    protected abstract T getItem(Cursor c);
+
     public void delete(long id) {
         openWrite();
         mDb.delete(getTableName(), getColumnId() + " = ?", new String[]{String.valueOf(id)});
@@ -94,6 +95,28 @@ public abstract class DAOBase<T extends IGetId> {
     public void delete(T t) {
         openWrite();
         mDb.delete(getTableName(), getColumnId() + " = ?", new String[]{t.getId()});
+    }
+
+    public void truncate()
+    {
+        openWrite();
+        mDb.execSQL("DELETE FROM " + getTableName());
+
+        if (!mDb.inTransaction())
+            mDb.execSQL("VACUUM");
+    }
+
+    public List<T> selectAll() {
+        openRead();
+        List<T> listT = new ArrayList<>();
+        Cursor c = mDb.rawQuery(getSelectAllCols() + " from " + getTableName(), null);
+
+        while (c.moveToNext())
+            listT.add(getItem(c));
+
+        c.close();
+
+        return listT;
     }
 
     public boolean inTransaction() {

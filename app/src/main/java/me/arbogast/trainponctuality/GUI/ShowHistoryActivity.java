@@ -14,9 +14,9 @@ public class ShowHistoryActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_show_history);
+        setContentView(R.layout.activity_show_list);
 
-        TravelAdapter adapter = new TravelAdapter(this, R.layout.show_history_row, new TravelDAO(this).selectAllTravels());
+        TravelAdapter adapter = new TravelAdapter(this, R.layout.show_history_row, new TravelDAO(this).selectAll());
 
 
         listView1 = (ListView)findViewById(R.id.listView1);
