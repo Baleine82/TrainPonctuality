@@ -4,27 +4,45 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import me.arbogast.trainponctuality.Model.StopTimes;
+
 /**
  * Created by excelsior on 08/01/17.
  */
 
 public class DatabaseHandler extends SQLiteOpenHelper {
 
-    private static final String TRAVEL_CREATE_TABLE = "CREATE TABLE travel (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
-            "departureDate LONG NOT NULL, arrivalDate LONG, line TEXT, mission TEXT, departureStation TEXT NOT NULL, arrivalStation TEXT);";
-    private static final String ROUTES_CREATE_TABLE = "CREATE TABLE routes (route_id CHAR(12) PRIMARY KEY NOT NULL, " +
-            "agency_id CHAR(6) NOT NULL, route_short_name VARCHAR(20), route_long_name TEXT, route_type INTEGER, " +
-            "route_color CHAR(6), route_text_color CHAR(6));";
-    private static final String TRIPS_CREATE_TABLE = "CREATE TABLE trips (id VARCHAR(26) PRIMARY KEY NOT NULL, route_id CHAR(12) NOT NULL, " +
-            "service_id CHAR(4) NOT NULL, trip_headsign VARCHAR(8) NOT NULL, direction_id INTEGER NOT NULL, block_id INTEGER)";
-    private static final String STOPS_CREATE_TABLE = "CREATE TABLE stops (id VARCHAR(20) PRIMARY KEY NOT NULL, name TEXT NOT NULL, " +
-            "latitude DOUBLE, longitude DOUBLE, location_type INTEGER, parent_station VARCHAR(20))";
-    private static final String STOP_TIMES_CREATE_TABLE = "CREATE TABLE stop_times (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
-            "trip_id VARCHAR(30) NOT NULL, arrival_time LONG NOT NULL, departure_time LONG NOT NULL, stop_id VARCHAR(20) NOT NULL, " +
-            "sequence INTEGER NOT NULL, pickup_type INTEGER NOT NULL, dropoff_type INTEGER NOT NULL)";
-    private static final String CALENDAR_CREATE_TABLE = "CREATE TABLE calendar (id  INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, service_id, " +
-            "monday INTEGER NOT NULL, tuesday INTEGER NOT NULL, wednesday INTEGER NOT NULL, thursday INTEGER NOT NULL, friday INTEGER NOT NULL, " +
-            "saturday INTEGER NOT NULL, sunday INTEGER NOT NULL, start_date LONG NOT NULL, end_date LONG NOT NULL)";
+    private static final String TRAVEL_CREATE_TABLE = "CREATE TABLE " + TravelDAO.TABLE_NAME +
+            " (" + TravelDAO.COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " + TravelDAO.COLUMN_DEPARTURE_DATE + " LONG NOT NULL, " +
+            TravelDAO.COLUMN_ARRIVAL_DATE + " LONG, " + TravelDAO.COLUMN_LINE + " TEXT, " + TravelDAO.COLUMN_MISSION + " TEXT, " +
+            TravelDAO.COLUMN_DEPARTURE_STATION + " TEXT NOT NULL, " + TravelDAO.COLUMN_ARRIVAL_STATION + " TEXT);";
+
+    private static final String ROUTES_CREATE_TABLE = "CREATE TABLE " + RoutesDAO.TABLE_NAME +
+            " (" + RoutesDAO.COLUMN_ID + " CHAR(12) PRIMARY KEY NOT NULL, " + RoutesDAO.COLUMN_AGENCY + " CHAR(6) NOT NULL, " +
+            RoutesDAO.COLUMN_SHORT_NAME + " VARCHAR(20), " + RoutesDAO.COLUMN_LONG_NAME + " TEXT, " + RoutesDAO.COLUMN_TYPE + " INTEGER, " +
+            RoutesDAO.COLUMN_COLOR + " CHAR(6), " + RoutesDAO.COLUMN_TEXT_COLOR + " CHAR(6));";
+
+    private static final String TRIPS_CREATE_TABLE = "CREATE TABLE " + TripsDAO.TABLE_NAME +
+            " (" + TripsDAO.COLUMN_ID + " VARCHAR(26) PRIMARY KEY NOT NULL, " + TripsDAO.COLUMN_ROUTE_ID + " CHAR(12) NOT NULL, " +
+            TripsDAO.COLUMN_SERVICE_ID + " CHAR(4) NOT NULL, " + TripsDAO.COLUMN_TRIP_HEADSIGN + " VARCHAR(8) NOT NULL, " +
+            TripsDAO.COLUMN_DIRECTION_ID + " INTEGER NOT NULL";
+
+    private static final String STOPS_CREATE_TABLE = "CREATE TABLE " + StopsDAO.TABLE_NAME + " (" + StopsDAO.COLUMN_ID + " VARCHAR(20) PRIMARY KEY NOT NULL, " +
+            StopsDAO.COLUMN_NAME + " TEXT NOT NULL, " + StopsDAO.COLUMN_LATITUDE + " DOUBLE, " + StopsDAO.COLUMN_LONGITUDE + " DOUBLE, " +
+            StopsDAO.COLUMN_LOCATION_TYPE + " INTEGER, " + StopsDAO.COLUMN_PARENT_STATION + " VARCHAR(20))";
+
+    private static final String STOP_TIMES_CREATE_TABLE = "CREATE TABLE " + StopTimesDAO.TABLE_NAME +
+            " (" + StopTimesDAO.COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " + StopTimesDAO.COLUMN_TRIP_ID + " VARCHAR(30) NOT NULL, " +
+            StopTimesDAO.COLUMN_ARRIVAL_TIME + " LONG NOT NULL, " + StopTimesDAO.COLUMN_DEPARTURE_TIME + " LONG NOT NULL, " +
+            StopTimesDAO.COLUMN_STOP_ID + " VARCHAR(20) NOT NULL, " + StopTimesDAO.COLUMN_SEQUENCE + " INTEGER NOT NULL, " +
+            StopTimesDAO.COLUMN_PICKUP_TYPE + " INTEGER NOT NULL, " + StopTimesDAO.COLUMN_DROPOFF_TYPE + " INTEGER NOT NULL)";
+
+    private static final String CALENDAR_CREATE_TABLE = "CREATE TABLE " + CalendarDAO.TABLE_NAME +
+            " (" + CalendarDAO.COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " + CalendarDAO.COLUMN_MONDAY + " INTEGER NOT NULL, " +
+            CalendarDAO.COLUMN_TUESDAY + " INTEGER NOT NULL, " + CalendarDAO.COLUMN_WEDNESDAY + " INTEGER NOT NULL, " +
+            CalendarDAO.COLUMN_THURSDAY + " INTEGER NOT NULL, " + CalendarDAO.COLUMN_FRIDAY + " INTEGER NOT NULL, " +
+            CalendarDAO.COLUMN_SATURDAY + " INTEGER NOT NULL, " + CalendarDAO.COLUMN_SUNDAY + " INTEGER NOT NULL, " +
+            CalendarDAO.COLUMN_START_DATE + " LONG NOT NULL, " + CalendarDAO.COLUMN_END_DATE + " LONG NOT NULL)";
 
     public DatabaseHandler(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
         super(context, name, factory, version);

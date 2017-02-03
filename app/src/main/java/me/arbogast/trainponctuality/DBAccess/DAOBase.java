@@ -27,7 +27,10 @@ public abstract class DAOBase<T extends IGetId> {
     protected SQLiteDatabase mDb = null;
     protected DatabaseHandler mHandler = null;
 
+    protected final Context context;
+
     public DAOBase(Context pContext) {
+        context = pContext;
         this.mHandler = new DatabaseHandler(pContext, NOM, null, VERSION);
     }
 
@@ -97,8 +100,7 @@ public abstract class DAOBase<T extends IGetId> {
         mDb.delete(getTableName(), getColumnId() + " = ?", new String[]{t.getId()});
     }
 
-    public void truncate()
-    {
+    public void truncate() {
         openWrite();
         mDb.execSQL("DELETE FROM " + getTableName());
 
@@ -109,7 +111,7 @@ public abstract class DAOBase<T extends IGetId> {
     public List<T> selectAll() {
         openRead();
         List<T> listT = new ArrayList<>();
-        Cursor c = mDb.rawQuery(getSelectAllCols() + " from " + getTableName(), null);
+        Cursor c = mDb.rawQuery("SELECT " + getSelectAllCols() + " from " + getTableName(), null);
 
         while (c.moveToNext())
             listT.add(getItem(c));
@@ -120,6 +122,6 @@ public abstract class DAOBase<T extends IGetId> {
     }
 
     public boolean inTransaction() {
-        return mDb!=null && mDb.inTransaction();
+        return mDb != null && mDb.inTransaction();
     }
 }

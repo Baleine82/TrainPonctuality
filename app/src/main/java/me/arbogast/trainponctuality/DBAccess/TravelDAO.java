@@ -15,16 +15,16 @@ import me.arbogast.trainponctuality.Model.Travel;
 public class TravelDAO extends DAOBase<Travel> {
     private static final String TAG = "TravelDAO";
 
-    private static final String TABLE_NAME = "travel";
-    private static final String COLUMN_ID = "id";
-    private static final String COLUMN_DEPARTURE_DATE = "departureDate";
-    private static final String COLUMN_DEPARTURE_STATION = "departureStation";
-    private static final String COLUMN_ARRIVAL_DATE = "arrivalDate";
-    private static final String COLUMN_ARRIVAL_STATION = "arrivalStation";
-    private static final String COLUMN_LINE = "line";
-    private static final String COLUMN_MISSION = "mission";
+    static final String TABLE_NAME = "travel";
+    static final String COLUMN_ID = "tra_id";
+    static final String COLUMN_DEPARTURE_DATE = "tra_departureDate";
+    static final String COLUMN_DEPARTURE_STATION = "tra_departureStation";
+    static final String COLUMN_ARRIVAL_DATE = "tra_arrivalDate";
+    static final String COLUMN_ARRIVAL_STATION = "tra_arrivalStation";
+    static final String COLUMN_LINE = "tra_line";
+    static final String COLUMN_MISSION = "tra_mission";
 
-    private static final String SELECT_ALL = "SELECT " + COLUMN_ID + ", " + COLUMN_DEPARTURE_DATE + ", " + COLUMN_DEPARTURE_STATION + ", " +
+    private static final String SELECT_ALL = COLUMN_ID + ", " + COLUMN_DEPARTURE_DATE + ", " + COLUMN_DEPARTURE_STATION + ", " +
             COLUMN_ARRIVAL_DATE + ", " + COLUMN_ARRIVAL_STATION + ", " + COLUMN_LINE + ", " + COLUMN_MISSION;
 
     public TravelDAO(Context pContext) {
@@ -72,7 +72,7 @@ public class TravelDAO extends DAOBase<Travel> {
     public Travel selectCurrentTravel() {
         openRead();
 
-        Cursor c = mDb.rawQuery(SELECT_ALL + " FROM " + TABLE_NAME + " WHERE " + COLUMN_ARRIVAL_DATE + " IS NULL", null);
+        Cursor c = mDb.rawQuery("SELECT " + SELECT_ALL + " FROM " + TABLE_NAME + " WHERE " + COLUMN_ARRIVAL_DATE + " IS NULL", null);
 
         try {
             if (c.moveToFirst())

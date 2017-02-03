@@ -13,15 +13,15 @@ import me.arbogast.trainponctuality.Model.StopTimes;
 public class StopTimesDAO extends DAOImportBase<StopTimes> {
     private static final String TAG = "TripsDAO";
 
-    private static final String TABLE_NAME = "stop_times";
-    private static final String COLUMN_ID = "id";
-    private static final String COLUMN_TRIP_ID = "trip_id";
-    private static final String COLUMN_ARRIVAL_TIME = "arrival_time";
-    private static final String COLUMN_DEPARTURE_TIME = "departure_time";
-    private static final String COLUMN_STOP_ID = "stop_id";
-    private static final String COLUMN_SEQUENCE = "sequence";
-    private static final String COLUMN_PICKUP_TYPE = "pickup_type";
-    private static final String COLUMN_DROPOFF_TYPE = "dropoff_type";
+    static final String TABLE_NAME = "stop_times";
+    static final String COLUMN_ID = "stt_id";
+    static final String COLUMN_TRIP_ID = "stt_trip_id";
+    static final String COLUMN_ARRIVAL_TIME = "stt_arrival_time";
+    static final String COLUMN_DEPARTURE_TIME = "stt_departure_time";
+    static final String COLUMN_STOP_ID = "stt_stop_id";
+    static final String COLUMN_SEQUENCE = "stt_sequence";
+    static final String COLUMN_PICKUP_TYPE = "stt_pickup_type";
+    static final String COLUMN_DROPOFF_TYPE = "stt_dropoff_type";
 
     public StopTimesDAO(Context pContext) {
         super(pContext);

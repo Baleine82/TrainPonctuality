@@ -13,12 +13,12 @@ import me.arbogast.trainponctuality.Model.Trips;
 public class TripsDAO extends DAOImportBase<Trips> {
     private static final String TAG = "TripsDAO";
 
-    private static final String TABLE_NAME = "trips";
-    private static final String COLUMN_ROUTE_ID = "route_id";
-    private static final String COLUMN_SERVICE_ID = "service_id";
-    private static final String COLUMN_ID = "id";
-    private static final String COLUMN_TRIP_HEADSIGN = "trip_headsign";
-    private static final String COLUMN_DIRECTION_ID = "direction_id";
+    static final String TABLE_NAME = "trips";
+    static final String COLUMN_ROUTE_ID = "tri_route_id";
+    static final String COLUMN_SERVICE_ID = "tri_service_id";
+    static final String COLUMN_ID = "tri_id";
+    static final String COLUMN_TRIP_HEADSIGN = "tri_trip_headsign";
+    static final String COLUMN_DIRECTION_ID = "tri_direction_id";
 
     public TripsDAO(Context pContext) {
         super(pContext);

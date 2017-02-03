@@ -13,18 +13,17 @@ import me.arbogast.trainponctuality.Model.CalendarTrip;
 public class CalendarDAO extends DAOImportBase<CalendarTrip> {
     private static final String TAG = "TripsDAO";
 
-    private static final String TABLE_NAME = "calendar";
-    private static final String COLUMN_ID = "id";
-    private static final String COLUMN_SERVICE_ID = "service_id";
-    private static final String COLUMN_MONDAY = "monday";
-    private static final String COLUMN_TUESDAY = "tuesday";
-    private static final String COLUMN_WEDNESDAY = "wednesday";
-    private static final String COLUMN_THURSDAY = "thursday";
-    private static final String COLUMN_FRIDAY = "friday";
-    private static final String COLUMN_SATURDAY = "saturday";
-    private static final String COLUMN_SUNDAY = "sunday";
-    private static final String COLUMN_START_DATE = "start_date";
-    private static final String COLUMN_END_DATE = "end_date";
+    static final String TABLE_NAME = "calendar";
+    static final String COLUMN_ID = "cal_service_id";
+    static final String COLUMN_MONDAY = "cal_monday";
+    static final String COLUMN_TUESDAY = "cal_tuesday";
+    static final String COLUMN_WEDNESDAY = "cal_wednesday";
+    static final String COLUMN_THURSDAY = "cal_thursday";
+    static final String COLUMN_FRIDAY = "cal_friday";
+    static final String COLUMN_SATURDAY = "cal_saturday";
+    static final String COLUMN_SUNDAY = "cal_sunday";
+    static final String COLUMN_START_DATE = "cal_start_date";
+    static final String COLUMN_END_DATE = "cal_end_date";
 
     public CalendarDAO(Context pContext) {
         super(pContext);
@@ -34,7 +33,6 @@ public class CalendarDAO extends DAOImportBase<CalendarTrip> {
     protected ContentValues createValues(CalendarTrip t) {
         ContentValues value = new ContentValues();
         value.put(COLUMN_ID, t.getId());
-        value.put(COLUMN_SERVICE_ID, t.getServiceId());
         value.put(COLUMN_MONDAY, t.getMonday());
         value.put(COLUMN_TUESDAY, t.getTuesday());
         value.put(COLUMN_WEDNESDAY, t.getWednesday());
@@ -51,7 +49,7 @@ public class CalendarDAO extends DAOImportBase<CalendarTrip> {
     @Override
     protected ContentValues createValues(String[] t) {
         ContentValues value = new ContentValues();
-        value.put(COLUMN_SERVICE_ID, t[0]);
+        value.put(COLUMN_ID, t[0]);
         value.put(COLUMN_MONDAY, t[1]);
         value.put(COLUMN_TUESDAY, t[2]);
         value.put(COLUMN_WEDNESDAY, t[3]);

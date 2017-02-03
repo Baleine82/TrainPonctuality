@@ -30,15 +30,15 @@
         android:id="@+id/btnCancelTrainStart"
         android:onClick="CancelInputDeparture" />
 
-    <EditText
+    <Spinner
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:inputType="textPersonName"
         android:ems="10"
-        android:id="@+id/txtLine"
-        android:hint="@string/txtLineHint"
+        android:id="@+id/spnLine"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:dropDownWidth="match_parent" />
 
     <EditText
         android:layout_width="wrap_content"
@@ -47,8 +47,8 @@
         android:id="@+id/txtMission"
         android:inputType="textCapCharacters"
         android:hint="@string/txtMissionHint"
-        android:layout_below="@+id/txtLine"
-        android:layout_alignStart="@+id/txtLine" />
+        android:layout_below="@+id/spnLine"
+        android:layout_alignStart="@+id/spnLine" />
 
     <TextView
         android:layout_width="wrap_content"
