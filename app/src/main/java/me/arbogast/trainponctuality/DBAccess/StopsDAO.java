@@ -82,7 +82,7 @@ public class StopsDAO extends DAOImportBase<Stops> {
         String query = "SELECT " + SELECT_ALL + " FROM " + RoutesDAO.TABLE_NAME +
                 " INNER JOIN " + TripsDAO.TABLE_NAME + " ON (" + RoutesDAO.TABLE_NAME + "." + RoutesDAO.COLUMN_ID + " = " + TripsDAO.TABLE_NAME + "." + TripsDAO.COLUMN_ROUTE_ID + ")" +
                 " INNER JOIN " + StopTimesDAO.TABLE_NAME + " ON (" + TripsDAO.TABLE_NAME + "." + TripsDAO.COLUMN_ID + " = " + StopTimesDAO.TABLE_NAME + "." + StopTimesDAO.COLUMN_TRIP_ID + ")" +
-                " INNER JOIN " + StopsDAO.TABLE_NAME + " ON (" + StopTimesDAO.TABLE_NAME + "." + StopTimesDAO.COLUMN_ID + " = " + StopsDAO.TABLE_NAME + "." + StopsDAO.COLUMN_ID + ")" +
+                " LEFT JOIN " + StopsDAO.TABLE_NAME + " ON (" + StopTimesDAO.TABLE_NAME + "." + StopTimesDAO.COLUMN_STOP_ID + " = " + StopsDAO.TABLE_NAME + "." + StopsDAO.COLUMN_ID + ")" +
                 " WHERE " + RoutesDAO.TABLE_NAME + "." + RoutesDAO.COLUMN_SHORT_NAME + " = ? " +
                 " GROUP BY " + StopsDAO.COLUMN_ID +
                 " ORDER BY " + StopsDAO.COLUMN_NAME + ";";

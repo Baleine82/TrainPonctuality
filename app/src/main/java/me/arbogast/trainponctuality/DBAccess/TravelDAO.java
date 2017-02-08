@@ -4,8 +4,11 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
+import me.arbogast.trainponctuality.Model.History;
 import me.arbogast.trainponctuality.Model.Travel;
 
 /**
@@ -86,5 +89,23 @@ public class TravelDAO extends DAOBase<Travel> {
 
     protected Travel getItem(Cursor c) {
         return new Travel(c.getLong(0), new Date(c.getLong(1)), c.getString(2), new Date(c.getLong(3)), c.getString(4), c.getString(5), c.getString(6));
+    }
+
+    public ArrayList selectHistory() {
+        openRead();
+        ArrayList listT = new ArrayList();
+        Cursor c = mDb.rawQuery("SELECT " + COLUMN_LINE + ", " + COLUMN_MISSION + ", " + COLUMN_DEPARTURE_DATE + " as DateTravel, " +
+                COLUMN_DEPARTURE_DATE + ", depStop." + StopsDAO.COLUMN_NAME + " AS departureStation, " + COLUMN_ARRIVAL_DATE + ", " +
+                " arrStop." + StopsDAO.COLUMN_NAME + " AS arrivalStation FROM " + TABLE_NAME +
+                " INNER JOIN " + StopsDAO.TABLE_NAME + " AS depStop ON (" + TABLE_NAME + "." + COLUMN_DEPARTURE_STATION + " = depStop." + StopsDAO.COLUMN_ID + ") " +
+                " LEFT JOIN " + StopsDAO.TABLE_NAME + " AS arrStop ON (" + TABLE_NAME + "." + COLUMN_ARRIVAL_STATION + " = arrStop." + StopsDAO.COLUMN_ID + ") " +
+                " ORDER BY " + COLUMN_DEPARTURE_DATE + ";", null);
+
+        while (c.moveToNext())
+            listT.add(new History(c.getString(0), c.getString(1), new Date(c.getLong(2)), new Date(c.getLong(3)), c.getString(4), new Date(c.getLong(5)), c.getString(6)));
+
+        c.close();
+
+        return listT;
     }
 }

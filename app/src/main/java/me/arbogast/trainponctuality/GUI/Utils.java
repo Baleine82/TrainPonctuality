@@ -40,4 +40,13 @@ public class Utils {
     {
         return e.getText().toString();
     }
+
+    public static String dateToString(Date d)
+    {
+        return dateFormat.format(d);
+    }
+
+    public static String timeToString(Date d) {
+        return timeFormat.format(d);
+    }
 }

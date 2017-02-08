@@ -17,7 +17,7 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        new InitializeSncfData(getApplicationContext()).execute();
+        new InitializeSncfData(getApplicationContext(), findViewById(R.id.txtStatus)).execute();
 }
 
     public void InputDepartureClick(View view) {
@@ -40,6 +40,8 @@ public class MainActivity extends Activity {
 
     public void btnHistoryClick(View view) {
         Intent showHistory = new Intent(this, ShowHistoryActivity.class);
+        showHistory.putExtra("title",getString(R.string.historyHeader));
+        showHistory.putExtra("color", R.color.historyHeader);
         startActivity(showHistory);
     }
 }

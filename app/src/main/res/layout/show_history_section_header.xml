@@ -3,14 +3,10 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
+    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/txtSectionHeader"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/txtElem"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:text="Élement"
-        android:layout_marginTop="2dp"
-        android:layout_marginBottom="2dp"
-        android:layout_marginLeft="5dp" />
+        android:textSize="20sp" />
+
 </LinearLayout>

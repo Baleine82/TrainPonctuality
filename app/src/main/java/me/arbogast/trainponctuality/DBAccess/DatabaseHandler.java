@@ -4,8 +4,6 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import me.arbogast.trainponctuality.Model.StopTimes;
-
 /**
  * Created by excelsior on 08/01/17.
  */
@@ -25,7 +23,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String TRIPS_CREATE_TABLE = "CREATE TABLE " + TripsDAO.TABLE_NAME +
             " (" + TripsDAO.COLUMN_ID + " VARCHAR(26) PRIMARY KEY NOT NULL, " + TripsDAO.COLUMN_ROUTE_ID + " CHAR(12) NOT NULL, " +
             TripsDAO.COLUMN_SERVICE_ID + " CHAR(4) NOT NULL, " + TripsDAO.COLUMN_TRIP_HEADSIGN + " VARCHAR(8) NOT NULL, " +
-            TripsDAO.COLUMN_DIRECTION_ID + " INTEGER NOT NULL";
+            TripsDAO.COLUMN_DIRECTION_ID + " INTEGER NOT NULL);";
 
     private static final String STOPS_CREATE_TABLE = "CREATE TABLE " + StopsDAO.TABLE_NAME + " (" + StopsDAO.COLUMN_ID + " VARCHAR(20) PRIMARY KEY NOT NULL, " +
             StopsDAO.COLUMN_NAME + " TEXT NOT NULL, " + StopsDAO.COLUMN_LATITUDE + " DOUBLE, " + StopsDAO.COLUMN_LONGITUDE + " DOUBLE, " +
@@ -60,7 +58,5 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // db.execSQL(TRAVEL_DROP_TABLE);
-        // onCreate(db);
     }
 }

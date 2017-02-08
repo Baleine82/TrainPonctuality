@@ -44,7 +44,7 @@ public class LineAdapter extends ArrayAdapter<Line> {
         View row = inflater.inflate(R.layout.spinner_line_layout, parent, false);
 
         ImageView imageView = (ImageView)row.findViewById(R.id.spinnerImage);
-        imageView.setImageDrawable(context.getResources().getDrawable(t.getresId()));;
+        imageView.setImageResource(context.getResources().getIdentifier(t.getCode().toLowerCase(), "drawable", context.getPackageName()));
 
         return row;
     }

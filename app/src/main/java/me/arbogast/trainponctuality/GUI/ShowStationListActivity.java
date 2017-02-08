@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import me.arbogast.trainponctuality.DBAccess.StopsDAO;
 import me.arbogast.trainponctuality.Model.Stops;
@@ -19,14 +20,18 @@ public class ShowStationListActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        String line = getIntent().getStringExtra("line");
+        Bundle extras = getIntent().getExtras();
+        String line = extras.getString("line");
         setContentView(R.layout.activity_show_list);
 
         // Get ListView object from xml
         listView1 = (ListView) findViewById(R.id.listView1);
+        TextView t = (TextView) findViewById(R.id.txtHeaderList);
+
+        t.setText(extras.getString("title"));
+        t.setBackgroundResource(extras.getInt("color"));
 
         StopsAdapter adapter = new StopsAdapter(this, R.layout.show_simple_list, new StopsDAO(this).getStopsForLine(line));
-
 
         // Assign adapter to ListView
         listView1.setAdapter(adapter);
@@ -36,7 +41,6 @@ public class ShowStationListActivity extends Activity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent resultIntent = new Intent();
-// TODO Add extras or a data URI to this intent as appropriate.
                 resultIntent.putExtra("stop", (Stops) listView1.getItemAtPosition(position));
                 setResult(Activity.RESULT_OK, resultIntent);
                 finish();

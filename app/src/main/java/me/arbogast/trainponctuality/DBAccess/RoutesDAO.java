@@ -87,7 +87,7 @@ public class RoutesDAO extends DAOImportBase<Routes> {
         Cursor c = mDb.rawQuery("SELECT DISTINCT " + COLUMN_SHORT_NAME + " FROM " + TABLE_NAME + " WHERE LENGTH(" + COLUMN_SHORT_NAME + ") = 1 ORDER BY " + COLUMN_SHORT_NAME + ";", null);
 
         while (c.moveToNext())
-            listT.add(new Line(c.getString(0), context.getResources().getIdentifier(c.getString(0).toLowerCase(), "drawable", context.getPackageName())));
+            listT.add(new Line(c.getString(0)));
 
         c.close();
 

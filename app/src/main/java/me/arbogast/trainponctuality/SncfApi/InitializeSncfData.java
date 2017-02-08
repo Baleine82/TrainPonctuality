@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.view.View;
+import android.widget.TextView;
 
 import com.opencsv.CSVReader;
 
@@ -43,10 +45,13 @@ public class InitializeSncfData extends AsyncTask<URL, Integer, String> {
     private static final String TAG = "InitializeSncfData";
 
     private Context myContext;
+    private View statusView;
 
-    public InitializeSncfData(Context context) {
+    public InitializeSncfData(Context context, View status) {
         super();
+
         myContext = context;
+        statusView = status;
     }
 
     @Override
@@ -63,7 +68,7 @@ public class InitializeSncfData extends AsyncTask<URL, Integer, String> {
             if (myInfo.getLastUpdate().compareTo(lastUpdate) <= 0)
                 return null;
 
-            downloadGTFSfile(myInfo.getFileName(), zipSncfInfo.getPath());
+            downloadGTFSfile(myInfo.getFileId(), zipSncfInfo.getPath());
 
             outputDir.mkdir();
             unpackZip(zipSncfInfo, outputDir.getPath());
@@ -98,6 +103,12 @@ public class InitializeSncfData extends AsyncTask<URL, Integer, String> {
         }
 
         return null;
+    }
+
+    @Override
+    protected void onPostExecute(String s) {
+        super.onPostExecute(s);
+        statusView.setVisibility(View.INVISIBLE);
     }
 
     private void InsertData(File file, DAOImportBase bdd, char separator, char quote) throws IOException {

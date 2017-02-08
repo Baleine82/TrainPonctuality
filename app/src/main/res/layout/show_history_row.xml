@@ -1,57 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="horizontal"
     android:padding="10dp">
 
-    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/txtId"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="20sp"
-        android:layout_margin="2dp" />
-
-    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/txtLine"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="20sp"
-        android:layout_margin="2dp" />
+    <ImageView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/imgLine"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_margin="2dp"
+        android:layout_row="0"
+        android:layout_rowSpan="2"
+        android:layout_column="0"
+        android:layout_gravity="center_vertical" />
 
     <TextView xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/txtMission"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="20sp"
-        android:layout_margin="2dp" />
+        android:layout_margin="2dp"
+        android:layout_row="0"
+        android:layout_rowSpan="2"
+        android:layout_column="1"
+        android:layout_gravity="center_vertical" />
 
     <TextView xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/txtDepartureDate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="20sp"
-        android:layout_margin="2dp" />
+        android:layout_margin="2dp"
+        android:layout_row="0"
+        android:layout_column="2" />
 
     <TextView xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/txtDepartureStation"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="20sp"
-        android:layout_margin="2dp" />
+        android:layout_margin="2dp"
+        android:layout_row="0"
+        android:layout_column="3" />
 
     <TextView xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/txtArrivalDate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="20sp"
-        android:layout_margin="2dp" />
+        android:layout_margin="2dp"
+        android:layout_row="1"
+        android:layout_column="2" />
 
     <TextView xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/txtArrivalStation"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="20sp"
-        android:layout_margin="2dp" />
+        android:layout_margin="2dp"
+        android:layout_row="1"
+        android:layout_column="3" />
 
-</LinearLayout>
+</GridLayout>

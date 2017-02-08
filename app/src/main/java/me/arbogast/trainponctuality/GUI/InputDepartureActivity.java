@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -59,8 +60,9 @@ public class InputDepartureActivity extends Activity {
     }
 
     public void ValidateDeparture(View view) {
-        if (DepartureStation == null)
+        if (DepartureStation == null || selectedLine == null)
             return;
+        
         Travel departure = new Travel(Utils.parseDate(Utils.getText(txtDepartureDate), Utils.getText(txtDepartureTime)),
                 ((Line) spnLine.getSelectedItem()).getCode(), Utils.getText(txtMission), DepartureStation.getId());
 
@@ -74,6 +76,8 @@ public class InputDepartureActivity extends Activity {
 
     public void showStationList(View view) {
         Intent showList = new Intent(this, ShowStationListActivity.class);
+        showList.putExtra("title",getString(R.string.txtLocationHint));
+        showList.putExtra("color", R.color.stationSelection);
         showList.putExtra("line", selectedLine.getCode());
         startActivityForResult(showList, RESULT_GET_DEPARTURE_STATION);
     }
@@ -82,6 +86,8 @@ public class InputDepartureActivity extends Activity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == RESULT_GET_DEPARTURE_STATION && resultCode == RESULT_OK && data != null) {
             Stops selected = data.getExtras().getParcelable("stop");
+            if (selected == null)
+                return;
             DepartureStation = selected;
             txtDepartureStation.setText(selected.getName());
         }

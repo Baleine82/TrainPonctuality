@@ -111,7 +111,7 @@ public abstract class DAOBase<T extends IGetId> {
     public List<T> selectAll() {
         openRead();
         List<T> listT = new ArrayList<>();
-        Cursor c = mDb.rawQuery("SELECT " + getSelectAllCols() + " from " + getTableName(), null);
+        Cursor c = mDb.rawQuery("SELECT " + getSelectAllCols() + " from " + getTableName() , null);
 
         while (c.moveToNext())
             listT.add(getItem(c));

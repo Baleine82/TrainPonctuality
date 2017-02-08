@@ -3,9 +3,13 @@ package me.arbogast.trainponctuality.GUI;
 import android.app.Activity;
 import android.os.Bundle;
 import android.widget.ListView;
+import android.widget.TextView;
+
+import java.util.ArrayList;
 
 import me.arbogast.trainponctuality.DBAccess.TravelDAO;
-import me.arbogast.trainponctuality.Model.TravelAdapter;
+import me.arbogast.trainponctuality.Model.History;
+import me.arbogast.trainponctuality.Model.HistoryAdapter;
 import me.arbogast.trainponctuality.R;
 
 public class ShowHistoryActivity extends Activity {
@@ -14,15 +18,34 @@ public class ShowHistoryActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Bundle extras = getIntent().getExtras();
         setContentView(R.layout.activity_show_list);
+        TextView t = (TextView) findViewById(R.id.txtHeaderList);
+        t.setText(extras.getString("title"));
+        t.setBackgroundResource(extras.getInt("color"));
+        ArrayList data = new TravelDAO(this).selectHistory();
 
-        TravelAdapter adapter = new TravelAdapter(this, R.layout.show_history_row, new TravelDAO(this).selectAll());
+
+        // Detecting when the list changes day
+        // I don't think that's very beautiful, but it comes from http://codetheory.in/android-dividing-listview-sections-group-headers/
+        String currentDay = null;
+        for (int i = 0; i < data.size(); i++) {
+            History obj = (History) data.get(i);
+            if (obj == null)
+                continue;
+
+            if (currentDay == null || !obj.getDayTravel().equals(currentDay)) {
+                currentDay = obj.getDayTravel();
+                data.add(i, new History(currentDay));
+                i++; // we skip next item, it's the item we were on
+            }
+        }
 
 
-        listView1 = (ListView)findViewById(R.id.listView1);
+        HistoryAdapter adapter = new HistoryAdapter(this, data);
 
-//        View header = (View)getLayoutInflater().inflate(R.layout.listview_header_row, null);
-//        listView1.addHeaderView(header);
+        listView1 = (ListView) findViewById(R.id.listView1);
 
         listView1.setAdapter(adapter);
     }

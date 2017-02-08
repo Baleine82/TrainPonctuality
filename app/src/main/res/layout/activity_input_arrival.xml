@@ -42,16 +42,16 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true" />
 
-    <EditText
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:inputType="textPersonName"
         android:ems="10"
         android:id="@+id/txtLocation"
-        android:hint="@string/txtLocationArrivalHint"
+        android:text="@string/txtLocationArrivalHint"
         android:layout_below="@+id/txtArrivalDate"
         android:layout_alignStart="@+id/txtArrivalDate"
-        android:layout_marginTop="26dp" />
+        android:layout_marginTop="26dp"
+        android:onClick="showStationList" />
 
     <EditText
         android:layout_width="wrap_content"
