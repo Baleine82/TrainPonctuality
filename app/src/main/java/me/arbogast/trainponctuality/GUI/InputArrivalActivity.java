@@ -19,6 +19,7 @@ public class InputArrivalActivity extends Activity {
     private TextView txtArrivalStation;
 
     private Travel currentTravel;
+    private Stops arrivalStation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,19 +37,36 @@ public class InputArrivalActivity extends Activity {
         currentTravel = data.getParcelable("travel");
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable("currentTravel", currentTravel);
+        outState.putParcelable("arrivalStation", arrivalStation);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        currentTravel = savedInstanceState.getParcelable("currentTravel");
+        arrivalStation = savedInstanceState.getParcelable("arrivalStation");
+        setStationText();
+    }
+
     public void CancelInputArrival(View view) {
         finish();
     }
 
     public void ValidateArrival(View view) {
         currentTravel.setArrivalDate(Utils.parseDate(Utils.getText(txtArrivalDate), Utils.getText(txtArrivalTime)));
-        new TravelDAO(this).update(currentTravel);
+        try (TravelDAO dbTravel = new TravelDAO(this)) {
+            dbTravel.update(currentTravel);
+        }
         finish();
     }
 
     public void showStationList(View view) {
         Intent showList = new Intent(this, ShowStationListActivity.class);
-        showList.putExtra("title",getString(R.string.txtLocationArrivalHint));
+        showList.putExtra("title", getString(R.string.txtLocationArrivalHint));
         showList.putExtra("color", R.color.stationSelection);
         showList.putExtra("line", currentTravel.getLine());
         startActivityForResult(showList, RESULT_GET_DEPARTURE_STATION);
@@ -57,11 +75,18 @@ public class InputArrivalActivity extends Activity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == RESULT_GET_DEPARTURE_STATION && resultCode == RESULT_OK && data != null) {
-            Stops selected = data.getExtras().getParcelable("stop");
-            if (selected == null)
+            arrivalStation = data.getExtras().getParcelable("stop");
+            if (arrivalStation == null)
                 return;
-            currentTravel.setArrivalStation(selected.getId());
-            txtArrivalStation.setText(selected.getName());
+            currentTravel.setArrivalStation(arrivalStation.getId());
+            setStationText();
         }
+    }
+
+    private void setStationText() {
+        if (arrivalStation != null)
+            txtArrivalStation.setText(arrivalStation.getName());
+        else
+            txtArrivalStation.setText(R.string.txtLocationArrivalHint);
     }
 }

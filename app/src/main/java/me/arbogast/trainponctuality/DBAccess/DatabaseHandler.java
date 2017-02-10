@@ -59,4 +59,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
     }
+
+    protected void finalize() throws Throwable {
+        this.close();
+        super.finalize();
+    }
 }

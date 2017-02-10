@@ -15,7 +15,7 @@ import me.arbogast.trainponctuality.Model.IGetId;
  * Created by excelsior on 08/01/17.
  */
 
-public abstract class DAOBase<T extends IGetId> {
+public abstract class DAOBase<T extends IGetId> implements AutoCloseable {
     private static final String TAG = "DAOBase";
 
     // Nous sommes à la première version de la base
@@ -35,12 +35,14 @@ public abstract class DAOBase<T extends IGetId> {
     }
 
     public SQLiteDatabase openWrite() {
+        closeDb();
         // Pas besoin de fermer la dernière base puisque getWritableDatabase s'en charge
         mDb = mHandler.getWritableDatabase();
         return mDb;
     }
 
     public SQLiteDatabase openRead() {
+        closeDb();
         // Pas besoin de fermer la dernière base puisque getWritableDatabase s'en charge
         mDb = mHandler.getReadableDatabase();
         return mDb;
@@ -111,14 +113,28 @@ public abstract class DAOBase<T extends IGetId> {
     public List<T> selectAll() {
         openRead();
         List<T> listT = new ArrayList<>();
-        Cursor c = mDb.rawQuery("SELECT " + getSelectAllCols() + " from " + getTableName() , null);
+        try (Cursor c = mDb.rawQuery("SELECT " + getSelectAllCols() + " from " + getTableName(), null)) {
 
-        while (c.moveToNext())
-            listT.add(getItem(c));
-
-        c.close();
+            while (c.moveToNext())
+                listT.add(getItem(c));
+        }
 
         return listT;
+    }
+
+    private void closeDb() {
+        if (mDb != null && mDb.isOpen()) {
+            if (mDb.inTransaction())
+                mDb.endTransaction();
+
+            mDb.close();
+        }
+    }
+
+    @Override
+    protected void finalize() throws Throwable {
+        closeDb();
+        super.finalize();
     }
 
     public boolean inTransaction() {

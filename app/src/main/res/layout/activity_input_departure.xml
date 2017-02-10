@@ -9,76 +9,91 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="me.arbogast.trainponctuality.GUI.InputDepartureActivity">
+
+    <EditText
+        android:id="@+id/txtDepartureDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:ems="10"
+        android:hint="@string/txtDepartureDateHint"
+        android:inputType="date" />
+
+    <EditText
+        android:id="@+id/txtDepartureTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/txtDepartureDate"
+        android:layout_below="@+id/txtDepartureDate"
+        android:ems="10"
+        android:hint="@string/txtDepartureTimeHint"
+        android:inputType="time" />
+
+    <Spinner
+        android:id="@+id/spnLine"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/txtDepartureTime"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="26dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/spnLine"
+        android:layout_marginEnd="3dp"
+        android:layout_toStartOf="@id/spnLine"
+        android:text="@string/txtLineHint" />
+
+    <Spinner
+        android:id="@+id/spnMission"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/spnLine"
+        android:layout_centerHorizontal="true"
+        android:dropDownWidth="wrap_content"
+        android:inputType="textCapCharacters" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/spnMission"
+        android:layout_marginEnd="3dp"
+        android:layout_toStartOf="@id/spnMission"
+        android:text="@string/txtMissionHint" />
+
+    <TextView
+        android:id="@+id/txtLocation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/spnMission"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="26dp"
+        android:ems="10"
+        android:freezesText="true"
+        android:onClick="showStationList"
+        android:text="@string/txtLocationHint" />
+
     <Button
-        android:text="@string/btnSaveDeparture"
+        android:id="@+id/btnSaveStart"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginEnd="35dp"
         android:layout_marginBottom="24dp"
-        android:id="@+id/btnSaveStart"
-        android:onClick="ValidateDeparture" />
+        android:layout_marginEnd="35dp"
+        android:onClick="ValidateDeparture"
+        android:text="@string/btnSaveDeparture" />
 
     <Button
-        android:text="@string/btnCancelDeparture"
+        android:id="@+id/btnCancelTrainStart"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/btnSaveStart"
         android:layout_alignParentStart="true"
         android:layout_marginStart="35dp"
-        android:id="@+id/btnCancelTrainStart"
-        android:onClick="CancelInputDeparture" />
+        android:onClick="CancelInputDeparture"
+        android:text="@string/btnCancelDeparture" />
 
-    <Spinner
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:inputType="textPersonName"
-        android:ems="10"
-        android:id="@+id/spnLine"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:dropDownWidth="match_parent" />
-
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:id="@+id/txtMission"
-        android:inputType="textCapCharacters"
-        android:hint="@string/txtMissionHint"
-        android:layout_below="@+id/spnLine"
-        android:layout_alignStart="@+id/spnLine" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:id="@+id/txtLocation"
-        android:text="@string/txtLocationHint"
-        android:layout_below="@+id/txtMission"
-        android:layout_alignStart="@+id/txtMission"
-        android:layout_marginTop="26dp"
-        android:onClick="showStationList" />
-
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:inputType="date"
-        android:ems="10"
-        android:id="@+id/txtDepartureDate"
-        android:hint="@string/txtDepartureDateHint"
-        android:layout_below="@+id/txtLocation"
-        android:layout_alignStart="@+id/txtLocation"
-        android:layout_marginTop="26sp"/>
-
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:id="@+id/txtDepartureTime"
-        android:inputType="time"
-        android:hint="@string/txtDepartureTimeHint"
-        android:layout_below="@+id/txtDepartureDate"
-        android:layout_alignStart="@+id/txtDepartureDate" />
 </RelativeLayout>

@@ -31,10 +31,12 @@ public class ShowStationListActivity extends Activity {
         t.setText(extras.getString("title"));
         t.setBackgroundResource(extras.getInt("color"));
 
-        StopsAdapter adapter = new StopsAdapter(this, R.layout.show_simple_list, new StopsDAO(this).getStopsForLine(line));
+        try (StopsDAO dbStops = new StopsDAO(this)) {
+            StopsAdapter adapter = new StopsAdapter(this, R.layout.show_simple_list, dbStops.getStopsForLine(line));
 
-        // Assign adapter to ListView
-        listView1.setAdapter(adapter);
+            // Assign adapter to ListView
+            listView1.setAdapter(adapter);
+        }
 
         // ListView Item Click Listener
         listView1.setOnItemClickListener(new AdapterView.OnItemClickListener() {

@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import me.arbogast.trainponctuality.Model.Stops;
+import me.arbogast.trainponctuality.Model.Trips;
 
 /**
  * Created by excelsior on 15/01/17.
@@ -86,12 +87,11 @@ public class StopsDAO extends DAOImportBase<Stops> {
                 " WHERE " + RoutesDAO.TABLE_NAME + "." + RoutesDAO.COLUMN_SHORT_NAME + " = ? " +
                 " GROUP BY " + StopsDAO.COLUMN_ID +
                 " ORDER BY " + StopsDAO.COLUMN_NAME + ";";
-        Cursor c = mDb.rawQuery(query, new String[]{line});
+        try (Cursor c = mDb.rawQuery(query, new String[]{line})) {
 
-        while (c.moveToNext())
-            listT.add(getItem(c));
-
-        c.close();
+            while (c.moveToNext())
+                listT.add(getItem(c));
+        }
 
         return listT;
     }

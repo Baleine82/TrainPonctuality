@@ -48,6 +48,7 @@
         android:ems="10"
         android:id="@+id/txtLocation"
         android:text="@string/txtLocationArrivalHint"
+        android:freezesText="true"
         android:layout_below="@+id/txtArrivalDate"
         android:layout_alignStart="@+id/txtArrivalDate"
         android:layout_marginTop="26dp"

@@ -24,29 +24,31 @@ public class ShowHistoryActivity extends Activity {
         TextView t = (TextView) findViewById(R.id.txtHeaderList);
         t.setText(extras.getString("title"));
         t.setBackgroundResource(extras.getInt("color"));
-        ArrayList data = new TravelDAO(this).selectHistory();
+        try (TravelDAO dbTravel = new TravelDAO(this)) {
+            ArrayList data = dbTravel.selectHistory();
 
 
-        // Detecting when the list changes day
-        // I don't think that's very beautiful, but it comes from http://codetheory.in/android-dividing-listview-sections-group-headers/
-        String currentDay = null;
-        for (int i = 0; i < data.size(); i++) {
-            History obj = (History) data.get(i);
-            if (obj == null)
-                continue;
+            // Detecting when the list changes day
+            // I don't think that's very beautiful, but it comes from http://codetheory.in/android-dividing-listview-sections-group-headers/
+            String currentDay = null;
+            for (int i = 0; i < data.size(); i++) {
+                History obj = (History) data.get(i);
+                if (obj == null)
+                    continue;
 
-            if (currentDay == null || !obj.getDayTravel().equals(currentDay)) {
-                currentDay = obj.getDayTravel();
-                data.add(i, new History(currentDay));
-                i++; // we skip next item, it's the item we were on
+                if (currentDay == null || !obj.getDayTravel().equals(currentDay)) {
+                    currentDay = obj.getDayTravel();
+                    data.add(i, new History(currentDay));
+                    i++; // we skip next item, it's the item we were on
+                }
             }
+
+
+            HistoryAdapter adapter = new HistoryAdapter(this, data);
+
+            listView1 = (ListView) findViewById(R.id.listView1);
+
+            listView1.setAdapter(adapter);
         }
-
-
-        HistoryAdapter adapter = new HistoryAdapter(this, data);
-
-        listView1 = (ListView) findViewById(R.id.listView1);
-
-        listView1.setAdapter(adapter);
     }
 }

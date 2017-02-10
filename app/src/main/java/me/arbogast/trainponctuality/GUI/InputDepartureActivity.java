@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import me.arbogast.trainponctuality.DBAccess.RoutesDAO;
 import me.arbogast.trainponctuality.DBAccess.TravelDAO;
+import me.arbogast.trainponctuality.DBAccess.TripsDAO;
 import me.arbogast.trainponctuality.Model.Line;
 import me.arbogast.trainponctuality.Model.LineAdapter;
 import me.arbogast.trainponctuality.Model.Stops;
@@ -24,9 +25,9 @@ public class InputDepartureActivity extends Activity {
     private EditText txtDepartureTime;
     private TextView txtDepartureStation;
     private Spinner spnLine;
-    private EditText txtMission;
+    private Spinner spnMission;
 
-    private Stops DepartureStation;
+    private Stops departureStation;
     private Line selectedLine;
 
     @Override
@@ -38,7 +39,7 @@ public class InputDepartureActivity extends Activity {
         txtDepartureTime = (EditText) findViewById(R.id.txtDepartureTime);
         txtDepartureStation = (TextView) findViewById(R.id.txtLocation);
         spnLine = (Spinner) findViewById(R.id.spnLine);
-        txtMission = (EditText) findViewById(R.id.txtMission);
+        spnMission = (Spinner) findViewById(R.id.spnMission);
 
         txtDepartureDate.setText(Utils.getDate());
         txtDepartureTime.setText(Utils.getTime());
@@ -46,27 +47,80 @@ public class InputDepartureActivity extends Activity {
         spnLine.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                selectedLine = (Line) spnLine.getSelectedItem();
+                Line newLine = (Line) spnLine.getSelectedItem();
+                if (selectedLine == null || !newLine.getCode().equals(selectedLine.getCode())) {
+                    clearDepartureStation();
+                    selectedLine = newLine;
+                    populateMissions();
+                }
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
+                clearDepartureStation();
                 selectedLine = null;
+                populateMissions();
             }
         });
 
-        LineAdapter adapter = new LineAdapter(this, R.layout.spinner_line_layout, new RoutesDAO(this).getDistinctLines());
-        spnLine.setAdapter(adapter);
+        try (RoutesDAO dbRoutes = new RoutesDAO(this)) {
+            LineAdapter adapter = new LineAdapter(this, R.layout.spinner_line_layout, dbRoutes.getDistinctLines());
+            spnLine.setAdapter(adapter);
+        }
+
+        populateMissions(((Line) spnLine.getSelectedItem()).getCode());
+    }
+
+    private void clearDepartureStation() {
+        departureStation = null;
+        setStationText();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putParcelable("departureStation", departureStation);
+        outState.putString("selectedLine", selectedLine.getCode());
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+        departureStation = savedInstanceState.getParcelable("departureStation");
+        String lineCode = savedInstanceState.getString("selectedLine");
+        if (lineCode != null && !lineCode.isEmpty())
+            selectedLine = new Line(lineCode);
+
+        setStationText();
+    }
+
+    private void populateMissions() {
+        populateMissions(null);
+    }
+
+    private void populateMissions(String select) {
+        if (selectedLine == null)
+            spnMission.setAdapter(null);
+        else {
+            try (TripsDAO dbTrips = new TripsDAO(this)) {
+                ArrayAdapter missionAdapter = new ArrayAdapter<>(this, R.layout.spinner_row_text, dbTrips.getTripsForLine(select != null ? select : selectedLine.getCode()));
+                spnMission.setAdapter(missionAdapter);
+            }
+        }
     }
 
     public void ValidateDeparture(View view) {
-        if (DepartureStation == null || selectedLine == null)
+        if (departureStation == null || selectedLine == null)
             return;
-        
-        Travel departure = new Travel(Utils.parseDate(Utils.getText(txtDepartureDate), Utils.getText(txtDepartureTime)),
-                ((Line) spnLine.getSelectedItem()).getCode(), Utils.getText(txtMission), DepartureStation.getId());
 
-        new TravelDAO(this).insert(departure);
+        Travel departure = new Travel(Utils.parseDate(Utils.getText(txtDepartureDate), Utils.getText(txtDepartureTime)),
+                selectedLine.getCode(), spnMission.getSelectedItem().toString(), departureStation.getId());
+
+        try (TravelDAO dbTravel = new TravelDAO(this)) {
+            dbTravel.insert(departure);
+        }
         finish();
     }
 
@@ -76,7 +130,7 @@ public class InputDepartureActivity extends Activity {
 
     public void showStationList(View view) {
         Intent showList = new Intent(this, ShowStationListActivity.class);
-        showList.putExtra("title",getString(R.string.txtLocationHint));
+        showList.putExtra("title", getString(R.string.txtLocationHint));
         showList.putExtra("color", R.color.stationSelection);
         showList.putExtra("line", selectedLine.getCode());
         startActivityForResult(showList, RESULT_GET_DEPARTURE_STATION);
@@ -88,8 +142,15 @@ public class InputDepartureActivity extends Activity {
             Stops selected = data.getExtras().getParcelable("stop");
             if (selected == null)
                 return;
-            DepartureStation = selected;
-            txtDepartureStation.setText(selected.getName());
+            departureStation = selected;
+            setStationText();
         }
+    }
+
+    private void setStationText() {
+        if (departureStation != null)
+            txtDepartureStation.setText(departureStation.getName());
+        else
+            txtDepartureStation.setText(R.string.txtLocationHint);
     }
 }

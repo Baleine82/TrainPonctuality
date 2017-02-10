@@ -75,15 +75,11 @@ public class TravelDAO extends DAOBase<Travel> {
     public Travel selectCurrentTravel() {
         openRead();
 
-        Cursor c = mDb.rawQuery("SELECT " + SELECT_ALL + " FROM " + TABLE_NAME + " WHERE " + COLUMN_ARRIVAL_DATE + " IS NULL", null);
-
-        try {
+        try (Cursor c = mDb.rawQuery("SELECT " + SELECT_ALL + " FROM " + TABLE_NAME + " WHERE " + COLUMN_ARRIVAL_DATE + " IS NULL", null)) {
             if (c.moveToFirst())
                 return getItem(c);
             else
                 return null;
-        } finally {
-            c.close();
         }
     }
 
@@ -94,17 +90,16 @@ public class TravelDAO extends DAOBase<Travel> {
     public ArrayList selectHistory() {
         openRead();
         ArrayList listT = new ArrayList();
-        Cursor c = mDb.rawQuery("SELECT " + COLUMN_LINE + ", " + COLUMN_MISSION + ", " + COLUMN_DEPARTURE_DATE + " as DateTravel, " +
+        try(Cursor c = mDb.rawQuery("SELECT " + COLUMN_LINE + ", " + COLUMN_MISSION + ", " + COLUMN_DEPARTURE_DATE + " as DateTravel, " +
                 COLUMN_DEPARTURE_DATE + ", depStop." + StopsDAO.COLUMN_NAME + " AS departureStation, " + COLUMN_ARRIVAL_DATE + ", " +
                 " arrStop." + StopsDAO.COLUMN_NAME + " AS arrivalStation FROM " + TABLE_NAME +
                 " INNER JOIN " + StopsDAO.TABLE_NAME + " AS depStop ON (" + TABLE_NAME + "." + COLUMN_DEPARTURE_STATION + " = depStop." + StopsDAO.COLUMN_ID + ") " +
                 " LEFT JOIN " + StopsDAO.TABLE_NAME + " AS arrStop ON (" + TABLE_NAME + "." + COLUMN_ARRIVAL_STATION + " = arrStop." + StopsDAO.COLUMN_ID + ") " +
-                " ORDER BY " + COLUMN_DEPARTURE_DATE + ";", null);
+                " ORDER BY " + COLUMN_DEPARTURE_DATE + ";", null)) {
 
-        while (c.moveToNext())
-            listT.add(new History(c.getString(0), c.getString(1), new Date(c.getLong(2)), new Date(c.getLong(3)), c.getString(4), new Date(c.getLong(5)), c.getString(6)));
-
-        c.close();
+            while (c.moveToNext())
+                listT.add(new History(c.getString(0), c.getString(1), new Date(c.getLong(2)), new Date(c.getLong(3)), c.getString(4), new Date(c.getLong(5)), c.getString(6)));
+        }
 
         return listT;
     }

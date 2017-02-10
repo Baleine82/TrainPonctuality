@@ -1,7 +1,6 @@
 package me.arbogast.trainponctuality.Model;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,23 +28,27 @@ public class LineAdapter extends ArrayAdapter<Line> {
     }
 
     @Override
-    public View getDropDownView(int position, View convertView,ViewGroup parent) {
-        return getCustomView(position, convertView, parent);
+    public View getView(final int position, final View convertView, final ViewGroup parent) {
+        return makeLayout(position, convertView, parent, R.layout.spinner_line_layout);
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        return getCustomView(position, convertView, parent);
+    public View getDropDownView(final int position, final View convertView, final ViewGroup parent) {
+        return makeLayout(position, convertView, parent, R.layout.spinner_line_layout);
     }
 
-    public View getCustomView(int position, View convertView, ViewGroup parent) {
+    private View makeLayout(final int position, final View convertView, final ViewGroup parent, final int layout) {
+        ImageView tv;
+        if (convertView != null) {
+            tv = (ImageView) convertView;
+        } else {
+            tv = (ImageView) LayoutInflater.from(context).inflate(layout,
+                    parent, false);
+        }
+
         Line t = this.objects.get(position);
-        LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View row = inflater.inflate(R.layout.spinner_line_layout, parent, false);
+        tv.setImageResource(context.getResources().getIdentifier(t.getCode().toLowerCase(), "drawable", context.getPackageName()));
 
-        ImageView imageView = (ImageView)row.findViewById(R.id.spinnerImage);
-        imageView.setImageResource(context.getResources().getIdentifier(t.getCode().toLowerCase(), "drawable", context.getPackageName()));
-
-        return row;
+        return tv;
     }
 }

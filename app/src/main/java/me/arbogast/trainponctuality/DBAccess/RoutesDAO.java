@@ -84,12 +84,11 @@ public class RoutesDAO extends DAOImportBase<Routes> {
     public List<Line> getDistinctLines() {
         openRead();
         List<Line> listT = new ArrayList<>();
-        Cursor c = mDb.rawQuery("SELECT DISTINCT " + COLUMN_SHORT_NAME + " FROM " + TABLE_NAME + " WHERE LENGTH(" + COLUMN_SHORT_NAME + ") = 1 ORDER BY " + COLUMN_SHORT_NAME + ";", null);
+        try (Cursor c = mDb.rawQuery("SELECT DISTINCT " + COLUMN_SHORT_NAME + " FROM " + TABLE_NAME + " WHERE LENGTH(" + COLUMN_SHORT_NAME + ") = 1 ORDER BY " + COLUMN_SHORT_NAME + ";", null)) {
 
-        while (c.moveToNext())
-            listT.add(new Line(c.getString(0)));
-
-        c.close();
+            while (c.moveToNext())
+                listT.add(new Line(c.getString(0)));
+        }
 
         return listT;
     }

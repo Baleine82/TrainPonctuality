@@ -73,11 +73,22 @@ public class InitializeSncfData extends AsyncTask<URL, Integer, String> {
             outputDir.mkdir();
             unpackZip(zipSncfInfo, outputDir.getPath());
 
-            InsertData(new File(outputDir, myContext.getString(R.string.sncfRouteFile)), new RoutesDAO(myContext), ',', '\"');
-            InsertData(new File(outputDir, myContext.getString(R.string.sncfTripsFile)), new TripsDAO(myContext), ',', '\"');
-            InsertData(new File(outputDir, myContext.getString(R.string.sncfStopsFile)), new StopsDAO(myContext), ',', '\"');
-            InsertData(new File(outputDir, myContext.getString(R.string.sncfStopTimesFile)), new StopTimesDAO(myContext), ',', '\"');
-            InsertData(new File(outputDir, myContext.getString(R.string.sncfSCalendarFile)), new CalendarDAO(myContext), ',', '\"');
+            try (RoutesDAO dbRoutes = new RoutesDAO(myContext)) {
+                InsertData(new File(outputDir, myContext.getString(R.string.sncfRouteFile)), dbRoutes, ',', '\"');
+            }
+            try (TripsDAO dbTrips = new TripsDAO(myContext)) {
+                InsertData(new File(outputDir, myContext.getString(R.string.sncfTripsFile)), dbTrips, ',', '\"');
+            }
+            try (StopsDAO dbStops = new StopsDAO(myContext)) {
+                InsertData(new File(outputDir, myContext.getString(R.string.sncfStopsFile)), dbStops, ',', '\"');
+            }
+            try (StopTimesDAO dbStopTimes = new StopTimesDAO(myContext)) {
+                InsertData(new File(outputDir, myContext.getString(R.string.sncfStopTimesFile)), dbStopTimes, ',', '\"');
+            }
+            try (CalendarDAO dbCalendar = new CalendarDAO(myContext)) {
+                InsertData(new File(outputDir, myContext.getString(R.string.sncfSCalendarFile)), dbCalendar, ',', '\"');
+            }
+
 
             SharedPreferences.Editor editor = prefs.edit();
             editor.putLong(myContext.getString(R.string.prefsLastUpdateSncf), myInfo.getLastUpdate().getTime());
