@@ -18,10 +18,7 @@ import me.arbogast.trainponctuality.Model.IGetId;
 public abstract class DAOBase<T extends IGetId> implements AutoCloseable {
     private static final String TAG = "DAOBase";
 
-    // Nous sommes à la première version de la base
-    // Si je décide de la mettre à jour, il faudra changer cet attribut
     private final static int VERSION = 1;
-    // Le nom du fichier qui représente ma base
     private final static String NOM = "database.db";
 
     SQLiteDatabase mDb = null;
@@ -39,7 +36,6 @@ public abstract class DAOBase<T extends IGetId> implements AutoCloseable {
             return mDb;
 
         closeDb();
-        // Pas besoin de fermer la dernière base puisque getWritableDatabase s'en charge
         mDb = mHandler.getWritableDatabase();
         return mDb;
     }
@@ -49,7 +45,6 @@ public abstract class DAOBase<T extends IGetId> implements AutoCloseable {
             return mDb;
 
         closeDb();
-        // Pas besoin de fermer la dernière base puisque getWritableDatabase s'en charge
         mDb = mHandler.getReadableDatabase();
         return mDb;
     }
@@ -74,7 +69,8 @@ public abstract class DAOBase<T extends IGetId> implements AutoCloseable {
     }
 
     public final void beginTransaction(boolean write) {
-        if (inTransaction())
+        // If we are already in transaction, we don't need to openWrite if write isn't required or we already have write permissions
+        if (inTransaction() && (!write || !mDb.isReadOnly()))
             return;
 
         if (write)
@@ -82,7 +78,8 @@ public abstract class DAOBase<T extends IGetId> implements AutoCloseable {
         else
             openRead();
 
-        mDb.beginTransaction();
+        if (inTransaction())
+            mDb.beginTransaction();
     }
 
     public final void endTransaction(boolean success) {
