@@ -12,7 +12,7 @@ import java.util.List;
 import me.arbogast.trainponctuality.Model.IGetId;
 
 /**
- * Created by excelsior on 08/01/17.
+ * Created by excelsior on 08/01/17
  */
 
 public abstract class DAOBase<T extends IGetId> implements AutoCloseable {
@@ -20,28 +20,34 @@ public abstract class DAOBase<T extends IGetId> implements AutoCloseable {
 
     // Nous sommes à la première version de la base
     // Si je décide de la mettre à jour, il faudra changer cet attribut
-    protected final static int VERSION = 1;
+    private final static int VERSION = 1;
     // Le nom du fichier qui représente ma base
-    protected final static String NOM = "database.db";
+    private final static String NOM = "database.db";
 
-    protected SQLiteDatabase mDb = null;
-    protected DatabaseHandler mHandler = null;
+    SQLiteDatabase mDb = null;
+    private DatabaseHandler mHandler = null;
 
     protected final Context context;
 
-    public DAOBase(Context pContext) {
+    DAOBase(Context pContext) {
         context = pContext;
         this.mHandler = new DatabaseHandler(pContext, NOM, null, VERSION);
     }
 
-    public SQLiteDatabase openWrite() {
+    final SQLiteDatabase openWrite() {
+        if (inTransaction() && !mDb.isReadOnly())
+            return mDb;
+
         closeDb();
         // Pas besoin de fermer la dernière base puisque getWritableDatabase s'en charge
         mDb = mHandler.getWritableDatabase();
         return mDb;
     }
 
-    public SQLiteDatabase openRead() {
+    final SQLiteDatabase openRead() {
+        if (inTransaction())
+            return mDb;
+
         closeDb();
         // Pas besoin de fermer la dernière base puisque getWritableDatabase s'en charge
         mDb = mHandler.getReadableDatabase();
@@ -67,7 +73,10 @@ public abstract class DAOBase<T extends IGetId> implements AutoCloseable {
         mDb.update(getTableName(), createValues(t), getColumnId() + " = ?", new String[]{t.getId()});
     }
 
-    public void beginTransaction(boolean write) {
+    public final void beginTransaction(boolean write) {
+        if (inTransaction())
+            return;
+
         if (write)
             openWrite();
         else
@@ -76,7 +85,7 @@ public abstract class DAOBase<T extends IGetId> implements AutoCloseable {
         mDb.beginTransaction();
     }
 
-    public void endTransaction(boolean success) {
+    public final void endTransaction(boolean success) {
         if (success)
             mDb.setTransactionSuccessful();
         mDb.endTransaction();
