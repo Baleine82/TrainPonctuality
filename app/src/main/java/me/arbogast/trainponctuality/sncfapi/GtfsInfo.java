@@ -1,12 +1,13 @@
-package me.arbogast.trainponctuality.SncfApi;
+package me.arbogast.trainponctuality.sncfapi;
 
 import java.util.Date;
 
 /**
  * Created by excelsior on 18/01/17.
+ * This contains data from GTFS SNCF API
  */
 
-public class GtfsInfo {
+class GtfsInfo {
     private String fileName;
     private String fileId;
     private Date lastUpdate;

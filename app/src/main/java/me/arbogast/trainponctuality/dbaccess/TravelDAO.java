@@ -1,4 +1,4 @@
-package me.arbogast.trainponctuality.DBAccess;
+package me.arbogast.trainponctuality.dbaccess;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -6,13 +6,13 @@ import android.database.Cursor;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
-import me.arbogast.trainponctuality.Model.History;
-import me.arbogast.trainponctuality.Model.Travel;
+import me.arbogast.trainponctuality.model.History;
+import me.arbogast.trainponctuality.model.Travel;
 
 /**
  * Created by excelsior on 08/01/17.
+ * DAO for Travel
  */
 
 public class TravelDAO extends DAOBase<Travel> {
@@ -87,9 +87,9 @@ public class TravelDAO extends DAOBase<Travel> {
         return new Travel(c.getLong(0), new Date(c.getLong(1)), c.getString(2), new Date(c.getLong(3)), c.getString(4), c.getString(5), c.getString(6));
     }
 
-    public ArrayList selectHistory() {
+    public ArrayList<History> selectHistory() {
         openRead();
-        ArrayList listT = new ArrayList();
+        ArrayList<History> listT = new ArrayList<>();
         try(Cursor c = mDb.rawQuery("SELECT " + COLUMN_LINE + ", " + COLUMN_MISSION + ", " + COLUMN_DEPARTURE_DATE + " as DateTravel, " +
                 COLUMN_DEPARTURE_DATE + ", depStop." + StopsDAO.COLUMN_NAME + " AS departureStation, " + COLUMN_ARRIVAL_DATE + ", " +
                 " arrStop." + StopsDAO.COLUMN_NAME + " AS arrivalStation FROM " + TABLE_NAME +

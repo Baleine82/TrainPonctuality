@@ -1,6 +1,7 @@
-package me.arbogast.trainponctuality.Model;
+package me.arbogast.trainponctuality.model;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,7 @@ import me.arbogast.trainponctuality.R;
 
 /**
  * Created by excelsior on 23/01/17.
+ * Adapter to show line as an image in a spinner
  */
 
 public class LineAdapter extends ArrayAdapter<Line> {
@@ -27,13 +29,14 @@ public class LineAdapter extends ArrayAdapter<Line> {
         this.objects = objects;
     }
 
+    @NonNull
     @Override
-    public View getView(final int position, final View convertView, final ViewGroup parent) {
+    public View getView(final int position, final View convertView, @NonNull final ViewGroup parent) {
         return makeLayout(position, convertView, parent, R.layout.spinner_line_layout);
     }
 
     @Override
-    public View getDropDownView(final int position, final View convertView, final ViewGroup parent) {
+    public View getDropDownView(final int position, final View convertView, @NonNull final ViewGroup parent) {
         return makeLayout(position, convertView, parent, R.layout.spinner_line_layout);
     }
 
@@ -42,8 +45,7 @@ public class LineAdapter extends ArrayAdapter<Line> {
         if (convertView != null) {
             tv = (ImageView) convertView;
         } else {
-            tv = (ImageView) LayoutInflater.from(context).inflate(layout,
-                    parent, false);
+            tv = (ImageView) LayoutInflater.from(context).inflate(layout, parent, false);
         }
 
         Line t = this.objects.get(position);

@@ -1,9 +1,10 @@
-package me.arbogast.trainponctuality.Model;
+package me.arbogast.trainponctuality.model;
 
 import java.util.Date;
 
 /**
  * Created by excelsior on 15/01/17.
+ * These are the times when a train reaches and departs from a station
  */
 
 public class StopTimes implements IGetId {

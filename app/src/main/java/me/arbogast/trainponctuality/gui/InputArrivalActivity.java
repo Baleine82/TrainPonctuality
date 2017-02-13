@@ -1,25 +1,34 @@
-package me.arbogast.trainponctuality.GUI;
+package me.arbogast.trainponctuality.gui;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import me.arbogast.trainponctuality.DBAccess.TravelDAO;
-import me.arbogast.trainponctuality.Model.Stops;
-import me.arbogast.trainponctuality.Model.Travel;
+import java.util.Observable;
+import java.util.Observer;
+
+import me.arbogast.trainponctuality.dbaccess.TravelDAO;
+import me.arbogast.trainponctuality.model.Stops;
+import me.arbogast.trainponctuality.model.Travel;
 import me.arbogast.trainponctuality.R;
+import me.arbogast.trainponctuality.services.LocationProxy;
 
 public class InputArrivalActivity extends Activity {
     private static final int RESULT_GET_DEPARTURE_STATION = 0;
+    private static final String TAG = "InputArrivalActivity";
+
     private EditText txtArrivalDate;
     private EditText txtArrivalTime;
     private TextView txtArrivalStation;
 
     private Travel currentTravel;
     private Stops arrivalStation;
+
+    private Observer locationObserver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +44,16 @@ public class InputArrivalActivity extends Activity {
 
         Bundle data = getIntent().getExtras();
         currentTravel = data.getParcelable("travel");
+
+        locationObserver = new Observer() {
+            @Override
+            public void update(Observable o, Object arg) {
+                Log.i(TAG, "update: Stopping Location");
+                LocationProxy.getInstance().stopRequest(getApplicationContext());
+            }
+        };
+        Log.i(TAG, "onCreate: AddObserver");
+        LocationProxy.getInstance().addObserver(locationObserver);
     }
 
     @Override
@@ -50,6 +69,27 @@ public class InputArrivalActivity extends Activity {
         currentTravel = savedInstanceState.getParcelable("currentTravel");
         arrivalStation = savedInstanceState.getParcelable("arrivalStation");
         setStationText();
+    }
+
+    @Override
+    protected void onStop() {
+        Log.i(TAG, "onStop: RemoveObserver");
+        LocationProxy.getInstance().deleteObserver(locationObserver);
+        super.onStop();
+    }
+
+    @Override
+    protected void onResume() {
+        LocationProxy.getInstance().startRequest(this);
+
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        LocationProxy.getInstance().stopRequest(this);
+
+        super.onPause();
     }
 
     public void CancelInputArrival(View view) {

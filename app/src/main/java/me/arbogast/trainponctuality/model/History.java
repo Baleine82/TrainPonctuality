@@ -1,11 +1,12 @@
-package me.arbogast.trainponctuality.Model;
+package me.arbogast.trainponctuality.model;
 
 import java.util.Date;
 
-import me.arbogast.trainponctuality.GUI.Utils;
+import me.arbogast.trainponctuality.gui.Utils;
 
 /**
  * Created by excelsior on 06/02/17.
+ * This is an object who represents the list of trips the user made
  */
 
 public class History {
@@ -37,7 +38,7 @@ public class History {
         return line;
     }
 
-    public String getMissionCode() {
+    String getMissionCode() {
         return missionCode;
     }
 
@@ -45,23 +46,23 @@ public class History {
         return dayTravel;
     }
 
-    public Date getDepartureDate() {
+    Date getDepartureDate() {
         return departureDate;
     }
 
-    public String getDepartureStation() {
+    String getDepartureStation() {
         return departureStation;
     }
 
-    public Date getArrivalDate() {
+    Date getArrivalDate() {
         return arrivalDate;
     }
 
-    public String getArrivalStation() {
+    String getArrivalStation() {
         return arrivalStation;
     }
 
-    public boolean isSection() {
+    boolean isSection() {
         return isSection;
     }
 }

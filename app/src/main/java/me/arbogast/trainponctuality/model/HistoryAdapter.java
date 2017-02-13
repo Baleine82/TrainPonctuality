@@ -1,5 +1,6 @@
-package me.arbogast.trainponctuality.Model;
+package me.arbogast.trainponctuality.model;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
@@ -12,11 +13,12 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
-import me.arbogast.trainponctuality.GUI.Utils;
+import me.arbogast.trainponctuality.gui.Utils;
 import me.arbogast.trainponctuality.R;
 
 /**
  * Created by excelsior on 11/01/17.
+ * Adapter to show Travels History list
  */
 
 public class HistoryAdapter extends BaseAdapter {
@@ -28,7 +30,7 @@ public class HistoryAdapter extends BaseAdapter {
     private final Context context;
     private final List<History> objects;
 
-    public HistoryAdapter(Context context, ArrayList objects) {
+    public HistoryAdapter(Context context, List<History> objects) {
         this.context = context;
         this.objects = objects;
     }
@@ -52,18 +54,19 @@ public class HistoryAdapter extends BaseAdapter {
     public int getItemViewType(int position) {
         if (objects.get(position).isSection()) {
             return ITEM_VIEW_TYPE_SEPARATOR;
-        }
-        else {
+        } else {
             return ITEM_VIEW_TYPE_REGULAR;
         }
     }
 
+    @SuppressLint("InflateParams")
     @NonNull
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         History line = objects.get(position);
-        if(line==null)
-            return null;
+        if (line == null)
+            return convertView;
+
         int itemViewType = getItemViewType(position);
 
         View view;
@@ -71,22 +74,17 @@ public class HistoryAdapter extends BaseAdapter {
         {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-            if (itemViewType == ITEM_VIEW_TYPE_SEPARATOR) {
-                // If its a section ?
+            if (itemViewType == ITEM_VIEW_TYPE_SEPARATOR)
                 view = inflater.inflate(R.layout.show_history_section_header, null);
-            }
-            else {
-                // Regular row
+            else
                 view = inflater.inflate(R.layout.show_history_row, null);
-            }
         }
 
         if (itemViewType == ITEM_VIEW_TYPE_SEPARATOR) {
             TextView separatorView = (TextView) view.findViewById(R.id.txtSectionHeader);
 
             separatorView.setText(line.getDayTravel());
-        }
-        else {
+        } else {
             ImageView txtLine = (ImageView) view.findViewById(R.id.imgLine);
             TextView txtMission = (TextView) view.findViewById(R.id.txtMission);
             TextView txtDepartureDate = (TextView) view.findViewById(R.id.txtDepartureDate);

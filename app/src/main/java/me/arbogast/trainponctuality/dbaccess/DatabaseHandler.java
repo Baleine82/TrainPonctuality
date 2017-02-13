@@ -1,4 +1,4 @@
-package me.arbogast.trainponctuality.DBAccess;
+package me.arbogast.trainponctuality.dbaccess;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
@@ -6,9 +6,10 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 /**
  * Created by excelsior on 08/01/17.
+ * Default database handler
  */
 
-public class DatabaseHandler extends SQLiteOpenHelper {
+class DatabaseHandler extends SQLiteOpenHelper {
 
     private static final String TRAVEL_CREATE_TABLE = "CREATE TABLE " + TravelDAO.TABLE_NAME +
             " (" + TravelDAO.COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " + TravelDAO.COLUMN_DEPARTURE_DATE + " LONG NOT NULL, " +
@@ -42,7 +43,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             CalendarDAO.COLUMN_SATURDAY + " INTEGER NOT NULL, " + CalendarDAO.COLUMN_SUNDAY + " INTEGER NOT NULL, " +
             CalendarDAO.COLUMN_START_DATE + " LONG NOT NULL, " + CalendarDAO.COLUMN_END_DATE + " LONG NOT NULL)";
 
-    public DatabaseHandler(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
+    DatabaseHandler(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
         super(context, name, factory, version);
     }
 

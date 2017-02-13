@@ -1,4 +1,4 @@
-package me.arbogast.trainponctuality.Model;
+package me.arbogast.trainponctuality.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -7,6 +7,7 @@ import java.util.Date;
 
 /**
  * Created by excelsior on 22/12/16.
+ * This is a travel (usually the travel in progress)
  */
 
 public class Travel implements Parcelable, IGetId {
@@ -94,7 +95,7 @@ public class Travel implements Parcelable, IGetId {
 
 
     //region Created with Parcelabler
-    protected Travel(Parcel in) {
+    private Travel(Parcel in) {
         long tmpDepartureDate = in.readLong();
         departureDate = tmpDepartureDate != -1 ? new Date(tmpDepartureDate) : null;
         long tmpArrivalDate = in.readLong();

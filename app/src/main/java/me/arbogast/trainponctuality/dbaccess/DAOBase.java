@@ -1,4 +1,4 @@
-package me.arbogast.trainponctuality.DBAccess;
+package me.arbogast.trainponctuality.dbaccess;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -9,7 +9,7 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
 
-import me.arbogast.trainponctuality.Model.IGetId;
+import me.arbogast.trainponctuality.model.IGetId;
 
 /**
  * Created by excelsior on 08/01/17

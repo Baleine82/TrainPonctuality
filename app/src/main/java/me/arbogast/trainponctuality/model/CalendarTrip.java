@@ -1,9 +1,10 @@
-package me.arbogast.trainponctuality.Model;
+package me.arbogast.trainponctuality.model;
 
 import java.util.Date;
 
 /**
  * Created by excelsior on 15/01/17.
+ * This is the calendar of trips
  */
 
 public class CalendarTrip implements IGetId {

@@ -1,16 +1,17 @@
-package me.arbogast.trainponctuality.DBAccess;
+package me.arbogast.trainponctuality.dbaccess;
 
 import android.content.ContentValues;
 import android.content.Context;
 
-import me.arbogast.trainponctuality.Model.IGetId;
+import me.arbogast.trainponctuality.model.IGetId;
 
 /**
  * Created by excelsior on 15/01/17.
+ * This is a class helping with SNCF import
  */
 
 public abstract class DAOImportBase<T extends IGetId> extends DAOBase<T> {
-    public DAOImportBase(Context pContext) {
+    DAOImportBase(Context pContext) {
         super(pContext);
     }
 

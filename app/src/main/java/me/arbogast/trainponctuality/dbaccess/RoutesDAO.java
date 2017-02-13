@@ -1,4 +1,4 @@
-package me.arbogast.trainponctuality.DBAccess;
+package me.arbogast.trainponctuality.dbaccess;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -7,11 +7,12 @@ import android.database.Cursor;
 import java.util.ArrayList;
 import java.util.List;
 
-import me.arbogast.trainponctuality.Model.Line;
-import me.arbogast.trainponctuality.Model.Routes;
+import me.arbogast.trainponctuality.model.Line;
+import me.arbogast.trainponctuality.model.Routes;
 
 /**
  * Created by excelsior on 15/01/17.
+ * DAO for Routes
  */
 
 public class RoutesDAO extends DAOImportBase<Routes> {

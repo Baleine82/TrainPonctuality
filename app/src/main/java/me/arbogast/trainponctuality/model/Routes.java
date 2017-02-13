@@ -1,7 +1,8 @@
-package me.arbogast.trainponctuality.Model;
+package me.arbogast.trainponctuality.model;
 
 /**
  * Created by excelsior on 15/01/17.
+ * This is a route
  */
 
 public class Routes implements IGetId {

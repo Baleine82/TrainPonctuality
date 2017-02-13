@@ -1,4 +1,4 @@
-package me.arbogast.trainponctuality.DBAccess;
+package me.arbogast.trainponctuality.dbaccess;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -7,10 +7,11 @@ import android.database.Cursor;
 import java.util.ArrayList;
 import java.util.List;
 
-import me.arbogast.trainponctuality.Model.Trips;
+import me.arbogast.trainponctuality.model.Trips;
 
 /**
  * Created by excelsior on 15/01/17.
+ * This is a trip done on the railway
  */
 
 public class TripsDAO extends DAOImportBase<Trips> {
@@ -79,7 +80,7 @@ public class TripsDAO extends DAOImportBase<Trips> {
         List<String> listT = new ArrayList<>();
         String query = "SELECT " + COLUMN_TRIP_HEADSIGN + " FROM " + RoutesDAO.TABLE_NAME +
                 " INNER JOIN " + TABLE_NAME + " ON (" + RoutesDAO.TABLE_NAME + "." + RoutesDAO.COLUMN_ID + " = " + TABLE_NAME + "." + COLUMN_ROUTE_ID + ")" +
-                " WHERE " + RoutesDAO.TABLE_NAME + "." + RoutesDAO.COLUMN_SHORT_NAME + " = ? " +
+                " WHERE " + RoutesDAO.TABLE_NAME + "." + RoutesDAO.COLUMN_SHORT_NAME + " = ? AND LENGTH(" + COLUMN_TRIP_HEADSIGN + ") = 4" +
                 " GROUP BY " + COLUMN_TRIP_HEADSIGN +
                 " ORDER BY " + COLUMN_TRIP_HEADSIGN + ";";
         try(Cursor c = mDb.rawQuery(query, new String[]{line})) {

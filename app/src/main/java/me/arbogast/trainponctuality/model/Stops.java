@@ -1,10 +1,14 @@
-package me.arbogast.trainponctuality.Model;
+package me.arbogast.trainponctuality.model;
 
+import android.location.Location;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.Comparator;
+
 /**
  * Created by excelsior on 15/01/17.
+ * This is a Station on the line
  */
 
 public class Stops implements Parcelable, IGetId {
@@ -14,6 +18,8 @@ public class Stops implements Parcelable, IGetId {
     private double longitude;
     private int locationType;
     private String parentStation;
+    private double distanceFromUser;
+    private Location location;
 
     public Stops(String id, String name, double latitude, double longitude, int locationType, String parentStation) {
         this.id = id;
@@ -22,6 +28,26 @@ public class Stops implements Parcelable, IGetId {
         this.longitude = longitude;
         this.locationType = locationType;
         this.parentStation = parentStation;
+
+        calculateLocation();
+    }
+
+    private void calculateLocation() {
+        location = new Location("");
+        location.setLatitude(this.latitude);
+        location.setLongitude(this.longitude);
+    }
+
+    public Location getLocation() {
+        return location;
+    }
+
+    public double getDistanceFromUser() {
+        return distanceFromUser;
+    }
+
+    public void setDistanceFromUser(double distanceFromUser) {
+        this.distanceFromUser = distanceFromUser;
     }
 
     public String getId() {
@@ -46,6 +72,7 @@ public class Stops implements Parcelable, IGetId {
 
     public void setLatitude(double latitude) {
         this.latitude = latitude;
+        calculateLocation();
     }
 
     public double getLongitude() {
@@ -54,6 +81,7 @@ public class Stops implements Parcelable, IGetId {
 
     public void setLongitude(double longitude) {
         this.longitude = longitude;
+        calculateLocation();
     }
 
     public int getLocationType() {
@@ -73,13 +101,14 @@ public class Stops implements Parcelable, IGetId {
     }
 
     //region Created with Parcelabler
-    protected Stops(Parcel in) {
+    private Stops(Parcel in) {
         id = in.readString();
         name = in.readString();
         latitude = in.readDouble();
         longitude = in.readDouble();
         locationType = in.readInt();
         parentStation = in.readString();
+        calculateLocation();
     }
 
     @Override
@@ -111,4 +140,11 @@ public class Stops implements Parcelable, IGetId {
     };
 
     //endregion
+
+    public static final Comparator<Stops> LOCATION_COMPARATOR = new Comparator<Stops>() {
+        // Overriding the compare method to sort the age
+        public int compare(Stops d, Stops d1) {
+            return Double.compare(d.distanceFromUser, d1.distanceFromUser);
+        }
+    };
 }

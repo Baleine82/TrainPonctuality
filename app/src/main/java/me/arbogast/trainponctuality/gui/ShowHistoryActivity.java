@@ -1,4 +1,4 @@
-package me.arbogast.trainponctuality.GUI;
+package me.arbogast.trainponctuality.gui;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -7,9 +7,9 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-import me.arbogast.trainponctuality.DBAccess.TravelDAO;
-import me.arbogast.trainponctuality.Model.History;
-import me.arbogast.trainponctuality.Model.HistoryAdapter;
+import me.arbogast.trainponctuality.dbaccess.TravelDAO;
+import me.arbogast.trainponctuality.model.History;
+import me.arbogast.trainponctuality.model.HistoryAdapter;
 import me.arbogast.trainponctuality.R;
 
 public class ShowHistoryActivity extends Activity {
@@ -25,14 +25,14 @@ public class ShowHistoryActivity extends Activity {
         t.setText(extras.getString("title"));
         t.setBackgroundResource(extras.getInt("color"));
         try (TravelDAO dbTravel = new TravelDAO(this)) {
-            ArrayList data = dbTravel.selectHistory();
+            ArrayList<History> data = dbTravel.selectHistory();
 
 
             // Detecting when the list changes day
             // I don't think that's very beautiful, but it comes from http://codetheory.in/android-dividing-listview-sections-group-headers/
             String currentDay = null;
             for (int i = 0; i < data.size(); i++) {
-                History obj = (History) data.get(i);
+                History obj = data.get(i);
                 if (obj == null)
                     continue;
 

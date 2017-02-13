@@ -1,17 +1,22 @@
-package me.arbogast.trainponctuality.GUI;
+package me.arbogast.trainponctuality.gui;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.location.Location;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import me.arbogast.trainponctuality.DBAccess.StopsDAO;
-import me.arbogast.trainponctuality.Model.Stops;
-import me.arbogast.trainponctuality.Model.StopsAdapter;
+import java.util.Collections;
+import java.util.List;
+
+import me.arbogast.trainponctuality.dbaccess.StopsDAO;
+import me.arbogast.trainponctuality.model.Stops;
+import me.arbogast.trainponctuality.model.StopsAdapter;
 import me.arbogast.trainponctuality.R;
+import me.arbogast.trainponctuality.services.LocationProxy;
 
 public class ShowStationListActivity extends Activity {
     private ListView listView1;
@@ -19,6 +24,8 @@ public class ShowStationListActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Location myLocation = LocationProxy.getInstance().getLastBest();
+        LocationProxy.getInstance().stopRequest(this);
 
         Bundle extras = getIntent().getExtras();
         String line = extras.getString("line");
@@ -32,7 +39,16 @@ public class ShowStationListActivity extends Activity {
         t.setBackgroundResource(extras.getInt("color"));
 
         try (StopsDAO dbStops = new StopsDAO(this)) {
-            StopsAdapter adapter = new StopsAdapter(this, R.layout.show_simple_list, dbStops.getStopsForLine(line));
+            List<Stops> stops = dbStops.getStopsForLine(line);
+
+            if (myLocation != null) {
+                for (Stops stop : stops)
+                    stop.setDistanceFromUser(myLocation.distanceTo(stop.getLocation()));
+
+                Collections.sort(stops, Stops.LOCATION_COMPARATOR);
+            }
+
+            StopsAdapter adapter = new StopsAdapter(this, R.layout.show_simple_list, stops);
 
             // Assign adapter to ListView
             listView1.setAdapter(adapter);

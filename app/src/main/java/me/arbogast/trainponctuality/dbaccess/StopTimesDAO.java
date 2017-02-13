@@ -1,13 +1,14 @@
-package me.arbogast.trainponctuality.DBAccess;
+package me.arbogast.trainponctuality.dbaccess;
 
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 
-import me.arbogast.trainponctuality.Model.StopTimes;
+import me.arbogast.trainponctuality.model.StopTimes;
 
 /**
  * Created by excelsior on 15/01/17.
+ * DAO for StopTimes
  */
 
 public class StopTimesDAO extends DAOImportBase<StopTimes> {

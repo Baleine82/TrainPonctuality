@@ -1,4 +1,4 @@
-package me.arbogast.trainponctuality.Model;
+package me.arbogast.trainponctuality.model;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -10,11 +10,12 @@ import android.widget.TextView;
 
 import java.util.List;
 
-import me.arbogast.trainponctuality.GUI.ShowStationListActivity;
+import me.arbogast.trainponctuality.gui.ShowStationListActivity;
 import me.arbogast.trainponctuality.R;
 
 /**
  * Created by excelsior on 11/01/17.
+ * Adapter to show stops in a list
  */
 
 public class StopsAdapter extends ArrayAdapter<Stops> {
@@ -31,7 +32,7 @@ public class StopsAdapter extends ArrayAdapter<Stops> {
 
     @NonNull
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(int position, View convertView, @NonNull ViewGroup parent) {
         View row = convertView;
         StopsHolder holder;
 
@@ -58,7 +59,7 @@ public class StopsAdapter extends ArrayAdapter<Stops> {
         return row;
     }
 
-    static class StopsHolder
+    private class StopsHolder
     {
         TextView txtId;
         TextView txtName;

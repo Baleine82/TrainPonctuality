@@ -1,4 +1,4 @@
-package me.arbogast.trainponctuality.DBAccess;
+package me.arbogast.trainponctuality.dbaccess;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -7,11 +7,11 @@ import android.database.Cursor;
 import java.util.ArrayList;
 import java.util.List;
 
-import me.arbogast.trainponctuality.Model.Stops;
-import me.arbogast.trainponctuality.Model.Trips;
+import me.arbogast.trainponctuality.model.Stops;
 
 /**
  * Created by excelsior on 15/01/17.
+ * DAO for Stops
  */
 
 public class StopsDAO extends DAOImportBase<Stops> {
@@ -95,5 +95,4 @@ public class StopsDAO extends DAOImportBase<Stops> {
 
         return listT;
     }
-
 }

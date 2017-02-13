@@ -1,8 +1,9 @@
-package me.arbogast.trainponctuality.GUI;
+package me.arbogast.trainponctuality.gui;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -10,17 +11,23 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import me.arbogast.trainponctuality.DBAccess.RoutesDAO;
-import me.arbogast.trainponctuality.DBAccess.TravelDAO;
-import me.arbogast.trainponctuality.DBAccess.TripsDAO;
-import me.arbogast.trainponctuality.Model.Line;
-import me.arbogast.trainponctuality.Model.LineAdapter;
-import me.arbogast.trainponctuality.Model.Stops;
-import me.arbogast.trainponctuality.Model.Travel;
+import java.util.Observable;
+import java.util.Observer;
+
+import me.arbogast.trainponctuality.dbaccess.RoutesDAO;
+import me.arbogast.trainponctuality.dbaccess.TravelDAO;
+import me.arbogast.trainponctuality.dbaccess.TripsDAO;
+import me.arbogast.trainponctuality.model.Line;
+import me.arbogast.trainponctuality.model.LineAdapter;
+import me.arbogast.trainponctuality.model.Stops;
+import me.arbogast.trainponctuality.model.Travel;
 import me.arbogast.trainponctuality.R;
+import me.arbogast.trainponctuality.services.LocationProxy;
 
 public class InputDepartureActivity extends Activity {
     private static final int RESULT_GET_DEPARTURE_STATION = 0;
+    private static final String TAG = "InputDepartureActivity";
+
     private EditText txtDepartureDate;
     private EditText txtDepartureTime;
     private TextView txtDepartureStation;
@@ -29,6 +36,8 @@ public class InputDepartureActivity extends Activity {
 
     private Stops departureStation;
     private Line selectedLine;
+
+    private Observer locationObserver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +78,37 @@ public class InputDepartureActivity extends Activity {
         }
 
         populateMissions(((Line) spnLine.getSelectedItem()).getCode());
+
+        locationObserver = new Observer() {
+            @Override
+            public void update(Observable o, Object arg) {
+                Log.i(TAG, "update: Stopping Location");
+                LocationProxy.getInstance().stopRequest(getApplicationContext());
+            }
+        };
+        Log.i(TAG, "onCreate: AddObserver");
+        LocationProxy.getInstance().addObserver(locationObserver);
+    }
+
+    @Override
+    protected void onStop() {
+        Log.i(TAG, "onStop: RemoveObserver");
+        LocationProxy.getInstance().deleteObserver(locationObserver);
+        super.onStop();
+    }
+
+    @Override
+    protected void onResume() {
+        LocationProxy.getInstance().startRequest(this);
+
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        LocationProxy.getInstance().stopRequest(this);
+
+        super.onPause();
     }
 
     private void clearDepartureStation() {

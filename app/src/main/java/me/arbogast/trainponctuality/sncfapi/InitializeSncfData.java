@@ -1,11 +1,11 @@
-package me.arbogast.trainponctuality.SncfApi;
+package me.arbogast.trainponctuality.sncfapi;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.view.View;
-import android.widget.TextView;
 
 import com.opencsv.CSVReader;
 
@@ -29,16 +29,17 @@ import java.util.Date;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import me.arbogast.trainponctuality.DBAccess.CalendarDAO;
-import me.arbogast.trainponctuality.DBAccess.DAOImportBase;
-import me.arbogast.trainponctuality.DBAccess.RoutesDAO;
-import me.arbogast.trainponctuality.DBAccess.StopTimesDAO;
-import me.arbogast.trainponctuality.DBAccess.StopsDAO;
-import me.arbogast.trainponctuality.DBAccess.TripsDAO;
+import me.arbogast.trainponctuality.dbaccess.CalendarDAO;
+import me.arbogast.trainponctuality.dbaccess.DAOImportBase;
+import me.arbogast.trainponctuality.dbaccess.RoutesDAO;
+import me.arbogast.trainponctuality.dbaccess.StopTimesDAO;
+import me.arbogast.trainponctuality.dbaccess.StopsDAO;
+import me.arbogast.trainponctuality.dbaccess.TripsDAO;
 import me.arbogast.trainponctuality.R;
 
 /**
  * Created by excelsior on 14/01/17.
+ * Task to synchronize SNCF GTFS data
  */
 
 public class InitializeSncfData extends AsyncTask<URL, Integer, String> {
@@ -54,6 +55,7 @@ public class InitializeSncfData extends AsyncTask<URL, Integer, String> {
         statusView = status;
     }
 
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     @Override
     protected String doInBackground(URL... params) {
         File zipSncfInfo = new File(myContext.getCacheDir(), myContext.getString(R.string.zipSncf));
@@ -64,12 +66,12 @@ public class InitializeSncfData extends AsyncTask<URL, Integer, String> {
             Date lastUpdate = new Date(prefs.getLong(myContext.getString(R.string.prefsLastUpdateSncf), 0));
 
             GtfsInfo myInfo = getGTFSinfo();
-
-            if (myInfo.getLastUpdate().compareTo(lastUpdate) <= 0)
+            if(myInfo == null || myInfo.getLastUpdate().compareTo(lastUpdate) <= 0)
                 return null;
 
             downloadGTFSfile(myInfo.getFileId(), zipSncfInfo.getPath());
 
+            //noinspection ResultOfMethodCallIgnored
             outputDir.mkdir();
             unpackZip(zipSncfInfo, outputDir.getPath());
 
@@ -122,6 +124,7 @@ public class InitializeSncfData extends AsyncTask<URL, Integer, String> {
         statusView.setVisibility(View.INVISIBLE);
     }
 
+    @SuppressWarnings("ThrowFromFinallyBlock")
     private void InsertData(File file, DAOImportBase bdd, char separator, char quote) throws IOException {
         if (!file.exists())
             return;
@@ -169,6 +172,7 @@ public class InitializeSncfData extends AsyncTask<URL, Integer, String> {
             // it will generate an Exception...
             if (ze.isDirectory()) {
                 File fmd = new File(outDir, filename);
+                //noinspection ResultOfMethodCallIgnored
                 fmd.mkdirs();
                 continue;
             }
@@ -187,6 +191,7 @@ public class InitializeSncfData extends AsyncTask<URL, Integer, String> {
         zis.close();
     }
 
+    @SuppressWarnings("ThrowFromFinallyBlock")
     private void downloadGTFSfile(String fileId, String filename) throws IOException {
         HttpURLConnection httpclient = null;
         InputStream reader = null;
@@ -212,6 +217,7 @@ public class InitializeSncfData extends AsyncTask<URL, Integer, String> {
         }
     }
 
+    @SuppressLint("SimpleDateFormat")
     private GtfsInfo getGTFSinfo() throws JSONException, ParseException, IOException {
         HttpURLConnection httpclient;
         httpclient = (HttpURLConnection) new URL(myContext.getString(R.string.sncfGetGtfsDatasets)).openConnection();
