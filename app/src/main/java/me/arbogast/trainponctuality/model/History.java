@@ -9,7 +9,8 @@ import me.arbogast.trainponctuality.gui.Utils;
  * This is an object who represents the list of trips the user made
  */
 
-public class History {
+public class History implements IGetId {
+    private String id;
     private String line;
     private String missionCode;
     private String dayTravel;
@@ -24,7 +25,8 @@ public class History {
         dayTravel = day;
     }
 
-    public History(String line, String missionCode, Date day, Date departureDate, String departureStation, Date arrivalDate, String arrivalStation) {
+    public History(String travelId, String line, String missionCode, Date day, Date departureDate, String departureStation, Date arrivalDate, String arrivalStation) {
+        this.id = travelId;
         this.line = line;
         this.missionCode = missionCode;
         this.dayTravel = Utils.dateToString(day);
@@ -62,7 +64,12 @@ public class History {
         return arrivalStation;
     }
 
-    boolean isSection() {
+    public boolean isSection() {
         return isSection;
+    }
+
+    @Override
+    public String getId() {
+        return id;
     }
 }

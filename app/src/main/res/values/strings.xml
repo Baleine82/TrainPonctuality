@@ -36,4 +36,8 @@
     <string name="sncfSCalendarFile">calendar.txt</string>
     <string name="Synchronize">Lecture des données de la SNCF</string>
     <string name="historyHeader">Historique</string>
+    <string name="travelInProgress">Voyage en cours</string>
+    <string name="txtDeleteHistoryQuestion"><![CDATA[Supprimer ?]]></string>
+    <string name="imgDeleteIcon">Icône de suppression</string>
+    <string name="imgLine">Icône de la ligne</string>
 </resources>

@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 
+import java.util.GregorianCalendar;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -43,7 +44,7 @@ public class LocationProxy extends Observable {
 
     private void notifyIfAccuracyIsMet() {
         Log.i(TAG, "notifyIfAccuracyIsMet: Accuracy = " + lastBest.getAccuracy());
-        if (lastBest.getAccuracy() < GOODENOUGHACCURACY) {
+        if (lastBest.getAccuracy() < GOODENOUGHACCURACY && GregorianCalendar.getInstance().getTime().getTime() - lastBest.getTime() < TWO_MINUTES) {
             Log.i(TAG, "notifyIfAccuracyIsMet: ");
             setChanged();
             hasChanged = true;
@@ -132,8 +133,13 @@ public class LocationProxy extends Observable {
         isInit = true;
     }
 
-    public void startRequest(Context c) {
+    @Override
+    public synchronized void addObserver(Observer o) {
         hasChanged = false;
+        super.addObserver(o);
+    }
+
+    public void startRequest(Context c) {
         Log.i(TAG, "startRequest: ");
         if (!isInit) {
             Log.i(TAG, "startRequest: Initializing");
@@ -152,6 +158,7 @@ public class LocationProxy extends Observable {
 
         Log.i(TAG, "startRequest: requestLocationUpdates");
         locMan.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locLis);
+        locMan.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locLis);
     }
 
     public void stopRequest(Context c) {

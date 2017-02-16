@@ -10,7 +10,6 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import me.arbogast.trainponctuality.gui.Utils;
@@ -96,8 +95,16 @@ public class HistoryAdapter extends BaseAdapter {
             txtMission.setText(line.getMissionCode());
             txtDepartureDate.setText(Utils.timeToString(line.getDepartureDate()));
             txtDepartureStation.setText(line.getDepartureStation());
-            txtArrivalDate.setText(Utils.timeToString(line.getArrivalDate()));
-            txtArrivalStation.setText(line.getArrivalStation());
+            if (line.getArrivalStation() != null) {
+                txtArrivalDate.setText(Utils.timeToString(line.getArrivalDate()));
+                txtArrivalStation.setText(line.getArrivalStation());
+            } else
+            {
+                txtArrivalDate.setVisibility(View.GONE);
+                txtArrivalStation.setVisibility(View.GONE);
+                TextView txtTravelInProgress = (TextView) view.findViewById(R.id.txtTravelInProgress);
+                txtTravelInProgress.setVisibility(View.VISIBLE);
+            }
         }
 
         return view;
