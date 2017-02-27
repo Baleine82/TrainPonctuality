@@ -78,7 +78,7 @@ public abstract class DAOBase<T extends IGetId> implements AutoCloseable {
         else
             openRead();
 
-        if (inTransaction())
+        if (!inTransaction())
             mDb.beginTransaction();
     }
 
