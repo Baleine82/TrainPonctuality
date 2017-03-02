@@ -4,10 +4,11 @@ import android.app.Activity;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import java.util.Collections;
 import java.util.List;
@@ -18,7 +19,7 @@ import me.arbogast.trainponctuality.model.StopsAdapter;
 import me.arbogast.trainponctuality.R;
 import me.arbogast.trainponctuality.services.LocationProxy;
 
-public class ShowStationListActivity extends Activity {
+public class ShowStationListActivity extends AppCompatActivity {
     private ListView listView1;
 
     @Override
@@ -32,11 +33,13 @@ public class ShowStationListActivity extends Activity {
         setContentView(R.layout.activity_show_list);
 
         // Get ListView object from xml
-        listView1 = (ListView) findViewById(R.id.listView1);
-        TextView t = (TextView) findViewById(R.id.txtHeaderList);
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.action_bar);
+        setSupportActionBar(myToolbar);
 
-        t.setText(extras.getString("title"));
-        t.setBackgroundResource(extras.getInt("color"));
+        myToolbar.setTitle(extras.getString("title"));
+        myToolbar.setBackgroundResource(extras.getInt("color"));
+
+        listView1 = (ListView) findViewById(R.id.listView1);
 
         try (StopsDAO dbStops = new StopsDAO(this)) {
             List<Stops> stops = dbStops.getStopsForLine(line);

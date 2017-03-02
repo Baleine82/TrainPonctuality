@@ -3,7 +3,8 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="horizontal"
-    android:padding="10dp">
+    android:padding="10dp"
+    android:background="?android:attr/selectableItemBackground">
 
     <ImageView xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/imgLine"
@@ -74,35 +75,4 @@
         android:layout_row="1"
         android:layout_column="2"
         android:layout_columnSpan="2" />
-
-    <ImageView xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/imgDelete"
-        android:visibility="gone"
-        android:layout_column="0"
-        android:layout_columnSpan="3"
-        android:layout_row="0"
-        android:layout_rowSpan="2"
-        android:clickable="true"
-        android:alpha="0.6"
-        android:onClick="DeleteHistoryLine"
-        android:src="@drawable/delete"
-        android:scaleType="fitCenter"
-        android:adjustViewBounds="false"
-        android:cropToPadding="false"
-        android:contentDescription="@string/imgDeleteIcon" />
-
-    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/txtDeleteLine"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        android:layout_column="3"
-        android:layout_row="0"
-        android:layout_rowSpan="2"
-        android:layout_gravity="center_vertical"
-        android:text="@string/txtDeleteHistoryQuestion"
-        android:textColor="@android:color/holo_red_light"
-        android:textSize="30sp"
-        android:fontFamily="sans-serif-black"
-        android:alpha="0.6" />
 </GridLayout>

@@ -1,13 +1,14 @@
 package me.arbogast.trainponctuality.gui;
 
-import android.app.Activity;
-import android.media.Image;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import java.util.ArrayList;
 
@@ -16,23 +17,25 @@ import me.arbogast.trainponctuality.model.History;
 import me.arbogast.trainponctuality.model.HistoryAdapter;
 import me.arbogast.trainponctuality.R;
 
-public class ShowHistoryActivity extends Activity implements AdapterView.OnItemLongClickListener {
-    private ListView listView1;
+public class ShowHistoryActivity extends AppCompatActivity implements AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
     private ArrayList<History> data;
-    private ShowHistoryActivity activityThis;
+    private int clickedPosition = -1;
+    private Toolbar myToolbar;
     private HistoryAdapter adapter;
-    private int clickedPosition;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        activityThis = this;
 
         Bundle extras = getIntent().getExtras();
         setContentView(R.layout.activity_show_list);
-        TextView t = (TextView) findViewById(R.id.txtHeaderList);
-        t.setText(extras.getString("title"));
-        t.setBackgroundResource(extras.getInt("color"));
+
+        myToolbar = (Toolbar) findViewById(R.id.action_bar);
+        setSupportActionBar(myToolbar);
+
+        myToolbar.setTitle(extras.getString("title"));
+        myToolbar.setBackgroundResource(extras.getInt("color"));
+
         try (TravelDAO dbTravel = new TravelDAO(this)) {
             data = dbTravel.selectHistory();
 
@@ -52,31 +55,50 @@ public class ShowHistoryActivity extends Activity implements AdapterView.OnItemL
             }
 
             adapter = new HistoryAdapter(this, data);
-            listView1 = (ListView) findViewById(R.id.listView1);
+            ListView listView1 = (ListView) findViewById(R.id.listView1);
             listView1.setAdapter(adapter);
             listView1.setOnItemLongClickListener(this);
+            listView1.setOnItemClickListener(this);
         }
     }
 
-    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-        if (data.get(position).isSection())
-            return false;
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        if (clickedPosition > -1)
+            getMenuInflater().inflate(R.menu.menu_history, menu);
 
-        clickedPosition = position;
-
-        View txtDelete = view.findViewById(R.id.txtDeleteLine);
-        ImageView imgDelete = (ImageView) view.findViewById(R.id.imgDelete);
-        imgDelete.setVisibility(View.VISIBLE);
-        txtDelete.setVisibility(View.VISIBLE);
-        return true;
+        return super.onCreateOptionsMenu(menu);
     }
 
-    public void DeleteHistoryLine(View view) {
+    public void DeleteHistoryLine(MenuItem item) {
+        if (clickedPosition < 0)
+            return;
+
         History requestDeletion = data.get(clickedPosition);
-        try (TravelDAO dbTravel = new TravelDAO(activityThis)) {
+        try (TravelDAO dbTravel = new TravelDAO(this)) {
             dbTravel.delete(Long.parseLong(requestDeletion.getId()));
             data.remove(clickedPosition);
             adapter.notifyDataSetChanged();
         }
+    }
+
+    public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
+        try {
+            if (data.get(position).isSection())
+                return false;
+
+            clickedPosition = position;
+            view.setBackgroundResource(R.color.colorSelectedItem);
+            return true;
+        } finally {
+            invalidateOptionsMenu();
+        }
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        parent.getChildAt(clickedPosition).setBackgroundColor(Color.TRANSPARENT);
+        clickedPosition = -1;
+        invalidateOptionsMenu();
     }
 }

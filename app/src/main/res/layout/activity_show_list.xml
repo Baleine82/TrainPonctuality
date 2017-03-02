@@ -6,17 +6,18 @@
     android:layout_height="fill_parent"
     android:background="#FFFFFF">
 
-    <TextView
-        android:id="@+id/txtHeaderList"
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/action_bar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:textSize="25sp" />
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar" />
 
     <ListView
         android:id="@+id/listView1"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:longClickable="true" />
+        android:longClickable="true"
+        android:choiceMode="singleChoice" />
 
 </LinearLayout>
