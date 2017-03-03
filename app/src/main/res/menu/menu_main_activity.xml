@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:icon="@drawable/traindeparture"
+        android:onClick="MenuDepartureClick"
+        android:title="@string/btnMenuInputDeparture"
+        app:showAsAction="ifRoom" />
+    <item
+        android:icon="@drawable/trainarrival"
+        android:onClick="MenuArrivalClick"
+        android:title="@string/btnInputArrivalText"
+        app:showAsAction="ifRoom" />
+    <item
+        android:onClick="MenuHistoryClick"
+        android:title="@string/btnHistoryText"
+        app:showAsAction="never" />
+</menu>

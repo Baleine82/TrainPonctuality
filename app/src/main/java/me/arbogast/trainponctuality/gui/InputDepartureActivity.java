@@ -3,6 +3,7 @@ package me.arbogast.trainponctuality.gui;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -24,7 +25,7 @@ import me.arbogast.trainponctuality.model.Travel;
 import me.arbogast.trainponctuality.R;
 import me.arbogast.trainponctuality.services.LocationProxy;
 
-public class InputDepartureActivity extends Activity {
+public class InputDepartureActivity extends AppCompatActivity {
     private static final int RESULT_GET_DEPARTURE_STATION = 0;
     private static final String TAG = "InputDepartureActivity";
 

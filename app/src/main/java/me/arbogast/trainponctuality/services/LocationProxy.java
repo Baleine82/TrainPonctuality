@@ -21,7 +21,7 @@ import java.util.Observer;
 
 public class LocationProxy extends Observable {
     private static final int TWO_MINUTES = 1000 * 60 * 2;
-    private static final int GOODENOUGHACCURACY = 100;
+    private static final int GOODENOUGHACCURACY = 100;  //meters
     private static final String TAG = "LocationProxy";
 
     private LocationManager locMan;

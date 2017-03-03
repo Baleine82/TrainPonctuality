@@ -1,13 +1,15 @@
 package me.arbogast.trainponctuality.gui;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 
 import java.util.Observable;
@@ -19,7 +21,7 @@ import me.arbogast.trainponctuality.R;
 import me.arbogast.trainponctuality.services.LocationProxy;
 import me.arbogast.trainponctuality.sncfapi.InitializeSncfData;
 
-public class MainActivity extends Activity {
+public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_PERMISSION_GPS = 1;
     private static final String TAG = "MainActivity";
     private Observer locationObserver;
@@ -56,6 +58,12 @@ public class MainActivity extends Activity {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main_activity, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {
             case REQUEST_PERMISSION_GPS: {
@@ -68,6 +76,14 @@ public class MainActivity extends Activity {
     }
 
     public void InputDepartureClick(View view) {
+        ShowDepartureActivity();
+    }
+
+    public void MenuDepartureClick(MenuItem item) {
+        ShowDepartureActivity();
+    }
+
+    private void ShowDepartureActivity() {
         try (TravelDAO dbTravel = new TravelDAO(this)) {
             if (dbTravel.selectCurrentTravel() == null) {
                 Intent inputDeparture = new Intent(this, InputDepartureActivity.class);
@@ -78,6 +94,14 @@ public class MainActivity extends Activity {
     }
 
     public void InputArrivalClick(View view) {
+        ShowArrivalActivity();
+    }
+
+    public void MenuArrivalClick(MenuItem item) {
+        ShowArrivalActivity();
+    }
+
+    private void ShowArrivalActivity() {
         try (TravelDAO dbTravel = new TravelDAO(this)) {
             Travel currentTravel = dbTravel.selectCurrentTravel();
 
@@ -89,7 +113,15 @@ public class MainActivity extends Activity {
         }
     }
 
-    public void btnHistoryClick(View view) {
+    public void InputHistoryClick(View view) {
+        ShowHistoryActivity();
+    }
+
+    public void MenuHistoryClick(MenuItem item) {
+        ShowHistoryActivity();
+    }
+
+    private void ShowHistoryActivity() {
         Intent showHistory = new Intent(this, ShowHistoryActivity.class);
         showHistory.putExtra("title", getString(R.string.historyHeader));
         showHistory.putExtra("color", R.color.historyHeader);

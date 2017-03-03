@@ -3,7 +3,6 @@ package me.arbogast.trainponctuality.gui;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,21 +19,14 @@ import me.arbogast.trainponctuality.R;
 public class ShowHistoryActivity extends AppCompatActivity implements AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
     private ArrayList<History> data;
     private int clickedPosition = -1;
-    private Toolbar myToolbar;
     private HistoryAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Bundle extras = getIntent().getExtras();
+        //Bundle extras = getIntent().getExtras();
         setContentView(R.layout.activity_show_list);
-
-        myToolbar = (Toolbar) findViewById(R.id.action_bar);
-        setSupportActionBar(myToolbar);
-
-        myToolbar.setTitle(extras.getString("title"));
-        myToolbar.setBackgroundResource(extras.getInt("color"));
 
         try (TravelDAO dbTravel = new TravelDAO(this)) {
             data = dbTravel.selectHistory();
@@ -97,6 +89,8 @@ public class ShowHistoryActivity extends AppCompatActivity implements AdapterVie
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        if(clickedPosition<0)
+            return;
         parent.getChildAt(clickedPosition).setBackgroundColor(Color.TRANSPARENT);
         clickedPosition = -1;
         invalidateOptionsMenu();
