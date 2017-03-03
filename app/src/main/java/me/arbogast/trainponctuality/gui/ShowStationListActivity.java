@@ -5,15 +5,12 @@ import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import java.util.Collections;
 import java.util.List;
 
-import me.arbogast.trainponctuality.dbaccess.StopsDAO;
 import me.arbogast.trainponctuality.model.Stops;
 import me.arbogast.trainponctuality.model.StopsAdapter;
 import me.arbogast.trainponctuality.R;
@@ -33,29 +30,20 @@ public class ShowStationListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_show_list);
 
         // Get ListView object from xml
-        Toolbar myToolbar = (Toolbar) findViewById(R.id.action_bar);
-        setSupportActionBar(myToolbar);
-
-        myToolbar.setTitle(extras.getString("title"));
-        myToolbar.setBackgroundResource(extras.getInt("color"));
-
         listView1 = (ListView) findViewById(R.id.listView1);
 
-        try (StopsDAO dbStops = new StopsDAO(this)) {
-            List<Stops> stops = dbStops.getStopsForLine(line);
+        GetStationForLineAsync findStationAsync = new GetStationForLineAsync() {
+            @Override
+            protected void onPostExecute(List<Stops> stops) {
+                super.onPostExecute(stops);
+                StopsAdapter adapter = new StopsAdapter(ctx, R.layout.show_simple_list, stops);
 
-            if (myLocation != null) {
-                for (Stops stop : stops)
-                    stop.setDistanceFromUser(myLocation.distanceTo(stop.getLocation()));
-
-                Collections.sort(stops, Stops.LOCATION_COMPARATOR);
+                // Assign adapter to ListView
+                listView1.setAdapter(adapter);
             }
+        };
 
-            StopsAdapter adapter = new StopsAdapter(this, R.layout.show_simple_list, stops);
-
-            // Assign adapter to ListView
-            listView1.setAdapter(adapter);
-        }
+        findStationAsync.execute(new GetStationForLineParams(this, line, myLocation));
 
         // ListView Item Click Listener
         listView1.setOnItemClickListener(new AdapterView.OnItemClickListener() {

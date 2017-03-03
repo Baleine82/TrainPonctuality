@@ -1,7 +1,7 @@
 package me.arbogast.trainponctuality.gui;
 
-import android.app.Activity;
 import android.content.Intent;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -9,13 +9,14 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
+import me.arbogast.trainponctuality.R;
 import me.arbogast.trainponctuality.dbaccess.TravelDAO;
 import me.arbogast.trainponctuality.model.Stops;
 import me.arbogast.trainponctuality.model.Travel;
-import me.arbogast.trainponctuality.R;
 import me.arbogast.trainponctuality.services.LocationProxy;
 
 public class InputArrivalActivity extends AppCompatActivity {
@@ -30,6 +31,9 @@ public class InputArrivalActivity extends AppCompatActivity {
     private Stops arrivalStation;
 
     private Observer locationObserver;
+    private Location foundLocation;
+    private boolean manualStationSelected = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +55,8 @@ public class InputArrivalActivity extends AppCompatActivity {
             public void update(Observable o, Object arg) {
                 Log.i(TAG, "update: Stopping Location");
                 LocationProxy.getInstance().stopRequest(getApplicationContext());
+                foundLocation = LocationProxy.getInstance().getLastBest();
+                autoSelectStation();
             }
         };
         Log.i(TAG, "onCreate: AddObserver");
@@ -68,8 +74,7 @@ public class InputArrivalActivity extends AppCompatActivity {
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         currentTravel = savedInstanceState.getParcelable("currentTravel");
-        arrivalStation = savedInstanceState.getParcelable("arrivalStation");
-        setStationText();
+        setArrivalStation((Stops) savedInstanceState.getParcelable("arrivalStation"));
     }
 
     @Override
@@ -92,6 +97,22 @@ public class InputArrivalActivity extends AppCompatActivity {
 
         super.onPause();
     }
+
+    private void autoSelectStation() {
+        if (manualStationSelected || foundLocation == null)
+            return;
+
+        GetStationForLineAsync findStationAsync = new GetStationForLineAsync() {
+            @Override
+            protected void onPostExecute(List<Stops> stops) {
+                super.onPostExecute(stops);
+                setArrivalStation(stops.get(0));
+            }
+        };
+
+        findStationAsync.execute(new GetStationForLineParams(this, currentTravel.getLine(), foundLocation));
+    }
+
 
     public void CancelInputArrival(View view) {
         finish();
@@ -119,15 +140,21 @@ public class InputArrivalActivity extends AppCompatActivity {
             arrivalStation = data.getExtras().getParcelable("stop");
             if (arrivalStation == null)
                 return;
-            currentTravel.setArrivalStation(arrivalStation.getId());
-            setStationText();
+
+            manualStationSelected = true;
+            setArrivalStation(arrivalStation);
         }
     }
 
-    private void setStationText() {
-        if (arrivalStation != null)
-            txtArrivalStation.setText(arrivalStation.getName());
-        else
+    public void setArrivalStation(Stops arrivalStation) {
+        this.arrivalStation = arrivalStation;
+
+        if (arrivalStation == null) {
             txtArrivalStation.setText(R.string.txtLocationArrivalHint);
+            return;
+        }
+
+        currentTravel.setArrivalStation(arrivalStation.getId());
+        txtArrivalStation.setText(arrivalStation.getName());
     }
 }

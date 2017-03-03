@@ -1,20 +1,23 @@
 package me.arbogast.trainponctuality.gui;
 
-import android.app.Activity;
 import android.content.Intent;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
+import me.arbogast.trainponctuality.R;
 import me.arbogast.trainponctuality.dbaccess.RoutesDAO;
 import me.arbogast.trainponctuality.dbaccess.TravelDAO;
 import me.arbogast.trainponctuality.dbaccess.TripsDAO;
@@ -22,7 +25,6 @@ import me.arbogast.trainponctuality.model.Line;
 import me.arbogast.trainponctuality.model.LineAdapter;
 import me.arbogast.trainponctuality.model.Stops;
 import me.arbogast.trainponctuality.model.Travel;
-import me.arbogast.trainponctuality.R;
 import me.arbogast.trainponctuality.services.LocationProxy;
 
 public class InputDepartureActivity extends AppCompatActivity {
@@ -33,12 +35,14 @@ public class InputDepartureActivity extends AppCompatActivity {
     private EditText txtDepartureTime;
     private TextView txtDepartureStation;
     private Spinner spnLine;
-    private Spinner spnMission;
+    private AutoCompleteTextView spnMission;
 
     private Stops departureStation;
     private Line selectedLine;
 
     private Observer locationObserver;
+    private Location foundLocation;
+    private boolean manualStationSelected = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +53,7 @@ public class InputDepartureActivity extends AppCompatActivity {
         txtDepartureTime = (EditText) findViewById(R.id.txtDepartureTime);
         txtDepartureStation = (TextView) findViewById(R.id.txtLocation);
         spnLine = (Spinner) findViewById(R.id.spnLine);
-        spnMission = (Spinner) findViewById(R.id.spnMission);
+        spnMission = (AutoCompleteTextView) findViewById(R.id.spnMission);
 
         txtDepartureDate.setText(Utils.getDate());
         txtDepartureTime.setText(Utils.getTime());
@@ -59,16 +63,16 @@ public class InputDepartureActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 Line newLine = (Line) spnLine.getSelectedItem();
                 if (selectedLine == null || !newLine.getCode().equals(selectedLine.getCode())) {
-                    clearDepartureStation();
-                    selectedLine = newLine;
+                    setSelectedLine(newLine);
+                    setDepartureStation(null);
                     populateMissions();
                 }
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-                clearDepartureStation();
-                selectedLine = null;
+                setSelectedLine(null);
+                setDepartureStation(null);
                 populateMissions();
             }
         });
@@ -85,10 +89,32 @@ public class InputDepartureActivity extends AppCompatActivity {
             public void update(Observable o, Object arg) {
                 Log.i(TAG, "update: Stopping Location");
                 LocationProxy.getInstance().stopRequest(getApplicationContext());
+                foundLocation = LocationProxy.getInstance().getLastBest();
+                autoSelectStation();
             }
         };
         Log.i(TAG, "onCreate: AddObserver");
         LocationProxy.getInstance().addObserver(locationObserver);
+    }
+
+    private void autoSelectStation() {
+        if (manualStationSelected || selectedLine == null || foundLocation == null)
+            return;
+
+        GetStationForLineAsync findStationAsync = new GetStationForLineAsync() {
+            @Override
+            protected void onPostExecute(List<Stops> stops) {
+                super.onPostExecute(stops);
+                setDepartureStation(stops.get(0));
+            }
+        };
+
+        findStationAsync.execute(new GetStationForLineParams(this, selectedLine.getCode(), foundLocation));
+    }
+
+    private void setSelectedLine(Line value) {
+        selectedLine = value;
+        autoSelectStation();
     }
 
     @Override
@@ -112,11 +138,6 @@ public class InputDepartureActivity extends AppCompatActivity {
         super.onPause();
     }
 
-    private void clearDepartureStation() {
-        departureStation = null;
-        setStationText();
-    }
-
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -129,12 +150,10 @@ public class InputDepartureActivity extends AppCompatActivity {
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
 
-        departureStation = savedInstanceState.getParcelable("departureStation");
         String lineCode = savedInstanceState.getString("selectedLine");
         if (lineCode != null && !lineCode.isEmpty())
-            selectedLine = new Line(lineCode);
-
-        setStationText();
+            setSelectedLine(new Line(lineCode));
+        setDepartureStation((Stops) savedInstanceState.getParcelable("departureStation"));
     }
 
     private void populateMissions() {
@@ -157,7 +176,7 @@ public class InputDepartureActivity extends AppCompatActivity {
             return;
 
         Travel departure = new Travel(Utils.parseDate(Utils.getText(txtDepartureDate), Utils.getText(txtDepartureTime)),
-                selectedLine.getCode(), spnMission.getSelectedItem().toString(), departureStation.getId());
+                selectedLine.getCode(), spnMission.getText().toString(), departureStation.getId());
 
         try (TravelDAO dbTravel = new TravelDAO(this)) {
             dbTravel.insert(departure);
@@ -183,15 +202,19 @@ public class InputDepartureActivity extends AppCompatActivity {
             Stops selected = data.getExtras().getParcelable("stop");
             if (selected == null)
                 return;
-            departureStation = selected;
-            setStationText();
+
+            manualStationSelected = true;
+            setDepartureStation(selected);
         }
     }
 
-    private void setStationText() {
-        if (departureStation != null)
-            txtDepartureStation.setText(departureStation.getName());
-        else
+    public void setDepartureStation(Stops departureStation) {
+        if (departureStation == null) {
             txtDepartureStation.setText(R.string.txtLocationHint);
+            return;
+        }
+
+        this.departureStation = departureStation;
+        txtDepartureStation.setText(departureStation.getName());
     }
 }

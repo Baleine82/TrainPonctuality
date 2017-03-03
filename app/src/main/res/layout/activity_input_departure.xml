@@ -24,8 +24,8 @@
         android:id="@+id/txtDepartureTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/txtDepartureDate"
-        android:layout_below="@+id/txtDepartureDate"
+        android:layout_alignStart="@id/txtDepartureDate"
+        android:layout_below="@id/txtDepartureDate"
         android:ems="10"
         android:hint="@string/txtDepartureTimeHint"
         android:inputType="time" />
@@ -39,6 +39,7 @@
         android:layout_marginTop="26dp" />
 
     <TextView
+        android:labelFor="@id/spnLine"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@id/spnLine"
@@ -46,16 +47,18 @@
         android:layout_toStartOf="@id/spnLine"
         android:text="@string/txtLineHint" />
 
-    <Spinner
+    <AutoCompleteTextView
         android:id="@+id/spnMission"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/spnLine"
+        android:layout_below="@id/spnLine"
         android:layout_centerHorizontal="true"
-        android:dropDownWidth="wrap_content"
-        android:inputType="textCapCharacters" />
+        android:completionThreshold="1"
+        android:inputType="textCapCharacters"
+        android:minWidth="80dp" />
 
     <TextView
+        android:labelFor="@id/spnMission"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@id/spnMission"
@@ -67,7 +70,7 @@
         android:id="@+id/txtLocation"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/spnMission"
+        android:layout_below="@id/spnMission"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="26dp"
         android:ems="10"
@@ -91,7 +94,7 @@
         android:id="@+id/btnCancelTrainStart"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/btnSaveStart"
+        android:layout_alignBottom="@id/btnSaveStart"
         android:layout_alignParentStart="true"
         android:layout_marginStart="35dp"
         android:onClick="CancelInputDeparture"

@@ -3,6 +3,7 @@ package me.arbogast.trainponctuality.dbaccess;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -78,7 +79,10 @@ public class StopsDAO extends DAOImportBase<Stops> {
     }
 
     public List<Stops> getStopsForLine(String line) {
+        long started = System.nanoTime();
+        Log.d(TAG, "getStopsForLine: Opening database");
         openRead();
+        Log.d(TAG, "getStopsForLine: Database opened : " + String.valueOf(System.nanoTime() - started));
         List<Stops> listT = new ArrayList<>();
         String query = "SELECT " + SELECT_ALL + " FROM " + RoutesDAO.TABLE_NAME +
                 " INNER JOIN " + TripsDAO.TABLE_NAME + " ON (" + RoutesDAO.TABLE_NAME + "." + RoutesDAO.COLUMN_ID + " = " + TripsDAO.TABLE_NAME + "." + TripsDAO.COLUMN_ROUTE_ID + ")" +
@@ -87,10 +91,12 @@ public class StopsDAO extends DAOImportBase<Stops> {
                 " WHERE " + RoutesDAO.TABLE_NAME + "." + RoutesDAO.COLUMN_SHORT_NAME + " = ? " +
                 " GROUP BY " + StopsDAO.COLUMN_ID +
                 " ORDER BY " + StopsDAO.COLUMN_NAME + ";";
-        try (Cursor c = mDb.rawQuery(query, new String[]{line})) {
 
+        try (Cursor c = mDb.rawQuery(query, new String[]{line})) {
+            Log.d(TAG, "getStopsForLine: Query done : " + String.valueOf(System.nanoTime() - started));
             while (c.moveToNext())
                 listT.add(getItem(c));
+            Log.d(TAG, "getStopsForLine: Model created : " + String.valueOf(System.nanoTime() - started));
         }
 
         return listT;
