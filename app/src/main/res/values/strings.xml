@@ -41,4 +41,7 @@
     <string name="txtMenuEditHistory">Modifier</string>
     <string name="imgDeleteIcon">Icône de suppression</string>
     <string name="imgLine">Icône de la ligne</string>
+    <string name="titleDeparture">Départ</string>
+    <string name="titleArrival">Arrivée</string>
+    <string name="titleHistory">Historique</string>
 </resources>

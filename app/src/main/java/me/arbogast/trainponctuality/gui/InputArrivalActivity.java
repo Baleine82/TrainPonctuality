@@ -9,7 +9,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import java.util.List;
+import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -33,12 +33,13 @@ public class InputArrivalActivity extends AppCompatActivity {
     private Observer locationObserver;
     private Location foundLocation;
     private boolean manualStationSelected = false;
-
+    private ArrayList<Stops> stationList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_input_arrival);
+        setTitle(R.string.titleArrival);
 
         txtArrivalDate = (EditText) findViewById(R.id.txtArrivalDate);
         txtArrivalTime = (EditText) findViewById(R.id.txtArrivalTime);
@@ -99,13 +100,14 @@ public class InputArrivalActivity extends AppCompatActivity {
     }
 
     private void autoSelectStation() {
-        if (manualStationSelected || foundLocation == null)
+        if (manualStationSelected)
             return;
 
         GetStationForLineAsync findStationAsync = new GetStationForLineAsync() {
             @Override
-            protected void onPostExecute(List<Stops> stops) {
+            protected void onPostExecute(ArrayList<Stops> stops) {
                 super.onPostExecute(stops);
+                stationList = stops;
                 setArrivalStation(stops.get(0));
             }
         };
@@ -127,10 +129,12 @@ public class InputArrivalActivity extends AppCompatActivity {
     }
 
     public void showStationList(View view) {
+        if(stationList == null)
+            return;
         Intent showList = new Intent(this, ShowStationListActivity.class);
-        showList.putExtra("title", getString(R.string.txtLocationArrivalHint));
+        showList.putExtra("title", R.string.txtLocationArrivalHint);
         showList.putExtra("color", R.color.stationSelection);
-        showList.putExtra("line", currentTravel.getLine());
+        showList.putParcelableArrayListExtra("stops", stationList);
         startActivityForResult(showList, RESULT_GET_DEPARTURE_STATION);
     }
 

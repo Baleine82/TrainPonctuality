@@ -13,7 +13,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import java.util.List;
+import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -42,12 +42,14 @@ public class InputDepartureActivity extends AppCompatActivity {
 
     private Observer locationObserver;
     private Location foundLocation;
+    private ArrayList<Stops> stationList;
     private boolean manualStationSelected = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_input_departure);
+        setTitle(R.string.titleDeparture);
 
         txtDepartureDate = (EditText) findViewById(R.id.txtDepartureDate);
         txtDepartureTime = (EditText) findViewById(R.id.txtDepartureTime);
@@ -98,13 +100,14 @@ public class InputDepartureActivity extends AppCompatActivity {
     }
 
     private void autoSelectStation() {
-        if (manualStationSelected || selectedLine == null || foundLocation == null)
+        if (manualStationSelected || selectedLine == null)
             return;
 
         GetStationForLineAsync findStationAsync = new GetStationForLineAsync() {
             @Override
-            protected void onPostExecute(List<Stops> stops) {
+            protected void onPostExecute(ArrayList<Stops> stops) {
                 super.onPostExecute(stops);
+                stationList = stops;
                 setDepartureStation(stops.get(0));
             }
         };
@@ -113,6 +116,7 @@ public class InputDepartureActivity extends AppCompatActivity {
     }
 
     private void setSelectedLine(Line value) {
+        stationList = null;
         selectedLine = value;
         autoSelectStation();
     }
@@ -189,10 +193,12 @@ public class InputDepartureActivity extends AppCompatActivity {
     }
 
     public void showStationList(View view) {
+        if(stationList == null)
+            return;
         Intent showList = new Intent(this, ShowStationListActivity.class);
-        showList.putExtra("title", getString(R.string.txtLocationHint));
+        showList.putExtra("title", R.string.txtLocationHint);
         showList.putExtra("color", R.color.stationSelection);
-        showList.putExtra("line", selectedLine.getCode());
+        showList.putParcelableArrayListExtra("stops", stationList);
         startActivityForResult(showList, RESULT_GET_DEPARTURE_STATION);
     }
 

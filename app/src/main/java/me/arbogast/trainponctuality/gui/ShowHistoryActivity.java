@@ -1,7 +1,9 @@
 package me.arbogast.trainponctuality.gui;
 
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -24,6 +26,10 @@ public class ShowHistoryActivity extends AppCompatActivity implements AdapterVie
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setTitle(R.string.titleHistory);
+
+        //noinspection ConstantConditions
+        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(this, R.color.historyHeader)));
 
         //Bundle extras = getIntent().getExtras();
         setContentView(R.layout.activity_show_list);

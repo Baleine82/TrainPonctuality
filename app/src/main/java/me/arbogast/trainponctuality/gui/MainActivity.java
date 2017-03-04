@@ -32,6 +32,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        setTitle(R.string.app_name);
+
         locationObserver = new Observer() {
             @Override
             public void update(Observable o, Object arg) {
@@ -130,7 +132,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void ShowHistoryActivity() {
         Intent showHistory = new Intent(this, ShowHistoryActivity.class);
-        showHistory.putExtra("title", getString(R.string.historyHeader));
+        showHistory.putExtra("title", R.string.historyHeader);
         showHistory.putExtra("color", R.color.historyHeader);
         startActivity(showHistory);
     }

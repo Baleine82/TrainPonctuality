@@ -2,19 +2,19 @@ package me.arbogast.trainponctuality.gui;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.location.Location;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import java.util.List;
+import java.util.ArrayList;
 
 import me.arbogast.trainponctuality.model.Stops;
 import me.arbogast.trainponctuality.model.StopsAdapter;
 import me.arbogast.trainponctuality.R;
-import me.arbogast.trainponctuality.services.LocationProxy;
 
 public class ShowStationListActivity extends AppCompatActivity {
     private ListView listView1;
@@ -22,28 +22,23 @@ public class ShowStationListActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Location myLocation = LocationProxy.getInstance().getLastBest();
-        LocationProxy.getInstance().stopRequest(this);
 
         Bundle extras = getIntent().getExtras();
-        String line = extras.getString("line");
+        ArrayList<Stops> stops = extras.getParcelableArrayList("stops");
         setContentView(R.layout.activity_show_list);
+        setTitle(extras.getInt("title"));
+
+        //noinspection ConstantConditions
+        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(this, extras.getInt("color"))));
+
 
         // Get ListView object from xml
         listView1 = (ListView) findViewById(R.id.listView1);
 
-        GetStationForLineAsync findStationAsync = new GetStationForLineAsync() {
-            @Override
-            protected void onPostExecute(List<Stops> stops) {
-                super.onPostExecute(stops);
-                StopsAdapter adapter = new StopsAdapter(ctx, R.layout.show_simple_list, stops);
+        StopsAdapter adapter = new StopsAdapter(this, R.layout.show_simple_list, stops);
 
-                // Assign adapter to ListView
-                listView1.setAdapter(adapter);
-            }
-        };
-
-        findStationAsync.execute(new GetStationForLineParams(this, line, myLocation));
+        // Assign adapter to ListView
+        listView1.setAdapter(adapter);
 
         // ListView Item Click Listener
         listView1.setOnItemClickListener(new AdapterView.OnItemClickListener() {

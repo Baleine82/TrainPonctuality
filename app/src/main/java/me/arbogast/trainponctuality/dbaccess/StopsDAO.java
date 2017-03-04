@@ -78,12 +78,12 @@ public class StopsDAO extends DAOImportBase<Stops> {
         return new Stops(c.getString(0), c.getString(1), c.getDouble(2), c.getDouble(3), c.getInt(4), c.getString(5));
     }
 
-    public List<Stops> getStopsForLine(String line) {
+    public ArrayList<Stops> getStopsForLine(String line) {
         long started = System.nanoTime();
         Log.d(TAG, "getStopsForLine: Opening database");
         openRead();
         Log.d(TAG, "getStopsForLine: Database opened : " + String.valueOf(System.nanoTime() - started));
-        List<Stops> listT = new ArrayList<>();
+        ArrayList<Stops> listT = new ArrayList<>();
         String query = "SELECT " + SELECT_ALL + " FROM " + RoutesDAO.TABLE_NAME +
                 " INNER JOIN " + TripsDAO.TABLE_NAME + " ON (" + RoutesDAO.TABLE_NAME + "." + RoutesDAO.COLUMN_ID + " = " + TripsDAO.TABLE_NAME + "." + TripsDAO.COLUMN_ROUTE_ID + ")" +
                 " INNER JOIN " + StopTimesDAO.TABLE_NAME + " ON (" + TripsDAO.TABLE_NAME + "." + TripsDAO.COLUMN_ID + " = " + StopTimesDAO.TABLE_NAME + "." + StopTimesDAO.COLUMN_TRIP_ID + ")" +

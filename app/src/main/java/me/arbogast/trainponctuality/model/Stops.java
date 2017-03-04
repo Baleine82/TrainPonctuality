@@ -147,4 +147,11 @@ public class Stops implements Parcelable, IGetId {
             return Double.compare(d.distanceFromUser, d1.distanceFromUser);
         }
     };
+
+    public static final Comparator<Stops> ASCENDING_NAME_COMPARATOR = new Comparator<Stops>() {
+        // Overriding the compare method to sort the age
+        public int compare(Stops d, Stops d1) {
+            return d.getName().compareTo(d1.getName());
+        }
+    };
 }
