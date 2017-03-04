@@ -25,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_PERMISSION_GPS = 1;
     private static final String TAG = "MainActivity";
     private Observer locationObserver;
+    private Travel currentTravel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +51,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        try (TravelDAO dbTravel = new TravelDAO(this)) {
+            currentTravel = dbTravel.selectCurrentTravel();
+        }
+        supportInvalidateOptionsMenu();
+    }
+
+    @Override
     protected void onStop() {
         Log.i(TAG, "onStop: RemoveObserver");
         LocationProxy.getInstance().deleteObserver(locationObserver);
@@ -60,6 +70,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main_activity, menu);
+        if (currentTravel == null)
+            menu.findItem(R.id.mnu_arrival).setVisible(false);
+        else
+            menu.findItem(R.id.mnu_departure).setVisible(false);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -84,12 +98,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void ShowDepartureActivity() {
-        try (TravelDAO dbTravel = new TravelDAO(this)) {
-            if (dbTravel.selectCurrentTravel() == null) {
-                Intent inputDeparture = new Intent(this, InputDepartureActivity.class);
-
-                startActivity(inputDeparture);
-            }
+        if (currentTravel == null) {
+            Intent inputDeparture = new Intent(this, InputDepartureActivity.class);
+            startActivity(inputDeparture);
         }
     }
 
@@ -102,14 +113,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void ShowArrivalActivity() {
-        try (TravelDAO dbTravel = new TravelDAO(this)) {
-            Travel currentTravel = dbTravel.selectCurrentTravel();
-
-            if (currentTravel != null) {
-                Intent inputArrival = new Intent(this, InputArrivalActivity.class);
-                inputArrival.putExtra("travel", currentTravel);
-                startActivity(inputArrival);
-            }
+        if (currentTravel != null) {
+            Intent inputArrival = new Intent(this, InputArrivalActivity.class);
+            inputArrival.putExtra("travel", currentTravel);
+            startActivity(inputArrival);
         }
     }
 

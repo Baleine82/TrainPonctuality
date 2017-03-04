@@ -3,11 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/mnu_departure"
         android:icon="@drawable/traindeparture"
         android:onClick="MenuDepartureClick"
         android:title="@string/btnMenuInputDeparture"
         app:showAsAction="ifRoom" />
     <item
+        android:id="@+id/mnu_arrival"
         android:icon="@drawable/trainarrival"
         android:onClick="MenuArrivalClick"
         android:title="@string/btnInputArrivalText"

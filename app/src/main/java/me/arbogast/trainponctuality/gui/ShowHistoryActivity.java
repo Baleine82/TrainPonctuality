@@ -83,7 +83,7 @@ public class ShowHistoryActivity extends AppCompatActivity implements AdapterVie
             view.setBackgroundResource(R.color.colorSelectedItem);
             return true;
         } finally {
-            invalidateOptionsMenu();
+            supportInvalidateOptionsMenu();
         }
     }
 
@@ -93,6 +93,6 @@ public class ShowHistoryActivity extends AppCompatActivity implements AdapterVie
             return;
         parent.getChildAt(clickedPosition).setBackgroundColor(Color.TRANSPARENT);
         clickedPosition = -1;
-        invalidateOptionsMenu();
+        supportInvalidateOptionsMenu();
     }
 }
