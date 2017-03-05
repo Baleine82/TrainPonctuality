@@ -91,20 +91,22 @@ public class HistoryAdapter extends BaseAdapter {
             TextView txtArrivalDate = (TextView) view.findViewById(R.id.txtArrivalDate);
             TextView txtArrivalStation = (TextView) view.findViewById(R.id.txtArrivalStation);
 
-            txtLine.setImageResource(context.getResources().getIdentifier(line.getLine().toLowerCase(), "drawable", context.getPackageName()));
-            txtMission.setText(line.getMissionCode());
-            txtDepartureDate.setText(Utils.timeToString(line.getDepartureDate()));
+            txtLine.setImageResource(context.getResources().getIdentifier(line.getTravel().getLine().toLowerCase(), "drawable", context.getPackageName()));
+            txtMission.setText(line.getTravel().getMissionCode());
+            txtDepartureDate.setText(Utils.timeToString(line.getTravel().getDepartureDate()));
             txtDepartureStation.setText(line.getDepartureStation());
             if (line.getArrivalStation() != null) {
-                txtArrivalDate.setText(Utils.timeToString(line.getArrivalDate()));
+                txtArrivalDate.setText(Utils.timeToString(line.getTravel().getArrivalDate()));
                 txtArrivalStation.setText(line.getArrivalStation());
-            } else
-            {
+            } else {
                 txtArrivalDate.setVisibility(View.GONE);
                 txtArrivalStation.setVisibility(View.GONE);
                 TextView txtTravelInProgress = (TextView) view.findViewById(R.id.txtTravelInProgress);
                 txtTravelInProgress.setVisibility(View.VISIBLE);
             }
+
+            if (line.getIsSelected())
+                view.setBackgroundResource(R.color.colorSelectedItem);
         }
 
         return view;

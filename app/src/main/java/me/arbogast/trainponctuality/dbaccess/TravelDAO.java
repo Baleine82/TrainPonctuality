@@ -90,15 +90,14 @@ public class TravelDAO extends DAOBase<Travel> {
     public ArrayList<History> selectHistory() {
         openRead();
         ArrayList<History> listT = new ArrayList<>();
-        try(Cursor c = mDb.rawQuery("SELECT " + COLUMN_ID + ", " + COLUMN_LINE + ", " + COLUMN_MISSION + ", " + COLUMN_DEPARTURE_DATE + " as DateTravel, " +
-                COLUMN_DEPARTURE_DATE + ", depStop." + StopsDAO.COLUMN_NAME + " AS departureStation, " + COLUMN_ARRIVAL_DATE + ", " +
-                " arrStop." + StopsDAO.COLUMN_NAME + " AS arrivalStation FROM " + TABLE_NAME +
+        try (Cursor c = mDb.rawQuery("SELECT " + SELECT_ALL + ", depStop." + StopsDAO.COLUMN_NAME + " AS departureStation, " +
+                " arrStop." + StopsDAO.COLUMN_NAME + " AS arrivalStation " + " FROM " + TABLE_NAME +
                 " INNER JOIN " + StopsDAO.TABLE_NAME + " AS depStop ON (" + TABLE_NAME + "." + COLUMN_DEPARTURE_STATION + " = depStop." + StopsDAO.COLUMN_ID + ") " +
                 " LEFT JOIN " + StopsDAO.TABLE_NAME + " AS arrStop ON (" + TABLE_NAME + "." + COLUMN_ARRIVAL_STATION + " = arrStop." + StopsDAO.COLUMN_ID + ") " +
                 " ORDER BY " + COLUMN_DEPARTURE_DATE + ";", null)) {
 
             while (c.moveToNext())
-                listT.add(new History(c.getString(0), c.getString(1), c.getString(2), new Date(c.getLong(3)), new Date(c.getLong(4)), c.getString(5), new Date(c.getLong(6)), c.getString(7)));
+                listT.add(new History(getItem(c), c.getString(7), c.getString(8)));
         }
 
         return listT;
