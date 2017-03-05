@@ -9,11 +9,11 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -29,10 +29,12 @@ import me.arbogast.trainponctuality.services.LocationProxy;
 
 public class InputDepartureActivity extends AppCompatActivity {
     private static final int RESULT_GET_DEPARTURE_STATION = 0;
+    private static final int RESULT_GET_DEPARTURE_DATE = 1;
+    private static final int RESULT_GET_DEPARTURE_TIME = 2;
     private static final String TAG = "InputDepartureActivity";
 
-    private EditText txtDepartureDate;
-    private EditText txtDepartureTime;
+    private TextView txtDepartureDate;
+    private TextView txtDepartureTime;
     private TextView txtDepartureStation;
     private Spinner spnLine;
     private AutoCompleteTextView spnMission;
@@ -44,6 +46,7 @@ public class InputDepartureActivity extends AppCompatActivity {
     private Location foundLocation;
     private ArrayList<Stops> stationList;
     private boolean manualStationSelected = false;
+    private Date departureDate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,14 +54,13 @@ public class InputDepartureActivity extends AppCompatActivity {
         setContentView(R.layout.activity_input_departure);
         setTitle(R.string.titleDeparture);
 
-        txtDepartureDate = (EditText) findViewById(R.id.txtDepartureDate);
-        txtDepartureTime = (EditText) findViewById(R.id.txtDepartureTime);
+        txtDepartureDate = (TextView) findViewById(R.id.txtDepartureDate);
+        txtDepartureTime = (TextView) findViewById(R.id.txtDepartureTime);
         txtDepartureStation = (TextView) findViewById(R.id.txtLocation);
         spnLine = (Spinner) findViewById(R.id.spnLine);
-        spnMission = (AutoCompleteTextView) findViewById(R.id.spnMission);
+        spnMission = (AutoCompleteTextView) findViewById(R.id.actMission);
 
-        txtDepartureDate.setText(Utils.getDate());
-        txtDepartureTime.setText(Utils.getTime());
+        setDepartureDateTime(Utils.now());
 
         spnLine.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -97,6 +99,12 @@ public class InputDepartureActivity extends AppCompatActivity {
         };
         Log.i(TAG, "onCreate: AddObserver");
         LocationProxy.getInstance().addObserver(locationObserver);
+    }
+
+    private void setDepartureDateTime(Date select) {
+        departureDate = select;
+        txtDepartureDate.setText(Utils.dateToString(select));
+        txtDepartureTime.setText(Utils.timeToString(select));
     }
 
     private void autoSelectStation() {
@@ -148,6 +156,7 @@ public class InputDepartureActivity extends AppCompatActivity {
 
         outState.putParcelable("departureStation", departureStation);
         outState.putString("selectedLine", selectedLine.getCode());
+        outState.putLong("departureDate", departureDate.getTime());
     }
 
     @Override
@@ -158,6 +167,8 @@ public class InputDepartureActivity extends AppCompatActivity {
         if (lineCode != null && !lineCode.isEmpty())
             setSelectedLine(new Line(lineCode));
         setDepartureStation((Stops) savedInstanceState.getParcelable("departureStation"));
+
+        setDepartureDateTime(new Date(savedInstanceState.getLong("departureDate")));
     }
 
     private void populateMissions() {
@@ -179,8 +190,7 @@ public class InputDepartureActivity extends AppCompatActivity {
         if (departureStation == null || selectedLine == null)
             return;
 
-        Travel departure = new Travel(Utils.parseDate(Utils.getText(txtDepartureDate), Utils.getText(txtDepartureTime)),
-                selectedLine.getCode(), spnMission.getText().toString(), departureStation.getId());
+        Travel departure = new Travel(departureDate, selectedLine.getCode(), spnMission.getText().toString(), departureStation.getId());
 
         try (TravelDAO dbTravel = new TravelDAO(this)) {
             dbTravel.insert(departure);
@@ -193,7 +203,7 @@ public class InputDepartureActivity extends AppCompatActivity {
     }
 
     public void showStationList(View view) {
-        if(stationList == null)
+        if (stationList == null)
             return;
         Intent showList = new Intent(this, ShowStationListActivity.class);
         showList.putExtra("title", R.string.txtLocationHint);
@@ -204,13 +214,30 @@ public class InputDepartureActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == RESULT_GET_DEPARTURE_STATION && resultCode == RESULT_OK && data != null) {
-            Stops selected = data.getExtras().getParcelable("stop");
-            if (selected == null)
-                return;
+        if (resultCode != RESULT_OK || data == null)
+            return;
 
-            manualStationSelected = true;
-            setDepartureStation(selected);
+        switch (requestCode) {
+            case RESULT_GET_DEPARTURE_STATION:
+                Stops selected = data.getExtras().getParcelable("stop");
+                if (selected == null)
+                    return;
+
+                manualStationSelected = true;
+                setDepartureStation(selected);
+                break;
+
+            case RESULT_GET_DEPARTURE_DATE:
+                Bundle resDate = data.getExtras();
+                setDepartureDateTime(new Date(resDate.getInt("year"), resDate.getInt("month"), resDate.getInt("day"),
+                        departureDate.getHours(), departureDate.getMinutes(), departureDate.getSeconds()));
+                break;
+
+            case RESULT_GET_DEPARTURE_TIME:
+                Bundle resTime = data.getExtras();
+                setDepartureDateTime(new Date(departureDate.getYear(), departureDate.getMonth(), departureDate.getDate(),
+                        resTime.getInt("hour"), resTime.getInt("minute"), departureDate.getSeconds()));
+                break;
         }
     }
 
@@ -222,5 +249,24 @@ public class InputDepartureActivity extends AppCompatActivity {
 
         this.departureStation = departureStation;
         txtDepartureStation.setText(departureStation.getName());
+    }
+
+    public void TextDepartureDateClicked(View view) {
+        Intent intent = new Intent(this, DateSelectionActivity.class);
+        intent.putExtra("title", R.string.txtDepartureDateHint);
+        intent.putExtra("year", departureDate.getYear() + 1900);
+        intent.putExtra("month", departureDate.getMonth());
+        intent.putExtra("day", departureDate.getDate());
+        intent.putExtra("color", R.color.dateSelection);
+        startActivityForResult(intent, RESULT_GET_DEPARTURE_DATE);
+    }
+
+    public void TextDepartureTimeClicked(View view) {
+        Intent intent = new Intent(this, TimeSelectionActivity.class);
+        intent.putExtra("title", R.string.txtDepartureTimeHint);
+        intent.putExtra("hour", departureDate.getHours());
+        intent.putExtra("minute", departureDate.getMinutes());
+        intent.putExtra("color", R.color.dateSelection);
+        startActivityForResult(intent, RESULT_GET_DEPARTURE_TIME);
     }
 }

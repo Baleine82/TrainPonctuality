@@ -33,36 +33,46 @@
         android:layout_alignBottom="@+id/btnSaveArrival"
         android:layout_alignParentStart="true" />
 
-    <EditText
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:inputType="date"
         android:ems="10"
         android:id="@+id/txtArrivalDate"
         android:hint="@string/txtArrivalDateHint"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:textSize="24sp"
+        android:height="40dp"
+        android:gravity="center"
+        android:onClick="TextArrivalDateClicked" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:ems="10"
+        android:id="@+id/txtArrivalTime"
+        android:hint="@string/txtArrivalTimeHint"
+        android:layout_marginTop="20dp"
+        android:textSize="24sp"
+        android:height="40dp"
+        android:gravity="center"
+        android:layout_below="@+id/txtArrivalDate"
+        android:layout_alignStart="@+id/txtArrivalDate"
+        android:onClick="TextArrivalTimeClicked" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:height="40dp"
+        android:gravity="center"
+        android:ems="10"
         android:id="@+id/txtLocation"
         android:text="@string/txtLocationArrivalHint"
         android:freezesText="true"
-        android:layout_below="@+id/txtArrivalDate"
-        android:layout_alignStart="@+id/txtArrivalDate"
-        android:layout_marginTop="26dp"
-        android:onClick="showStationList" />
-
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:id="@+id/txtArrivalTime"
-        android:inputType="time"
-        android:hint="@string/txtArrivalTimeHint"
-        android:layout_marginTop="26dp"
-        android:layout_below="@+id/txtLocation"
-        android:layout_alignStart="@+id/txtArrivalDate" />
+        android:layout_marginTop="20dp"
+        android:onClick="showStationList"
+        android:textAlignment="center"
+        android:textSize="24sp"
+        android:layout_below="@+id/txtArrivalTime"
+        android:layout_alignStart="@+id/txtArrivalTime" />
 </RelativeLayout>

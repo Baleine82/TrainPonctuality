@@ -30,6 +30,8 @@
                 android:value=".gui.MainActivity" />
         </activity>
         <activity android:name=".gui.ShowStationListActivity" />
+        <activity android:name=".gui.DateSelectionActivity" />
+        <activity android:name=".gui.TimeSelectionActivity"></activity>
     </application>
 
 </manifest>

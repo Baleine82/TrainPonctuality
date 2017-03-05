@@ -10,25 +10,32 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="me.arbogast.trainponctuality.gui.InputDepartureActivity">
 
-    <EditText
+    <TextView
         android:id="@+id/txtDepartureDate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:ems="10"
+        android:textSize="24sp"
         android:hint="@string/txtDepartureDateHint"
-        android:inputType="date" />
+        android:height="40dp"
+        android:gravity="center"
+        android:onClick="TextDepartureDateClicked" />
 
-    <EditText
+    <TextView
         android:id="@+id/txtDepartureTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignStart="@id/txtDepartureDate"
         android:layout_below="@id/txtDepartureDate"
+        android:layout_marginTop="20dp"
         android:ems="10"
         android:hint="@string/txtDepartureTimeHint"
-        android:inputType="time" />
+        android:textSize="24sp"
+        android:height="40dp"
+        android:gravity="center"
+        android:onClick="TextDepartureTimeClicked" />
 
     <Spinner
         android:id="@+id/spnLine"
@@ -48,35 +55,41 @@
         android:text="@string/txtLineHint" />
 
     <AutoCompleteTextView
-        android:id="@+id/spnMission"
+        android:id="@+id/actMission"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/spnLine"
+        android:layout_marginTop="20dp"
         android:layout_centerHorizontal="true"
         android:completionThreshold="1"
-        android:inputType="textCapCharacters"
-        android:minWidth="80dp" />
+        android:inputType="textNoSuggestions|textCapCharacters"
+        android:minWidth="80dp"
+        android:dropDownWidth="80dp"/>
 
     <TextView
-        android:labelFor="@id/spnMission"
+        android:labelFor="@id/actMission"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@id/spnMission"
+        android:layout_alignBottom="@id/actMission"
         android:layout_marginEnd="3dp"
-        android:layout_toStartOf="@id/spnMission"
+        android:layout_toStartOf="@id/actMission"
         android:text="@string/txtMissionHint" />
 
     <TextView
         android:id="@+id/txtLocation"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/spnMission"
+        android:layout_below="@id/actMission"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="26dp"
+        android:height="40dp"
+        android:gravity="center"
+        android:layout_marginTop="20dp"
         android:ems="10"
         android:freezesText="true"
         android:onClick="showStationList"
-        android:text="@string/txtLocationHint" />
+        android:text="@string/txtLocationHint"
+        android:textAlignment="center"
+        android:textSize="24sp" />
 
     <Button
         android:id="@+id/btnSaveStart"

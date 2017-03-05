@@ -5,5 +5,6 @@
     <color name="colorAccent">#FF4081</color>
     <color name="historyHeader">#007F00</color>
     <color name="stationSelection">#503040</color>
+    <color name="dateSelection">#603080</color>
     <color name="colorSelectedItem">#00A0FF</color>
 </resources>

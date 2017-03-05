@@ -44,4 +44,5 @@
     <string name="titleDeparture">Départ</string>
     <string name="titleArrival">Arrivée</string>
     <string name="titleHistory">Historique</string>
+    <string name="validate">OK</string>
 </resources>
