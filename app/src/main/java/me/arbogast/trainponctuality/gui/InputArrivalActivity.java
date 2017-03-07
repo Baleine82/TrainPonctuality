@@ -1,7 +1,6 @@
 package me.arbogast.trainponctuality.gui;
 
 import android.content.Intent;
-import android.location.Location;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -33,7 +32,6 @@ public class InputArrivalActivity extends AppCompatActivity {
     private Stops arrivalStation;
 
     private Observer locationObserver;
-    private Location foundLocation;
     private boolean manualStationSelected = false;
     private ArrayList<Stops> stationList;
     private Date arrivalDate;
@@ -58,7 +56,6 @@ public class InputArrivalActivity extends AppCompatActivity {
             public void update(Observable o, Object arg) {
                 Log.i(TAG, "update: Stopping Location");
                 LocationProxy.getInstance().stopRequest(getApplicationContext());
-                foundLocation = LocationProxy.getInstance().getLastBest();
                 autoSelectStation();
             }
         };
@@ -123,7 +120,7 @@ public class InputArrivalActivity extends AppCompatActivity {
             }
         };
 
-        findStationAsync.execute(new GetStationForLineParams(this, currentTravel.getLine(), foundLocation));
+        findStationAsync.execute(new GetStationForLineParams(this, currentTravel.getLine(), LocationProxy.getInstance().getLastBest()));
     }
 
 

@@ -6,12 +6,13 @@ import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.List;
 
+import me.arbogast.trainponctuality.gui.ShowHistoryActivity;
 import me.arbogast.trainponctuality.gui.Utils;
 import me.arbogast.trainponctuality.R;
 
@@ -20,95 +21,74 @@ import me.arbogast.trainponctuality.R;
  * Adapter to show Travels History list
  */
 
-public class HistoryAdapter extends BaseAdapter {
-    // View Type for Separators
-    private static final int ITEM_VIEW_TYPE_SEPARATOR = 0;
-    // View Type for Regular rows
-    private static final int ITEM_VIEW_TYPE_REGULAR = 1;
-
+public class HistoryAdapter extends ArrayAdapter<History> {
     private final Context context;
+    private final int resource;
     private final List<History> objects;
 
-    public HistoryAdapter(Context context, List<History> objects) {
+    public HistoryAdapter(Context context, int resource, List<History> objects) {
+        super(context, resource, objects);
+        this.resource = resource;
         this.context = context;
         this.objects = objects;
-    }
-
-    @Override
-    public int getCount() {
-        return objects.size();
-    }
-
-    @Override
-    public Object getItem(int position) {
-        return null;
-    }
-
-    @Override
-    public long getItemId(int position) {
-        return 0;
-    }
-
-    @Override
-    public int getItemViewType(int position) {
-        if (objects.get(position).isSection()) {
-            return ITEM_VIEW_TYPE_SEPARATOR;
-        } else {
-            return ITEM_VIEW_TYPE_REGULAR;
-        }
     }
 
     @SuppressLint("InflateParams")
     @NonNull
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        History line = objects.get(position);
-        if (line == null)
-            return convertView;
+    public View getView(int position, View convertView, @NonNull ViewGroup parent) {
+        HistoryHolder holder;
 
-        int itemViewType = getItemViewType(position);
+        if (convertView == null) {
+            LayoutInflater inflater = ((ShowHistoryActivity) context).getLayoutInflater();
+            convertView = inflater.inflate(resource, parent, false);
 
-        View view;
-        //if (view == null)
-        {
-            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            holder = new HistoryHolder();
+            holder.txtLine = (ImageView) convertView.findViewById(R.id.imgLine);
+            holder.txtDate = (TextView) convertView.findViewById(R.id.txtDate);
+            holder.txtMission = (TextView) convertView.findViewById(R.id.txtMission);
+            holder.txtDepartureDate = (TextView) convertView.findViewById(R.id.txtDepartureDate);
+            holder.txtDepartureStation = (TextView) convertView.findViewById(R.id.txtDepartureStation);
+            holder.txtArrivalDate = (TextView) convertView.findViewById(R.id.txtArrivalDate);
+            holder.txtArrivalStation = (TextView) convertView.findViewById(R.id.txtArrivalStation);
+            holder.txtTravelInProgress = (TextView) convertView.findViewById(R.id.txtTravelInProgress);
 
-            if (itemViewType == ITEM_VIEW_TYPE_SEPARATOR)
-                view = inflater.inflate(R.layout.show_history_section_header, null);
-            else
-                view = inflater.inflate(R.layout.show_history_row, null);
-        }
-
-        if (itemViewType == ITEM_VIEW_TYPE_SEPARATOR) {
-            TextView separatorView = (TextView) view.findViewById(R.id.txtSectionHeader);
-
-            separatorView.setText(line.getDayTravel());
+            convertView.setTag(holder);
         } else {
-            ImageView txtLine = (ImageView) view.findViewById(R.id.imgLine);
-            TextView txtMission = (TextView) view.findViewById(R.id.txtMission);
-            TextView txtDepartureDate = (TextView) view.findViewById(R.id.txtDepartureDate);
-            TextView txtDepartureStation = (TextView) view.findViewById(R.id.txtDepartureStation);
-            TextView txtArrivalDate = (TextView) view.findViewById(R.id.txtArrivalDate);
-            TextView txtArrivalStation = (TextView) view.findViewById(R.id.txtArrivalStation);
-
-            txtLine.setImageResource(context.getResources().getIdentifier(line.getTravel().getLine().toLowerCase(), "drawable", context.getPackageName()));
-            txtMission.setText(line.getTravel().getMissionCode());
-            txtDepartureDate.setText(Utils.timeToString(line.getTravel().getDepartureDate()));
-            txtDepartureStation.setText(line.getDepartureStation());
-            if (line.getArrivalStation() != null) {
-                txtArrivalDate.setText(Utils.timeToString(line.getTravel().getArrivalDate()));
-                txtArrivalStation.setText(line.getArrivalStation());
-            } else {
-                txtArrivalDate.setVisibility(View.GONE);
-                txtArrivalStation.setVisibility(View.GONE);
-                TextView txtTravelInProgress = (TextView) view.findViewById(R.id.txtTravelInProgress);
-                txtTravelInProgress.setVisibility(View.VISIBLE);
-            }
-
-            if (line.getIsSelected())
-                view.setBackgroundResource(R.color.colorSelectedItem);
+            holder = (HistoryHolder) convertView.getTag();
         }
 
-        return view;
+        History line = objects.get(position);
+        holder.txtDate.setText(Utils.dateToString(line.getTravel().getDepartureDate()));
+        holder.txtLine.setImageResource(context.getResources().getIdentifier(line.getTravel().getLine().toLowerCase(), "drawable", context.getPackageName()));
+        holder.txtMission.setText(line.getTravel().getMissionCode());
+        holder.txtDepartureDate.setText(Utils.timeToString(line.getTravel().getDepartureDate()));
+        holder.txtDepartureStation.setText(line.getDepartureStation());
+        if (line.getArrivalStation() != null) {
+            holder.txtArrivalDate.setVisibility(View.VISIBLE);
+            holder.txtArrivalStation.setVisibility(View.VISIBLE);
+            holder.txtTravelInProgress.setVisibility(View.GONE);
+            holder.txtArrivalDate.setText(Utils.timeToString(line.getTravel().getArrivalDate()));
+            holder.txtArrivalStation.setText(line.getArrivalStation());
+        } else {
+            holder.txtArrivalDate.setVisibility(View.GONE);
+            holder.txtArrivalStation.setVisibility(View.GONE);
+            holder.txtTravelInProgress.setVisibility(View.VISIBLE);
+        }
+
+        convertView.setBackgroundResource(line.getIsSelected() ? R.color.colorSelectedItem : 0);
+
+        return convertView;
+    }
+
+    private static class HistoryHolder {
+        private TextView txtArrivalDate;
+        private ImageView txtLine;
+        private TextView txtDate;
+        private TextView txtMission;
+        private TextView txtDepartureDate;
+        private TextView txtDepartureStation;
+        private TextView txtArrivalStation;
+        private TextView txtTravelInProgress;
     }
 }

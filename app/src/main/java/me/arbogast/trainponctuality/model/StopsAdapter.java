@@ -33,35 +33,34 @@ public class StopsAdapter extends ArrayAdapter<Stops> {
     @NonNull
     @Override
     public View getView(int position, View convertView, @NonNull ViewGroup parent) {
-        View row = convertView;
         StopsHolder holder;
 
-        if(row == null)
+        if(convertView == null)
         {
             LayoutInflater inflater = ((ShowStationListActivity)context).getLayoutInflater();
-            row = inflater.inflate(resource, parent, false);
+            convertView = inflater.inflate(resource, parent, false);
 
             holder = new StopsHolder();
-            //holder.txtId = (TextView)row.findViewById(R.id.txtId);
-            holder.txtName = (TextView)row.findViewById(R.id.txtElem);
+            //holder.txtId = (TextView)convertView.findViewById(R.id.txtId);
+            holder.txtName = (TextView)convertView.findViewById(R.id.txtElem);
 
-            row.setTag(holder);
+            convertView.setTag(holder);
         }
         else
         {
-            holder = (StopsHolder)row.getTag();
+            holder = (StopsHolder)convertView.getTag();
         }
 
         Stops t = this.objects.get(position);
         //holder.txtId.setText(t.getId());
         holder.txtName.setText(t.getName());
 
-        return row;
+        return convertView;
     }
 
     private class StopsHolder
     {
-        TextView txtId;
+        //TextView txtId;
         TextView txtName;
     }
 }

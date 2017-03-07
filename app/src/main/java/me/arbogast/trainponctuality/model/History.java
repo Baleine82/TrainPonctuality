@@ -10,15 +10,9 @@ import me.arbogast.trainponctuality.gui.Utils;
 public class History {
     private Travel iTravel;
     private String dayTravel;
-    private boolean isSection;
     private boolean isSelected;
     private String departureStation;
     private String arrivalStation;
-
-    public History(String day) {
-        isSection = true;
-        dayTravel = day;
-    }
 
     public History(Travel travel, String stationDeparture, String stationArrival) {
         this.iTravel = travel;
@@ -33,10 +27,6 @@ public class History {
 
     public Travel getTravel() {
         return iTravel;
-    }
-
-    public boolean isSection() {
-        return isSection;
     }
 
     public void setIsSelected(boolean isSelected) {

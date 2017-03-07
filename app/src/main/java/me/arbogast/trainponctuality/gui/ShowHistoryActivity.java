@@ -37,22 +37,7 @@ public class ShowHistoryActivity extends AppCompatActivity implements AdapterVie
             data = dbTravel.selectHistory();
         }
 
-        // Detecting when the list changes day
-        // I don't think that's very beautiful, but it comes from http://codetheory.in/android-dividing-listview-sections-group-headers/
-        String currentDay = null;
-        for (int i = 0; i < data.size(); i++) {
-            History obj = data.get(i);
-            if (obj == null)
-                continue;
-
-            if (currentDay == null || !obj.getDayTravel().equals(currentDay)) {
-                currentDay = obj.getDayTravel();
-                data.add(i, new History(currentDay));
-                i++; // we skip next item, it's the item we were on
-            }
-        }
-
-        adapter = new HistoryAdapter(this, data);
+        adapter = new HistoryAdapter(this, R.layout.show_history_row, data);
         ListView listView1 = (ListView) findViewById(R.id.listView1);
         listView1.setAdapter(adapter);
         listView1.setOnItemLongClickListener(this);
@@ -73,24 +58,14 @@ public class ShowHistoryActivity extends AppCompatActivity implements AdapterVie
 
         try (TravelDAO dbTravel = new TravelDAO(this)) {
             dbTravel.delete(Long.parseLong(selectedItem.getTravel().getId()));
-
-            String dayOfTravel = selectedItem.getDayTravel();
-            int indexRemove = data.indexOf(selectedItem);
-            // remove associated header if it was the only travel for the date
-            if ((indexRemove == data.size() - 1) || !data.get(indexRemove + 1).getDayTravel().equals(dayOfTravel) &&
-                    (indexRemove < 2 || !data.get(indexRemove - 2).getDayTravel().equals(dayOfTravel)))
-                data.remove(indexRemove - 1);
-            data.remove(selectedItem);
-
-            adapter.notifyDataSetChanged();
         }
+
+        data.remove(selectedItem);
+        adapter.notifyDataSetChanged();
     }
 
     public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
         History selected = data.get(position);
-        if (selected.isSection())
-            return false;
-
         setSelectedItem(selected);
         return true;
     }
