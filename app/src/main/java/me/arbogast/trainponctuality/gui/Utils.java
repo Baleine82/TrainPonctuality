@@ -2,9 +2,9 @@ package me.arbogast.trainponctuality.gui;
 
 import android.annotation.SuppressLint;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.GregorianCalendar;
 
 /**
  * Created by excelsior on 22/12/16.
@@ -14,13 +14,9 @@ import java.util.GregorianCalendar;
 public class Utils {
     private static final String TAG = "Utils";
     @SuppressLint("SimpleDateFormat")
-    private static SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+    private static DateFormat dateFormat = SimpleDateFormat.getDateInstance(SimpleDateFormat.SHORT);
     @SuppressLint("SimpleDateFormat")
-    private static SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
-
-    static Date now() {
-        return GregorianCalendar.getInstance().getTime();
-    }
+    private static DateFormat timeFormat = SimpleDateFormat.getTimeInstance(SimpleDateFormat.SHORT);
 
     public static String dateToString(Date d)
     {

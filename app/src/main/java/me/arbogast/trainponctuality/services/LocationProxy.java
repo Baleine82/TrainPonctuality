@@ -43,6 +43,8 @@ public class LocationProxy extends Observable {
     }
 
     private void notifyIfAccuracyIsMet() {
+        if(lastBest == null)
+            return;
         Log.i(TAG, "notifyIfAccuracyIsMet: Accuracy = " + lastBest.getAccuracy());
         if (lastBest.getAccuracy() < GOODENOUGHACCURACY && GregorianCalendar.getInstance().getTime().getTime() - lastBest.getTime() < TWO_MINUTES) {
             Log.i(TAG, "notifyIfAccuracyIsMet: ");

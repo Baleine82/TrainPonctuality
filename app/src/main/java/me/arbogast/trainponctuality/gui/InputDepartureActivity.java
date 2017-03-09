@@ -1,10 +1,12 @@
 package me.arbogast.trainponctuality.gui;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -12,7 +14,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -36,7 +39,7 @@ public class InputDepartureActivity extends AppCompatActivity {
     private TextView txtDepartureTime;
     private TextView txtDepartureStation;
     private Spinner spnLine;
-    private AutoCompleteTextView spnMission;
+    private AutoCompleteTextView actMission;
 
     private Stops departureStation;
     private Line selectedLine;
@@ -44,7 +47,7 @@ public class InputDepartureActivity extends AppCompatActivity {
     private Observer locationObserver;
     private ArrayList<Stops> stationList;
     private boolean manualStationSelected = false;
-    private Date departureDate;
+    private Calendar departureDate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,9 +59,18 @@ public class InputDepartureActivity extends AppCompatActivity {
         txtDepartureTime = (TextView) findViewById(R.id.txtDepartureTime);
         txtDepartureStation = (TextView) findViewById(R.id.txtLocation);
         spnLine = (Spinner) findViewById(R.id.spnLine);
-        spnMission = (AutoCompleteTextView) findViewById(R.id.actMission);
+        actMission = (AutoCompleteTextView) findViewById(R.id.actMission);
 
-        setDepartureDateTime(Utils.now());
+        // This is not working, why?
+        actMission.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                InputMethodManager in = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                in.hideSoftInputFromInputMethod(view.getApplicationWindowToken(), 0);
+            }
+        });
+
+        setDepartureDateTime(GregorianCalendar.getInstance());
 
         spnLine.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -91,17 +103,22 @@ public class InputDepartureActivity extends AppCompatActivity {
             public void update(Observable o, Object arg) {
                 Log.i(TAG, "update: Stopping Location");
                 LocationProxy.getInstance().stopRequest(getApplicationContext());
-                autoSelectStation();
+                //autoSelectStation();
             }
         };
         Log.i(TAG, "onCreate: AddObserver");
         LocationProxy.getInstance().addObserver(locationObserver);
     }
 
-    private void setDepartureDateTime(Date select) {
-        departureDate = select;
-        txtDepartureDate.setText(Utils.dateToString(select));
-        txtDepartureTime.setText(Utils.timeToString(select));
+    private void setDepartureDateTime(Calendar date) {
+        departureDate = date;
+        txtDepartureDate.setText(Utils.dateToString(departureDate.getTime()));
+        txtDepartureTime.setText(Utils.timeToString(departureDate.getTime()));
+    }
+    private void setDepartureDateTime(Long millis) {
+        departureDate.setTimeInMillis(millis);
+        txtDepartureDate.setText(Utils.dateToString(departureDate.getTime()));
+        txtDepartureTime.setText(Utils.timeToString(departureDate.getTime()));
     }
 
     private void autoSelectStation() {
@@ -153,7 +170,7 @@ public class InputDepartureActivity extends AppCompatActivity {
 
         outState.putParcelable("departureStation", departureStation);
         outState.putString("selectedLine", selectedLine.getCode());
-        outState.putLong("departureDate", departureDate.getTime());
+        outState.putLong("departureDate", departureDate.getTimeInMillis());
     }
 
     @Override
@@ -165,7 +182,7 @@ public class InputDepartureActivity extends AppCompatActivity {
             setSelectedLine(new Line(lineCode));
         setDepartureStation((Stops) savedInstanceState.getParcelable("departureStation"));
 
-        setDepartureDateTime(new Date(savedInstanceState.getLong("departureDate")));
+        setDepartureDateTime(savedInstanceState.getLong("departureDate"));
     }
 
     private void populateMissions() {
@@ -174,11 +191,11 @@ public class InputDepartureActivity extends AppCompatActivity {
 
     private void populateMissions(String select) {
         if (selectedLine == null)
-            spnMission.setAdapter(null);
+            actMission.setAdapter(null);
         else {
             try (TripsDAO dbTrips = new TripsDAO(this)) {
                 ArrayAdapter missionAdapter = new ArrayAdapter<>(this, R.layout.spinner_row_text, dbTrips.getTripsForLine(select != null ? select : selectedLine.getCode()));
-                spnMission.setAdapter(missionAdapter);
+                actMission.setAdapter(missionAdapter);
             }
         }
     }
@@ -187,7 +204,7 @@ public class InputDepartureActivity extends AppCompatActivity {
         if (departureStation == null || selectedLine == null)
             return;
 
-        Travel departure = new Travel(departureDate, selectedLine.getCode(), spnMission.getText().toString(), departureStation.getId());
+        Travel departure = new Travel(departureDate.getTime(), selectedLine.getCode(), actMission.getText().toString(), departureStation.getId());
 
         try (TravelDAO dbTravel = new TravelDAO(this)) {
             dbTravel.insert(departure);
@@ -225,15 +242,8 @@ public class InputDepartureActivity extends AppCompatActivity {
                 break;
 
             case RESULT_GET_DEPARTURE_DATE:
-                Bundle resDate = data.getExtras();
-                setDepartureDateTime(new Date(resDate.getInt("year"), resDate.getInt("month"), resDate.getInt("day"),
-                        departureDate.getHours(), departureDate.getMinutes(), departureDate.getSeconds()));
-                break;
-
             case RESULT_GET_DEPARTURE_TIME:
-                Bundle resTime = data.getExtras();
-                setDepartureDateTime(new Date(departureDate.getYear(), departureDate.getMonth(), departureDate.getDate(),
-                        resTime.getInt("hour"), resTime.getInt("minute"), departureDate.getSeconds()));
+                setDepartureDateTime(data.getExtras().getLong("date"));
                 break;
         }
     }
@@ -251,9 +261,7 @@ public class InputDepartureActivity extends AppCompatActivity {
     public void TextDepartureDateClicked(View view) {
         Intent intent = new Intent(this, DateSelectionActivity.class);
         intent.putExtra("title", R.string.txtDepartureDateHint);
-        intent.putExtra("year", departureDate.getYear() + 1900);
-        intent.putExtra("month", departureDate.getMonth());
-        intent.putExtra("day", departureDate.getDate());
+        intent.putExtra("date", departureDate.getTimeInMillis());
         intent.putExtra("color", R.color.dateSelection);
         startActivityForResult(intent, RESULT_GET_DEPARTURE_DATE);
     }
@@ -261,8 +269,7 @@ public class InputDepartureActivity extends AppCompatActivity {
     public void TextDepartureTimeClicked(View view) {
         Intent intent = new Intent(this, TimeSelectionActivity.class);
         intent.putExtra("title", R.string.txtDepartureTimeHint);
-        intent.putExtra("hour", departureDate.getHours());
-        intent.putExtra("minute", departureDate.getMinutes());
+        intent.putExtra("date", departureDate.getTimeInMillis());
         intent.putExtra("color", R.color.dateSelection);
         startActivityForResult(intent, RESULT_GET_DEPARTURE_TIME);
     }

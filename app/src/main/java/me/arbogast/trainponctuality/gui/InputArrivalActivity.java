@@ -8,7 +8,8 @@ import android.view.View;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -34,7 +35,7 @@ public class InputArrivalActivity extends AppCompatActivity {
     private Observer locationObserver;
     private boolean manualStationSelected = false;
     private ArrayList<Stops> stationList;
-    private Date arrivalDate;
+    private Calendar arrivalDate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +47,7 @@ public class InputArrivalActivity extends AppCompatActivity {
         txtArrivalTime = (TextView) findViewById(R.id.txtArrivalTime);
         txtArrivalStation = (TextView) findViewById(R.id.txtLocation);
 
-        setArrivalDateTime(Utils.now());
+        setArrivalDateTime(GregorianCalendar.getInstance());
 
         Bundle data = getIntent().getExtras();
         currentTravel = data.getParcelable("travel");
@@ -61,12 +62,18 @@ public class InputArrivalActivity extends AppCompatActivity {
         };
         Log.i(TAG, "onCreate: AddObserver");
         LocationProxy.getInstance().addObserver(locationObserver);
+        autoSelectStation();
     }
 
-    private void setArrivalDateTime(Date select) {
+    private void setArrivalDateTime(Calendar select) {
         arrivalDate = select;
-        txtArrivalDate.setText(Utils.dateToString(select));
-        txtArrivalTime.setText(Utils.timeToString(select));
+        txtArrivalDate.setText(Utils.dateToString(arrivalDate.getTime()));
+        txtArrivalTime.setText(Utils.timeToString(arrivalDate.getTime()));
+    }
+    private void setArrivalDateTime(Long millis) {
+        arrivalDate.setTimeInMillis(millis);
+        txtArrivalDate.setText(Utils.dateToString(arrivalDate.getTime()));
+        txtArrivalTime.setText(Utils.timeToString(arrivalDate.getTime()));
     }
 
     @Override
@@ -74,7 +81,7 @@ public class InputArrivalActivity extends AppCompatActivity {
         super.onSaveInstanceState(outState);
         outState.putParcelable("currentTravel", currentTravel);
         outState.putParcelable("arrivalStation", arrivalStation);
-        outState.putLong("arrivalDate", arrivalDate.getTime());
+        outState.putLong("arrivalDate", arrivalDate.getTimeInMillis());
     }
 
     @Override
@@ -83,7 +90,7 @@ public class InputArrivalActivity extends AppCompatActivity {
         currentTravel = savedInstanceState.getParcelable("currentTravel");
         setArrivalStation((Stops) savedInstanceState.getParcelable("arrivalStation"));
 
-        setArrivalDateTime(new Date(savedInstanceState.getLong("arrivalDate")));
+        setArrivalDateTime(savedInstanceState.getLong("arrivalDate"));
     }
 
     @Override
@@ -129,7 +136,7 @@ public class InputArrivalActivity extends AppCompatActivity {
     }
 
     public void ValidateArrival(View view) {
-        currentTravel.setArrivalDate(arrivalDate);
+        currentTravel.setArrivalDate(arrivalDate.getTime());
         try (TravelDAO dbTravel = new TravelDAO(this)) {
             dbTravel.update(currentTravel);
         }
@@ -159,17 +166,11 @@ public class InputArrivalActivity extends AppCompatActivity {
 
                 manualStationSelected = true;
                 setArrivalStation(arrivalStation);
-
-            case RESULT_GET_ARRIVAL_DATE:
-                Bundle resDate = data.getExtras();
-                setArrivalDateTime(new Date(resDate.getInt("year"), resDate.getInt("month"), resDate.getInt("day"),
-                        arrivalDate.getHours(), arrivalDate.getMinutes(), arrivalDate.getSeconds()));
                 break;
 
+            case RESULT_GET_ARRIVAL_DATE:
             case RESULT_GET_ARRIVAL_TIME:
-                Bundle resTime = data.getExtras();
-                setArrivalDateTime(new Date(arrivalDate.getYear(), arrivalDate.getMonth(), arrivalDate.getDate(),
-                        resTime.getInt("hour"), resTime.getInt("minute"), arrivalDate.getSeconds()));
+                setArrivalDateTime(data.getExtras().getLong("date"));
                 break;
         }
     }
@@ -189,9 +190,7 @@ public class InputArrivalActivity extends AppCompatActivity {
     public void TextArrivalDateClicked(View view) {
         Intent intent = new Intent(this, DateSelectionActivity.class);
         intent.putExtra("title", R.string.txtDepartureDateHint);
-        intent.putExtra("year", arrivalDate.getYear() + 1900);
-        intent.putExtra("month", arrivalDate.getMonth());
-        intent.putExtra("day", arrivalDate.getDate());
+        intent.putExtra("date", arrivalDate.getTimeInMillis());
         intent.putExtra("color", R.color.dateSelection);
         startActivityForResult(intent, RESULT_GET_ARRIVAL_DATE);
     }
@@ -199,8 +198,7 @@ public class InputArrivalActivity extends AppCompatActivity {
     public void TextArrivalTimeClicked(View view) {
         Intent intent = new Intent(this, TimeSelectionActivity.class);
         intent.putExtra("title", R.string.txtDepartureTimeHint);
-        intent.putExtra("hour", arrivalDate.getHours());
-        intent.putExtra("minute", arrivalDate.getMinutes());
+        intent.putExtra("date", arrivalDate.getTimeInMillis());
         intent.putExtra("color", R.color.dateSelection);
         startActivityForResult(intent, RESULT_GET_ARRIVAL_TIME);
     }

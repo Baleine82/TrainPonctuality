@@ -31,7 +31,7 @@
         </activity>
         <activity android:name=".gui.ShowStationListActivity" />
         <activity android:name=".gui.DateSelectionActivity" />
-        <activity android:name=".gui.TimeSelectionActivity"></activity>
+        <activity android:name=".gui.TimeSelectionActivity" />
     </application>
 
 </manifest>
