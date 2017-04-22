@@ -1,11 +1,13 @@
-package me.arbogast.trainponctuality.sncfapi;
+package me.arbogast.trainponctuality.services;
 
 import android.annotation.SuppressLint;
+import android.app.IntentService;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
+import android.support.annotation.Nullable;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
-import android.view.View;
 
 import com.opencsv.CSVReader;
 
@@ -42,22 +44,19 @@ import me.arbogast.trainponctuality.R;
  * Task to synchronize SNCF GTFS data
  */
 
-public class InitializeSncfData extends AsyncTask<URL, Integer, String> {
+public class InitializeSncfData extends IntentService {
     private static final String TAG = "InitializeSncfData";
-
+    public static final String INITIALIZE_DATA_FINISHED_BROADCAST = "me.arbogast.trainponctuality.InitializeSncfData.Completed";
     private Context myContext;
-    private View statusView;
 
-    public InitializeSncfData(Context context, View status) {
-        super();
-
-        myContext = context;
-        statusView = status;
+    public InitializeSncfData() {
+        super("InitializeSncfData");
     }
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
     @Override
-    protected String doInBackground(URL... params) {
+    protected void onHandleIntent(@Nullable Intent intent) {
+        myContext = this.getApplicationContext();
         File zipSncfInfo = new File(myContext.getCacheDir(), myContext.getString(R.string.zipSncf));
         File outputDir = new File(myContext.getCacheDir(), myContext.getString(R.string.unzipSncf));
 
@@ -67,7 +66,7 @@ public class InitializeSncfData extends AsyncTask<URL, Integer, String> {
 
             GtfsInfo myInfo = getGTFSinfo();
             if(myInfo == null || myInfo.getLastUpdate().compareTo(lastUpdate) <= 0)
-                return null;
+                return;
 
             downloadGTFSfile(myInfo.getFileId(), zipSncfInfo.getPath());
 
@@ -91,7 +90,6 @@ public class InitializeSncfData extends AsyncTask<URL, Integer, String> {
                 InsertData(new File(outputDir, myContext.getString(R.string.sncfSCalendarFile)), dbCalendar, ',', '\"');
             }
 
-
             SharedPreferences.Editor editor = prefs.edit();
             editor.putLong(myContext.getString(R.string.prefsLastUpdateSncf), myInfo.getLastUpdate().getTime());
             editor.apply();
@@ -113,15 +111,11 @@ public class InitializeSncfData extends AsyncTask<URL, Integer, String> {
                 }
                 outputDir.delete();
             }
+
+            Intent localIntent = new Intent(INITIALIZE_DATA_FINISHED_BROADCAST);
+            // Broadcasts the Intent to receivers in this app.
+            LocalBroadcastManager.getInstance(this).sendBroadcast(localIntent);
         }
-
-        return null;
-    }
-
-    @Override
-    protected void onPostExecute(String s) {
-        super.onPostExecute(s);
-        statusView.setVisibility(View.INVISIBLE);
     }
 
     @SuppressWarnings("ThrowFromFinallyBlock")
@@ -137,7 +131,7 @@ public class InitializeSncfData extends AsyncTask<URL, Integer, String> {
             // ignoring first line which contains header
             reader.readNext();
             String[] nextLine;
-            bdd.beginTransaction(true);
+            bdd.beginTransaction();
 
             bdd.truncate();
             while ((nextLine = reader.readNext()) != null) {

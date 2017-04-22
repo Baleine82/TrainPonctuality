@@ -32,7 +32,9 @@ public class TimeSelectionActivity extends AppCompatActivity {
         dtpTime.setIs24HourView(true);
         timeSelection = GregorianCalendar.getInstance();
         timeSelection.setTimeInMillis(extras.getLong("date"));
+        //noinspection deprecation
         dtpTime.setCurrentHour(timeSelection.get(Calendar.HOUR_OF_DAY));
+        //noinspection deprecation
         dtpTime.setCurrentMinute(timeSelection.get(Calendar.MINUTE));
     }
 
@@ -50,7 +52,9 @@ public class TimeSelectionActivity extends AppCompatActivity {
 
     public void InputValidateClick(View view) {
         Intent resultIntent = new Intent();
+        //noinspection deprecation
         timeSelection.set(Calendar.HOUR_OF_DAY, dtpTime.getCurrentHour());
+        //noinspection deprecation
         timeSelection.set(Calendar.MINUTE, dtpTime.getCurrentMinute());
         resultIntent.putExtra("date", timeSelection.getTimeInMillis());
         setResult(Activity.RESULT_OK, resultIntent);

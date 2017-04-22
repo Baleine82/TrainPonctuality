@@ -4,6 +4,10 @@
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="me.arbogast.trainponctuality.gui.MainActivity">
 
     <TextView
@@ -11,7 +15,134 @@
         android:layout_height="wrap_content"
         android:id="@+id/txtStatus"
         android:text="@string/Synchronize"
-        android:layout_column="0" />
+        android:layout_row="0"
+        android:layout_column="0"
+        android:layout_marginBottom="10dp" />
+
+    <LinearLayout
+        android:id="@+id/layoutTravel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        android:layout_row="1"
+        android:layout_column="0"
+        android:orientation="vertical"
+        android:visibility="gone"
+        android:background="@drawable/border">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_margin="5dp"
+            android:text="@string/travelInProgress"
+            android:textSize="20sp" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="2dp">
+
+            <ImageView
+                android:id="@+id/imgLine"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:layout_gravity="center"
+                android:contentDescription="@string/imgLine"
+                tools:src="@drawable/a" />
+
+            <TextView
+                android:id="@+id/txtMission"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="4dp"
+                android:layout_marginStart="4dp"
+                android:layout_alignParentStart="true"
+                android:layout_alignTop="@id/imgLine"
+                android:layout_alignBottom="@id/imgLine"
+                android:layout_toStartOf="@id/imgLine"
+                android:gravity="center_vertical|start"
+                android:textSize="20sp"
+                tools:text="QENO" />
+
+            <TextView
+                android:id="@+id/txtDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="4dp"
+                android:layout_marginStart="4dp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignTop="@id/imgLine"
+                android:layout_alignBottom="@id/imgLine"
+                android:layout_toEndOf="@id/imgLine"
+                android:gravity="center_vertical|end"
+                android:textSize="20sp"
+                tools:text="06/03/2017" />
+        </RelativeLayout>
+
+        <GridLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/txtDepartureDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="4dp"
+                android:layout_marginStart="4dp"
+                android:layout_column="0"
+                android:layout_row="0"
+                android:textSize="20sp"
+                tools:text="14:00" />
+
+            <TextView
+                android:id="@+id/txtArrivalDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="4dp"
+                android:layout_marginStart="4dp"
+                android:layout_column="0"
+                android:layout_row="1"
+                android:textSize="20sp"
+                tools:text="14:00" />
+
+            <TextView
+                android:id="@+id/txtDepartureDelay"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="4dp"
+                android:layout_marginStart="4dp"
+                android:layout_column="1"
+                android:layout_row="0"
+                android:textSize="20sp"
+                tools:text="(+3)"
+                tools:textColor="@android:color/holo_red_dark" />
+
+            <TextView
+                android:id="@+id/txtDepartureStation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="4dp"
+                android:layout_marginStart="4dp"
+                android:layout_column="2"
+                android:layout_row="0"
+                android:textSize="20sp"
+                tools:text="CHATELET-LES-HALLES" />
+
+            <TextView
+                android:id="@+id/txtTravelInProgress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="4dp"
+                android:layout_marginStart="4dp"
+                android:layout_column="2"
+                android:layout_row="1"
+                android:text="@string/travelInProgress"
+                android:textSize="20sp" />
+        </GridLayout>
+    </LinearLayout>
 
     <Button
         android:text="@string/btnMenuInputDeparture"
@@ -19,9 +150,10 @@
         android:layout_height="wrap_content"
         android:id="@+id/btnInputDeparture"
         android:onClick="InputDepartureClick"
-        android:layout_row="1"
+        android:layout_row="2"
         android:layout_column="0"
-        android:layout_gravity="center_horizontal" />
+        android:layout_gravity="center_horizontal"
+        android:layout_margin="5dp" />
 
     <Button
         android:text="@string/btnInputArrivalText"
@@ -29,9 +161,10 @@
         android:layout_height="wrap_content"
         android:id="@+id/btnInputArrival"
         android:onClick="InputArrivalClick"
-        android:layout_row="2"
+        android:layout_row="3"
         android:layout_column="0"
-        android:layout_gravity="center_horizontal" />
+        android:layout_gravity="center_horizontal"
+        android:layout_margin="5dp" />
 
     <Button
         android:text="@string/btnHistoryText"
@@ -39,8 +172,9 @@
         android:layout_height="wrap_content"
         android:id="@+id/btnHistory"
         android:onClick="InputHistoryClick"
-        android:layout_row="3"
+        android:layout_row="4"
         android:layout_column="0"
-        android:layout_gravity="center_horizontal" />
+        android:layout_gravity="center_horizontal"
+        android:layout_margin="5dp" />
 
 </GridLayout>

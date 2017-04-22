@@ -19,12 +19,10 @@ import me.arbogast.trainponctuality.R;
 
 public class LineAdapter extends ArrayAdapter<Line> {
     private final Context context;
-    private final int resource;
     private final List<Line> objects;
 
     public LineAdapter(Context context, int resource, List<Line> objects) {
         super(context, resource, objects);
-        this.resource = resource;
         this.context = context;
         this.objects = objects;
     }

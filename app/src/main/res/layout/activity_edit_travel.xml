@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_input_departure"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="me.arbogast.trainponctuality.gui.InputDepartureActivity">
+
+    <LinearLayout
+        android:baselineAligned="false"
+        android:orientation="horizontal"
+        android:id="@+id/gridDates"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/txtDepartureLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="@string/txtDeparture"
+                android:textSize="24sp" />
+
+            <TextView
+                android:id="@+id/txtDepartureDate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:height="40dp"
+                android:gravity="center"
+                android:hint="@string/txtDepartureDateHint"
+                android:onClick="TextDepartureDateClicked"
+                android:textSize="24sp" />
+
+            <TextView
+                android:id="@+id/txtDepartureTime"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:height="40dp"
+                android:gravity="center"
+                android:hint="@string/txtDepartureTimeHint"
+                android:onClick="TextDepartureTimeClicked"
+                android:textSize="24sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/txtArrivalLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="@string/txtArrival"
+                android:textSize="24sp" />
+
+            <TextView
+                android:id="@+id/txtArrivalDate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:height="40dp"
+                android:gravity="center"
+                android:hint="@string/txtArrivalDateHint"
+                android:onClick="TextArrivalDateClicked"
+                android:textSize="24sp" />
+
+            <TextView
+                android:id="@+id/txtArrivalTime"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:height="40dp"
+                android:gravity="center"
+                android:hint="@string/txtArrivalTimeHint"
+                android:onClick="TextArrivalTimeClicked"
+                android:textSize="24sp" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <Spinner
+        android:id="@+id/spnLine"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/gridDates"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="26dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/spnLine"
+        android:layout_marginEnd="3dp"
+        android:layout_toStartOf="@id/spnLine"
+        android:labelFor="@id/spnLine"
+        android:text="@string/txtLineHint" />
+
+    <AutoCompleteTextView
+        android:id="@+id/actMission"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/spnLine"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:completionThreshold="1"
+        android:inputType="textNoSuggestions|textCapCharacters"
+        android:minWidth="90dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/actMission"
+        android:layout_marginEnd="3dp"
+        android:layout_toStartOf="@id/actMission"
+        android:labelFor="@id/actMission"
+        android:text="@string/txtMissionHint" />
+
+    <TextView
+        android:id="@+id/txtDepartureLocation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/actMission"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:height="40dp"
+        android:freezesText="true"
+        android:gravity="center"
+        android:onClick="showDepartureStationList"
+        android:text="@string/txtLocationHint"
+        android:textAlignment="center"
+        android:textSize="24sp" />
+
+    <TextView
+        android:id="@+id/txtArrivalLocation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/txtDepartureLocation"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:height="40dp"
+        android:freezesText="true"
+        android:gravity="center"
+        android:onClick="showArrivalStationList"
+        android:text="@string/txtLocationArrivalHint"
+        android:textAlignment="center"
+        android:textSize="24sp" />
+
+</RelativeLayout>

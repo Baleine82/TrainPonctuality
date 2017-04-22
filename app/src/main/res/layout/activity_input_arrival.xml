@@ -61,11 +61,10 @@
         android:onClick="TextArrivalTimeClicked" />
 
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:height="40dp"
         android:gravity="center"
-        android:ems="10"
         android:id="@+id/txtLocation"
         android:text="@string/txtLocationArrivalHint"
         android:freezesText="true"
@@ -73,6 +72,5 @@
         android:onClick="showStationList"
         android:textAlignment="center"
         android:textSize="24sp"
-        android:layout_below="@+id/txtArrivalTime"
-        android:layout_alignStart="@+id/txtArrivalTime" />
+        android:layout_below="@+id/txtArrivalTime" />
 </RelativeLayout>

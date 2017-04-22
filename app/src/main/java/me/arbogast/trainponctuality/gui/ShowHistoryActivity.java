@@ -1,5 +1,6 @@
 package me.arbogast.trainponctuality.gui;
 
+import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
@@ -92,5 +93,24 @@ public class ShowHistoryActivity extends AppCompatActivity implements AdapterVie
         selectedItem = chosen;
         adapter.notifyDataSetChanged();
         supportInvalidateOptionsMenu();
+    }
+
+    public void ModifyHistoryLine(MenuItem item) {
+        Intent editTravel = new Intent(this, EditTravelActivity.class);
+        editTravel.putExtra("history", selectedItem);
+        startActivityForResult(editTravel, Utils.RESULT_EDIT_TRAVEL);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == Utils.RESULT_EDIT_TRAVEL && resultCode == RESULT_OK) {
+            int idxSelect = this.data.indexOf(selectedItem);
+            this.data.remove(idxSelect);
+            History res = data.getExtras().getParcelable("history");
+            this.data.add(idxSelect,res);
+
+            adapter.notifyDataSetChanged();
+        }
     }
 }

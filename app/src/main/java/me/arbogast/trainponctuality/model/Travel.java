@@ -136,5 +136,16 @@ public class Travel implements Parcelable, IGetId {
         }
     };
 
+    private boolean isValidDeparture(){
+        return line != null && !line.equals("") &&
+                missionCode != null && !missionCode.equals("") &&
+                departureStation != null && !departureStation.equals("");
+    }
+
+    public boolean isInValidTravel() {
+        return !(isValidDeparture() ||
+                arrivalStation != null && !arrivalStation.equals(""));
+    }
+
     //endregion
 }

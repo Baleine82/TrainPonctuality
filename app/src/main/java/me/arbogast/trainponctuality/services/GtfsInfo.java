@@ -1,4 +1,4 @@
-package me.arbogast.trainponctuality.sncfapi;
+package me.arbogast.trainponctuality.services;
 
 import java.util.Date;
 

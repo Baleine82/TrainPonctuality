@@ -42,10 +42,6 @@ public class Stops implements Parcelable, IGetId {
         return location;
     }
 
-    public double getDistanceFromUser() {
-        return distanceFromUser;
-    }
-
     public void setDistanceFromUser(double distanceFromUser) {
         this.distanceFromUser = distanceFromUser;
     }

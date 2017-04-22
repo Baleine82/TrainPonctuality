@@ -16,12 +16,12 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:ems="10"
-        android:textSize="24sp"
-        android:hint="@string/txtDepartureDateHint"
         android:height="40dp"
+        android:ems="10"
         android:gravity="center"
-        android:onClick="TextDepartureDateClicked" />
+        android:hint="@string/txtDepartureDateHint"
+        android:onClick="TextDepartureDateClicked"
+        android:textSize="24sp" />
 
     <TextView
         android:id="@+id/txtDepartureTime"
@@ -30,12 +30,12 @@
         android:layout_alignStart="@id/txtDepartureDate"
         android:layout_below="@id/txtDepartureDate"
         android:layout_marginTop="20dp"
-        android:ems="10"
-        android:hint="@string/txtDepartureTimeHint"
-        android:textSize="24sp"
         android:height="40dp"
+        android:ems="10"
         android:gravity="center"
-        android:onClick="TextDepartureTimeClicked" />
+        android:hint="@string/txtDepartureTimeHint"
+        android:onClick="TextDepartureTimeClicked"
+        android:textSize="24sp" />
 
     <Spinner
         android:id="@+id/spnLine"
@@ -46,12 +46,12 @@
         android:layout_marginTop="26dp" />
 
     <TextView
-        android:labelFor="@id/spnLine"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@id/spnLine"
         android:layout_marginEnd="3dp"
         android:layout_toStartOf="@id/spnLine"
+        android:labelFor="@id/spnLine"
         android:text="@string/txtLineHint" />
 
     <AutoCompleteTextView
@@ -59,33 +59,32 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/spnLine"
-        android:layout_marginTop="20dp"
         android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
         android:completionThreshold="1"
         android:inputType="textNoSuggestions|textCapCharacters"
-        android:minWidth="80dp"
-        android:dropDownWidth="80dp"/>
+        android:minWidth="90dp" />
 
     <TextView
-        android:labelFor="@id/actMission"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@id/actMission"
         android:layout_marginEnd="3dp"
         android:layout_toStartOf="@id/actMission"
+        android:labelFor="@id/actMission"
         android:text="@string/txtMissionHint" />
 
     <TextView
         android:id="@+id/txtLocation"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/actMission"
         android:layout_centerHorizontal="true"
-        android:height="40dp"
-        android:gravity="center"
         android:layout_marginTop="20dp"
+        android:height="40dp"
         android:ems="10"
         android:freezesText="true"
+        android:gravity="center"
         android:onClick="showStationList"
         android:text="@string/txtLocationHint"
         android:textAlignment="center"

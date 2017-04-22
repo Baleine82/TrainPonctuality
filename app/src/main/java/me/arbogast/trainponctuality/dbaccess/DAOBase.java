@@ -24,33 +24,29 @@ public abstract class DAOBase<T extends IGetId> implements AutoCloseable {
     SQLiteDatabase mDb = null;
     private DatabaseHandler mHandler = null;
 
-    protected final Context context;
-
     DAOBase(Context pContext) {
-        context = pContext;
         this.mHandler = new DatabaseHandler(pContext, NOM, null, VERSION);
     }
 
-    final SQLiteDatabase openWrite() {
+    final void openWrite() {
         if (inTransaction() && !mDb.isReadOnly())
-            return mDb;
+            return;
 
         closeDb();
         mDb = mHandler.getWritableDatabase();
-        return mDb;
     }
 
-    final SQLiteDatabase openRead() {
-        if (inTransaction())
-            return mDb;
+    final void openRead() {
+        if (mDb != null)
+            return;
 
         closeDb();
         mDb = mHandler.getReadableDatabase();
-        return mDb;
     }
 
     public void close() {
-        mDb.close();
+        if (mDb != null)
+            mDb.close();
     }
 
     public void insert(T t) {
@@ -68,18 +64,13 @@ public abstract class DAOBase<T extends IGetId> implements AutoCloseable {
         mDb.update(getTableName(), createValues(t), getColumnId() + " = ?", new String[]{t.getId()});
     }
 
-    public final void beginTransaction(boolean write) {
+    public final void beginTransaction() {
         // If we are already in transaction, we don't need to openWrite if write isn't required or we already have write permissions
-        if (inTransaction() && (!write || !mDb.isReadOnly()))
+        if (inTransaction())
             return;
 
-        if (write)
-            openWrite();
-        else
-            openRead();
-
-        if (!inTransaction())
-            mDb.beginTransaction();
+        openWrite();
+        mDb.beginTransaction();
     }
 
     public final void endTransaction(boolean success) {

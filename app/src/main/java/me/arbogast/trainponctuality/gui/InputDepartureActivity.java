@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
@@ -30,9 +32,6 @@ import me.arbogast.trainponctuality.model.Travel;
 import me.arbogast.trainponctuality.services.LocationProxy;
 
 public class InputDepartureActivity extends AppCompatActivity {
-    private static final int RESULT_GET_DEPARTURE_STATION = 0;
-    private static final int RESULT_GET_DEPARTURE_DATE = 1;
-    private static final int RESULT_GET_DEPARTURE_TIME = 2;
     private static final String TAG = "InputDepartureActivity";
 
     private TextView txtDepartureDate;
@@ -96,7 +95,7 @@ public class InputDepartureActivity extends AppCompatActivity {
             spnLine.setAdapter(adapter);
         }
 
-        populateMissions(((Line) spnLine.getSelectedItem()).getCode());
+        //populateMissions(((Line) spnLine.getSelectedItem()).getCode());
 
         locationObserver = new Observer() {
             @Override
@@ -110,11 +109,27 @@ public class InputDepartureActivity extends AppCompatActivity {
         LocationProxy.getInstance().addObserver(locationObserver);
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_validate_cancel_edition, menu);
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    public void CancelEdition(MenuItem item) {
+        finish();
+    }
+
+    public void ValidateEdition(MenuItem item) {
+        addTravel();
+    }
+
     private void setDepartureDateTime(Calendar date) {
         departureDate = date;
         txtDepartureDate.setText(Utils.dateToString(departureDate.getTime()));
         txtDepartureTime.setText(Utils.timeToString(departureDate.getTime()));
     }
+
     private void setDepartureDateTime(Long millis) {
         departureDate.setTimeInMillis(millis);
         txtDepartureDate.setText(Utils.dateToString(departureDate.getTime()));
@@ -130,7 +145,8 @@ public class InputDepartureActivity extends AppCompatActivity {
             protected void onPostExecute(ArrayList<Stops> stops) {
                 super.onPostExecute(stops);
                 stationList = stops;
-                setDepartureStation(stops.get(0));
+                if (stops != null && stops.size() > 0)
+                    setDepartureStation(stops.get(0));
             }
         };
 
@@ -183,25 +199,23 @@ public class InputDepartureActivity extends AppCompatActivity {
         setDepartureStation((Stops) savedInstanceState.getParcelable("departureStation"));
 
         setDepartureDateTime(savedInstanceState.getLong("departureDate"));
+        populateMissions();
     }
 
     private void populateMissions() {
-        populateMissions(null);
-    }
-
-    private void populateMissions(String select) {
+        actMission.setText(null);
         if (selectedLine == null)
             actMission.setAdapter(null);
         else {
             try (TripsDAO dbTrips = new TripsDAO(this)) {
-                ArrayAdapter missionAdapter = new ArrayAdapter<>(this, R.layout.spinner_row_text, dbTrips.getTripsForLine(select != null ? select : selectedLine.getCode()));
+                ArrayAdapter missionAdapter = new ArrayAdapter<>(this, R.layout.spinner_row_text, dbTrips.getTripsForLine(selectedLine.getCode()));
                 actMission.setAdapter(missionAdapter);
             }
         }
     }
 
-    public void ValidateDeparture(View view) {
-        if (departureStation == null || selectedLine == null)
+    private void addTravel() {
+        if (departureStation == null || selectedLine == null || actMission.getText().toString().equals(""))
             return;
 
         Travel departure = new Travel(departureDate.getTime(), selectedLine.getCode(), actMission.getText().toString(), departureStation.getId());
@@ -210,6 +224,10 @@ public class InputDepartureActivity extends AppCompatActivity {
             dbTravel.insert(departure);
         }
         finish();
+    }
+
+    public void ValidateDeparture(View view) {
+        addTravel();
     }
 
     public void CancelInputDeparture(View view) {
@@ -223,7 +241,7 @@ public class InputDepartureActivity extends AppCompatActivity {
         showList.putExtra("title", R.string.txtLocationHint);
         showList.putExtra("color", R.color.stationSelection);
         showList.putParcelableArrayListExtra("stops", stationList);
-        startActivityForResult(showList, RESULT_GET_DEPARTURE_STATION);
+        startActivityForResult(showList, Utils.RESULT_GET_DEPARTURE_STATION);
     }
 
     @Override
@@ -232,7 +250,7 @@ public class InputDepartureActivity extends AppCompatActivity {
             return;
 
         switch (requestCode) {
-            case RESULT_GET_DEPARTURE_STATION:
+            case Utils.RESULT_GET_DEPARTURE_STATION:
                 Stops selected = data.getExtras().getParcelable("stop");
                 if (selected == null)
                     return;
@@ -241,8 +259,8 @@ public class InputDepartureActivity extends AppCompatActivity {
                 setDepartureStation(selected);
                 break;
 
-            case RESULT_GET_DEPARTURE_DATE:
-            case RESULT_GET_DEPARTURE_TIME:
+            case Utils.RESULT_GET_DEPARTURE_DATE:
+            case Utils.RESULT_GET_DEPARTURE_TIME:
                 setDepartureDateTime(data.getExtras().getLong("date"));
                 break;
         }
@@ -263,7 +281,7 @@ public class InputDepartureActivity extends AppCompatActivity {
         intent.putExtra("title", R.string.txtDepartureDateHint);
         intent.putExtra("date", departureDate.getTimeInMillis());
         intent.putExtra("color", R.color.dateSelection);
-        startActivityForResult(intent, RESULT_GET_DEPARTURE_DATE);
+        startActivityForResult(intent, Utils.RESULT_GET_DEPARTURE_DATE);
     }
 
     public void TextDepartureTimeClicked(View view) {
@@ -271,6 +289,6 @@ public class InputDepartureActivity extends AppCompatActivity {
         intent.putExtra("title", R.string.txtDepartureTimeHint);
         intent.putExtra("date", departureDate.getTimeInMillis());
         intent.putExtra("color", R.color.dateSelection);
-        startActivityForResult(intent, RESULT_GET_DEPARTURE_TIME);
+        startActivityForResult(intent, Utils.RESULT_GET_DEPARTURE_TIME);
     }
 }

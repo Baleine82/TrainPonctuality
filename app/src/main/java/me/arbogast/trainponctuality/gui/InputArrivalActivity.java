@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
@@ -20,9 +22,6 @@ import me.arbogast.trainponctuality.model.Travel;
 import me.arbogast.trainponctuality.services.LocationProxy;
 
 public class InputArrivalActivity extends AppCompatActivity {
-    private static final int RESULT_GET_DEPARTURE_STATION = 0;
-    private static final int RESULT_GET_ARRIVAL_DATE = 1;
-    private static final int RESULT_GET_ARRIVAL_TIME = 2;
     private static final String TAG = "InputArrivalActivity";
 
     private TextView txtArrivalDate;
@@ -30,12 +29,10 @@ public class InputArrivalActivity extends AppCompatActivity {
     private TextView txtArrivalStation;
 
     private Travel currentTravel;
-    private Stops arrivalStation;
 
     private Observer locationObserver;
     private boolean manualStationSelected = false;
     private ArrayList<Stops> stationList;
-    private Calendar arrivalDate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,10 +44,10 @@ public class InputArrivalActivity extends AppCompatActivity {
         txtArrivalTime = (TextView) findViewById(R.id.txtArrivalTime);
         txtArrivalStation = (TextView) findViewById(R.id.txtLocation);
 
-        setArrivalDateTime(GregorianCalendar.getInstance());
-
         Bundle data = getIntent().getExtras();
         currentTravel = data.getParcelable("travel");
+
+        setArrivalDateTime(GregorianCalendar.getInstance());
 
         locationObserver = new Observer() {
             @Override
@@ -65,32 +62,43 @@ public class InputArrivalActivity extends AppCompatActivity {
         autoSelectStation();
     }
 
-    private void setArrivalDateTime(Calendar select) {
-        arrivalDate = select;
-        txtArrivalDate.setText(Utils.dateToString(arrivalDate.getTime()));
-        txtArrivalTime.setText(Utils.timeToString(arrivalDate.getTime()));
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_validate_cancel_edition, menu);
+
+        return super.onCreateOptionsMenu(menu);
     }
+
+    public void CancelEdition(MenuItem item) {
+        finish();
+    }
+
+    public void ValidateEdition(MenuItem item) {
+        validateArrival();
+    }
+
+    private void setArrivalDateTime(Calendar select) {
+        currentTravel.setArrivalDate(select.getTime());
+        txtArrivalDate.setText(Utils.dateToString(currentTravel.getArrivalDate()));
+        txtArrivalTime.setText(Utils.timeToString(currentTravel.getArrivalDate()));
+    }
+
     private void setArrivalDateTime(Long millis) {
-        arrivalDate.setTimeInMillis(millis);
-        txtArrivalDate.setText(Utils.dateToString(arrivalDate.getTime()));
-        txtArrivalTime.setText(Utils.timeToString(arrivalDate.getTime()));
+        currentTravel.setArrivalDate(Utils.millisToDate(millis));
+        txtArrivalDate.setText(Utils.dateToString(currentTravel.getArrivalDate()));
+        txtArrivalTime.setText(Utils.timeToString(currentTravel.getArrivalDate()));
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelable("currentTravel", currentTravel);
-        outState.putParcelable("arrivalStation", arrivalStation);
-        outState.putLong("arrivalDate", arrivalDate.getTimeInMillis());
     }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         currentTravel = savedInstanceState.getParcelable("currentTravel");
-        setArrivalStation((Stops) savedInstanceState.getParcelable("arrivalStation"));
-
-        setArrivalDateTime(savedInstanceState.getLong("arrivalDate"));
     }
 
     @Override
@@ -136,7 +144,13 @@ public class InputArrivalActivity extends AppCompatActivity {
     }
 
     public void ValidateArrival(View view) {
-        currentTravel.setArrivalDate(arrivalDate.getTime());
+        validateArrival();
+    }
+
+    private void validateArrival() {
+        if (currentTravel.isInValidTravel())
+            return;
+
         try (TravelDAO dbTravel = new TravelDAO(this)) {
             dbTravel.update(currentTravel);
         }
@@ -150,7 +164,7 @@ public class InputArrivalActivity extends AppCompatActivity {
         showList.putExtra("title", R.string.txtLocationArrivalHint);
         showList.putExtra("color", R.color.stationSelection);
         showList.putParcelableArrayListExtra("stops", stationList);
-        startActivityForResult(showList, RESULT_GET_DEPARTURE_STATION);
+        startActivityForResult(showList, Utils.RESULT_GET_ARRIVAL_STATION);
     }
 
     @Override
@@ -159,8 +173,8 @@ public class InputArrivalActivity extends AppCompatActivity {
             return;
 
         switch (requestCode) {
-            case RESULT_GET_DEPARTURE_STATION:
-                arrivalStation = data.getExtras().getParcelable("stop");
+            case Utils.RESULT_GET_ARRIVAL_STATION:
+                Stops arrivalStation = data.getExtras().getParcelable("stop");
                 if (arrivalStation == null)
                     return;
 
@@ -168,18 +182,17 @@ public class InputArrivalActivity extends AppCompatActivity {
                 setArrivalStation(arrivalStation);
                 break;
 
-            case RESULT_GET_ARRIVAL_DATE:
-            case RESULT_GET_ARRIVAL_TIME:
+            case Utils.RESULT_GET_ARRIVAL_DATE:
+            case Utils.RESULT_GET_ARRIVAL_TIME:
                 setArrivalDateTime(data.getExtras().getLong("date"));
                 break;
         }
     }
 
     public void setArrivalStation(Stops arrivalStation) {
-        this.arrivalStation = arrivalStation;
-
         if (arrivalStation == null) {
             txtArrivalStation.setText(R.string.txtLocationArrivalHint);
+            currentTravel.setArrivalStation(null);
             return;
         }
 
@@ -189,17 +202,17 @@ public class InputArrivalActivity extends AppCompatActivity {
 
     public void TextArrivalDateClicked(View view) {
         Intent intent = new Intent(this, DateSelectionActivity.class);
-        intent.putExtra("title", R.string.txtDepartureDateHint);
-        intent.putExtra("date", arrivalDate.getTimeInMillis());
+        intent.putExtra("title", R.string.txtArrivalDateHint);
+        intent.putExtra("date", currentTravel.getArrivalDate().getTime());
         intent.putExtra("color", R.color.dateSelection);
-        startActivityForResult(intent, RESULT_GET_ARRIVAL_DATE);
+        startActivityForResult(intent, Utils.RESULT_GET_ARRIVAL_DATE);
     }
 
     public void TextArrivalTimeClicked(View view) {
         Intent intent = new Intent(this, TimeSelectionActivity.class);
-        intent.putExtra("title", R.string.txtDepartureTimeHint);
-        intent.putExtra("date", arrivalDate.getTimeInMillis());
+        intent.putExtra("title", R.string.txtArrivalTimeHint);
+        intent.putExtra("date", currentTravel.getArrivalDate().getTime());
         intent.putExtra("color", R.color.dateSelection);
-        startActivityForResult(intent, RESULT_GET_ARRIVAL_TIME);
+        startActivityForResult(intent, Utils.RESULT_GET_ARRIVAL_TIME);
     }
 }

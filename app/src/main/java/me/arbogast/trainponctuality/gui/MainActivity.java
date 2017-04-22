@@ -1,31 +1,41 @@
 package me.arbogast.trainponctuality.gui;
 
 import android.Manifest;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Observable;
 import java.util.Observer;
 
 import me.arbogast.trainponctuality.dbaccess.TravelDAO;
-import me.arbogast.trainponctuality.model.Travel;
+import me.arbogast.trainponctuality.model.History;
 import me.arbogast.trainponctuality.R;
 import me.arbogast.trainponctuality.services.LocationProxy;
-import me.arbogast.trainponctuality.sncfapi.InitializeSncfData;
+import me.arbogast.trainponctuality.services.InitializeSncfData;
 
 public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_PERMISSION_GPS = 1;
     private static final String TAG = "MainActivity";
     private Observer locationObserver;
-    private Travel currentTravel;
+    private History currentTravel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +44,11 @@ public class MainActivity extends AppCompatActivity {
 
         setTitle(R.string.app_name);
 
+        StartInitializingData();
+        startGps();
+    }
+
+    private void startGps() {
         locationObserver = new Observer() {
             @Override
             public void update(Observable o, Object arg) {
@@ -49,7 +64,21 @@ public class MainActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_PERMISSION_GPS);
         else
             LocationProxy.getInstance().startRequest(this);
-        new InitializeSncfData(getApplicationContext(), findViewById(R.id.txtStatus)).execute();
+    }
+
+    private void StartInitializingData() {
+        // Prepare for the service answer
+        IntentFilter statusIntentFilter = new IntentFilter(InitializeSncfData.INITIALIZE_DATA_FINISHED_BROADCAST);
+        LocalBroadcastManager.getInstance(this).registerReceiver(new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                findViewById(R.id.txtStatus).setVisibility(View.GONE);
+            }
+        }, statusIntentFilter);
+
+        // Starting the service
+        Intent initDataIntent = new Intent(this, InitializeSncfData.class);
+        startService(initDataIntent);
     }
 
     @Override
@@ -59,6 +88,33 @@ public class MainActivity extends AppCompatActivity {
             currentTravel = dbTravel.selectCurrentTravel();
         }
         supportInvalidateOptionsMenu();
+
+        updateTravelView();
+    }
+
+    private void updateTravelView() {
+        LinearLayout layoutProgress = (LinearLayout) findViewById(R.id.layoutTravel);
+
+        if (currentTravel == null) {
+            layoutProgress.setVisibility(View.GONE);
+            return;
+        }
+
+        ImageView imgLine = (ImageView) findViewById(R.id.imgLine);
+        TextView txtDate = (TextView) findViewById(R.id.txtDate);
+        TextView txtMission = (TextView) findViewById(R.id.txtMission);
+        TextView txtDepartureDate = (TextView) findViewById(R.id.txtDepartureDate);
+        TextView txtDepartureStation = (TextView) findViewById(R.id.txtDepartureStation);
+        TextView txtArrivalDate = (TextView) findViewById(R.id.txtArrivalDate);
+
+        txtDate.setText(Utils.dateToString(currentTravel.getTravel().getDepartureDate()));
+        imgLine.setImageResource(getResources().getIdentifier(currentTravel.getTravel().getLine().toLowerCase(), "drawable", getPackageName()));
+        txtMission.setText(currentTravel.getTravel().getMissionCode());
+        txtDepartureDate.setText(Utils.timeToString(currentTravel.getTravel().getDepartureDate()));
+        txtDepartureStation.setText(currentTravel.getDepartureStation());
+        txtArrivalDate.setText(Utils.timeToString(GregorianCalendar.getInstance().getTime()));
+
+        layoutProgress.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -117,7 +173,7 @@ public class MainActivity extends AppCompatActivity {
     private void ShowArrivalActivity() {
         if (currentTravel != null) {
             Intent inputArrival = new Intent(this, InputArrivalActivity.class);
-            inputArrival.putExtra("travel", currentTravel);
+            inputArrival.putExtra("travel", currentTravel.getTravel());
             startActivity(inputArrival);
         }
     }

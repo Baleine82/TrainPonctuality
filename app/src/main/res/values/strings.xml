@@ -45,4 +45,9 @@
     <string name="titleArrival">Arrivée</string>
     <string name="titleHistory">Historique</string>
     <string name="validate">OK</string>
+    <string name="titleEditTravel">Modifier le voyage</string>
+    <string name="txtMenuValidate">Valider</string>
+    <string name="txtMenuCancel">Annuler</string>
+    <string name="txtArrival">Arrivée</string>
+    <string name="txtDeparture">Départ</string>
 </resources>

@@ -72,12 +72,14 @@ public class TravelDAO extends DAOBase<Travel> {
         mDb.delete(TABLE_NAME, COLUMN_ID + " = ?", new String[]{String.valueOf(t.getId())});
     }
 
-    public Travel selectCurrentTravel() {
+    public History selectCurrentTravel() {
         openRead();
 
-        try (Cursor c = mDb.rawQuery("SELECT " + SELECT_ALL + " FROM " + TABLE_NAME + " WHERE " + COLUMN_ARRIVAL_DATE + " IS NULL", null)) {
+        try (Cursor c = mDb.rawQuery("SELECT " + SELECT_ALL + ", depStop." + StopsDAO.COLUMN_NAME + " AS departureStation FROM " + TABLE_NAME +
+                " INNER JOIN " + StopsDAO.TABLE_NAME + " AS depStop ON (" + TABLE_NAME + "." + COLUMN_DEPARTURE_STATION + " = depStop." + StopsDAO.COLUMN_ID + ") " +
+                " WHERE " + COLUMN_ARRIVAL_DATE + " IS NULL LIMIT 1", null)) {
             if (c.moveToFirst())
-                return getItem(c);
+                return new History(getItem(c), c.getString(7), null);
             else
                 return null;
         }
@@ -91,7 +93,7 @@ public class TravelDAO extends DAOBase<Travel> {
         openRead();
         ArrayList<History> listT = new ArrayList<>();
         try (Cursor c = mDb.rawQuery("SELECT " + SELECT_ALL + ", depStop." + StopsDAO.COLUMN_NAME + " AS departureStation, " +
-                " arrStop." + StopsDAO.COLUMN_NAME + " AS arrivalStation " + " FROM " + TABLE_NAME +
+                " arrStop." + StopsDAO.COLUMN_NAME + " AS arrivalStation FROM " + TABLE_NAME +
                 " INNER JOIN " + StopsDAO.TABLE_NAME + " AS depStop ON (" + TABLE_NAME + "." + COLUMN_DEPARTURE_STATION + " = depStop." + StopsDAO.COLUMN_ID + ") " +
                 " LEFT JOIN " + StopsDAO.TABLE_NAME + " AS arrStop ON (" + TABLE_NAME + "." + COLUMN_ARRIVAL_STATION + " = arrStop." + StopsDAO.COLUMN_ID + ") " +
                 " ORDER BY " + COLUMN_DEPARTURE_DATE + ";", null)) {
