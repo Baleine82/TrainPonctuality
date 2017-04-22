@@ -97,6 +97,7 @@ public class EditTravelActivity extends AppCompatActivity {
         });
 
         populateMissions();
+        findStations();
     }
 
     private void populateMissions() {
