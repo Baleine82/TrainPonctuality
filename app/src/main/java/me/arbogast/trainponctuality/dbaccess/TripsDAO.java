@@ -80,7 +80,8 @@ public class TripsDAO extends DAOImportBase<Trips> {
         List<String> listT = new ArrayList<>();
         String query = "SELECT " + COLUMN_TRIP_HEADSIGN + " FROM " + RoutesDAO.TABLE_NAME +
                 " INNER JOIN " + TABLE_NAME + " ON (" + RoutesDAO.TABLE_NAME + "." + RoutesDAO.COLUMN_ID + " = " + TABLE_NAME + "." + COLUMN_ROUTE_ID + ")" +
-                " WHERE " + RoutesDAO.TABLE_NAME + "." + RoutesDAO.COLUMN_SHORT_NAME + " = ? AND LENGTH(" + COLUMN_TRIP_HEADSIGN + ") = 4" +
+                " WHERE " + RoutesDAO.TABLE_NAME + "." + RoutesDAO.COLUMN_SHORT_NAME + " = ? " +
+                " AND " + TABLE_NAME + "." + COLUMN_TRIP_HEADSIGN + " REGEXP '[A-Z]{4}'" +
                 " GROUP BY " + COLUMN_TRIP_HEADSIGN +
                 " ORDER BY " + COLUMN_TRIP_HEADSIGN + ";";
         try(Cursor c = mDb.rawQuery(query, new String[]{line})) {

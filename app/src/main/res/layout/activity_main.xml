@@ -145,7 +145,7 @@
     </LinearLayout>
 
     <Button
-        android:text="@string/btnMenuInputDeparture"
+        android:text="@string/titleDeparture"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/btnInputDeparture"
@@ -156,7 +156,7 @@
         android:layout_margin="5dp" />
 
     <Button
-        android:text="@string/btnInputArrivalText"
+        android:text="@string/titleArrival"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/btnInputArrival"
@@ -167,7 +167,7 @@
         android:layout_margin="5dp" />
 
     <Button
-        android:text="@string/btnHistoryText"
+        android:text="@string/titleHistory"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/btnHistory"

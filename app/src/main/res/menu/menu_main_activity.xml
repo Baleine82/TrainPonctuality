@@ -6,16 +6,16 @@
         android:id="@+id/mnu_departure"
         android:icon="@drawable/traindeparture"
         android:onClick="MenuDepartureClick"
-        android:title="@string/btnMenuInputDeparture"
+        android:title="@string/titleDeparture"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/mnu_arrival"
         android:icon="@drawable/trainarrival"
         android:onClick="MenuArrivalClick"
-        android:title="@string/btnInputArrivalText"
+        android:title="@string/titleArrival"
         app:showAsAction="ifRoom" />
     <item
         android:onClick="MenuHistoryClick"
-        android:title="@string/btnHistoryText"
+        android:title="@string/titleHistory"
         app:showAsAction="never" />
 </menu>

@@ -1,9 +1,5 @@
 <resources>
     <string name="app_name">Train Ponctuality</string>
-    <string name="btnMenuInputDeparture">Départ</string>
-    <string name="btnInputArrivalText">Arrivée</string>
-    <string name="btnHistoryText">Historique</string>
-    <string name="btnCancelDeparture">Annuler</string>
     <string name="txtMissionHint">Code mission</string>
     <string name="txtLineHint">Ligne</string>
     <string name="txtDepartureDateHint">Date de départ</string>
@@ -14,7 +10,6 @@
     <string name="txtArrivalTimeHint">Heure d\'arrivée</string>
     <string name="txtLocationArrivalHint">Gare d\'arrivée</string>
     <string name="btnSaveArrival">Arriver</string>
-    <string name="btnCancelArrival">Annuler</string>
     <string name="sncfJsonDateFormat">yyyy-MM-dd\'T\'HH:mm:ss</string>
     <string name="sncfJsonTimestamp">record_timestamp</string>
     <string name="sharedPrefs">default</string>
@@ -39,15 +34,12 @@
     <string name="travelInProgress">Voyage en cours</string>
     <string name="txtMenuDeleteHistory">Supprimer</string>
     <string name="txtMenuEditHistory">Modifier</string>
-    <string name="imgDeleteIcon">Icône de suppression</string>
     <string name="imgLine">Icône de la ligne</string>
     <string name="titleDeparture">Départ</string>
     <string name="titleArrival">Arrivée</string>
     <string name="titleHistory">Historique</string>
-    <string name="validate">OK</string>
+    <string name="txtOK">OK</string>
     <string name="titleEditTravel">Modifier le voyage</string>
-    <string name="txtMenuValidate">Valider</string>
-    <string name="txtMenuCancel">Annuler</string>
-    <string name="txtArrival">Arrivée</string>
-    <string name="txtDeparture">Départ</string>
+    <string name="txtValidate">Valider</string>
+    <string name="txtCancel">Annuler</string>
 </resources>

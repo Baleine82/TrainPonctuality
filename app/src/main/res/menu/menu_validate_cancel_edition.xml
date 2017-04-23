@@ -5,14 +5,14 @@
     <item
         android:id="@+id/action_edit_history"
         android:icon="@drawable/checktickicon"
-        android:title="@string/txtMenuValidate"
+        android:title="@string/txtValidate"
         app:showAsAction="ifRoom"
         android:onClick="ValidateEdition" />
 
     <item
         android:id="@+id/action_delete_history"
         android:icon="@drawable/delete"
-        android:title="@string/txtMenuCancel"
+        android:title="@string/txtCancel"
         app:showAsAction="ifRoom"
         android:onClick="CancelEdition"/>
 </menu>
