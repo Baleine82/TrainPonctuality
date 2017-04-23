@@ -11,13 +11,14 @@ import java.util.Date;
  */
 
 public class Travel implements Parcelable, IGetId {
+    private long id;
     private Date departureDate;
     private Date arrivalDate;
     private String line;
     private String missionCode;
     private String departureStation;
     private String arrivalStation;
-    private long id;
+    private String tripId;
 
     public Travel(Date date, String line, String missionCode, String station) {
         this.departureDate = date;
@@ -96,6 +97,7 @@ public class Travel implements Parcelable, IGetId {
 
     //region Created with Parcelabler
     private Travel(Parcel in) {
+        id = in.readLong();
         long tmpDepartureDate = in.readLong();
         departureDate = tmpDepartureDate != -1 ? new Date(tmpDepartureDate) : null;
         long tmpArrivalDate = in.readLong();
@@ -104,7 +106,7 @@ public class Travel implements Parcelable, IGetId {
         missionCode = in.readString();
         departureStation = in.readString();
         arrivalStation = in.readString();
-        id = in.readLong();
+        tripId  = in.readString();
     }
 
     @Override
@@ -114,13 +116,13 @@ public class Travel implements Parcelable, IGetId {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(id);
         dest.writeLong(departureDate != null ? departureDate.getTime() : -1L);
         dest.writeLong(arrivalDate != null ? arrivalDate.getTime() : -1L);
         dest.writeString(line);
         dest.writeString(missionCode);
         dest.writeString(departureStation);
         dest.writeString(arrivalStation);
-        dest.writeLong(id);
     }
 
     @SuppressWarnings("unused")

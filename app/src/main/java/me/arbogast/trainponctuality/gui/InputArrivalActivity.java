@@ -135,7 +135,7 @@ public class InputArrivalActivity extends AppCompatActivity {
             }
         };
 
-        findStationAsync.execute(new GetStationForLineParams(this, currentTravel.getLine(), LocationProxy.getInstance().getLastBest()));
+        findStationAsync.execute(new GetStationForLineParams(this, currentTravel.getLine(), LocationProxy.getInstance().getLastBest(), currentTravel.getMissionCode()));
     }
 
 

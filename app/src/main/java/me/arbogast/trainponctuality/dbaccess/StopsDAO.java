@@ -77,22 +77,31 @@ public class StopsDAO extends DAOImportBase<Stops> {
         return new Stops(c.getString(0), c.getString(1), c.getDouble(2), c.getDouble(3), c.getInt(4), c.getString(5));
     }
 
-    public ArrayList<Stops> getStopsForLine(String line) {
+    public ArrayList<Stops> getStopsForLine(String line, String missionCode) {
         long started = System.nanoTime();
         Log.d(TAG, "getStopsForLine: Opening database");
         openRead();
         Log.d(TAG, "getStopsForLine: Database opened : " + String.valueOf(System.nanoTime() - started));
         ArrayList<Stops> listT = new ArrayList<>();
+        ArrayList<String> params = new ArrayList<>();
+        params.add(line);
+
         String query = "SELECT " + SELECT_ALL + " FROM " + RoutesDAO.TABLE_NAME +
                 " INNER JOIN " + TripsDAO.TABLE_NAME + " ON (" + RoutesDAO.TABLE_NAME + "." + RoutesDAO.COLUMN_ID + " = " + TripsDAO.TABLE_NAME + "." + TripsDAO.COLUMN_ROUTE_ID + ")" +
                 " INNER JOIN " + StopTimesDAO.TABLE_NAME + " ON (" + TripsDAO.TABLE_NAME + "." + TripsDAO.COLUMN_ID + " = " + StopTimesDAO.TABLE_NAME + "." + StopTimesDAO.COLUMN_TRIP_ID + ")" +
                 " LEFT JOIN " + StopsDAO.TABLE_NAME + " ON (" + StopTimesDAO.TABLE_NAME + "." + StopTimesDAO.COLUMN_STOP_ID + " = " + StopsDAO.TABLE_NAME + "." + StopsDAO.COLUMN_ID + ")" +
                 " WHERE " + RoutesDAO.TABLE_NAME + "." + RoutesDAO.COLUMN_SHORT_NAME + " = ? " +
-                " AND " + StopsDAO.TABLE_NAME + "." + StopsDAO.COLUMN_ID + " LIKE 'StopPoint:%'" +
-                " GROUP BY " + StopsDAO.COLUMN_ID +
+                " AND " + StopsDAO.TABLE_NAME + "." + StopsDAO.COLUMN_ID + " LIKE 'StopPoint:%'";
+
+        if (missionCode != null && !missionCode.equals("")) {
+            query += " AND " + TripsDAO.TABLE_NAME + "." + TripsDAO.COLUMN_TRIP_HEADSIGN + " = ?";
+            params.add(missionCode);
+        }
+        query += " GROUP BY " + StopsDAO.COLUMN_ID +
                 " ORDER BY " + StopsDAO.COLUMN_NAME + ";";
 
-        try (Cursor c = mDb.rawQuery(query, new String[]{line})) {
+
+        try (Cursor c = mDb.rawQuery(query, params.toArray(new String[params.size()]))) {
             Log.d(TAG, "getStopsForLine: Query done : " + String.valueOf(System.nanoTime() - started));
             while (c.moveToNext())
                 listT.add(getItem(c));

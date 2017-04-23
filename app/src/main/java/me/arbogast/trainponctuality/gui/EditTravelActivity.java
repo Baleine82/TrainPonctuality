@@ -15,6 +15,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import me.arbogast.trainponctuality.R;
 import me.arbogast.trainponctuality.dbaccess.RoutesDAO;
@@ -28,6 +29,7 @@ import me.arbogast.trainponctuality.model.Stops;
 public class EditTravelActivity extends AppCompatActivity {
     private History currentTravel;
     private ArrayList<Stops> stationList;
+    private List<String> missionsAvailable;
 
     private TextView txtDepartureDate;
     private TextView txtDepartureTime;
@@ -102,7 +104,8 @@ public class EditTravelActivity extends AppCompatActivity {
 
     private void populateMissions() {
         try (TripsDAO dbTrips = new TripsDAO(this)) {
-            ArrayAdapter missionAdapter = new ArrayAdapter<>(this, R.layout.spinner_row_text, dbTrips.getTripsForLine(currentTravel.getTravel().getLine()));
+            missionsAvailable = dbTrips.getTripsForLine(currentTravel.getTravel().getLine());
+            ArrayAdapter missionAdapter = new ArrayAdapter<>(this, R.layout.spinner_row_text, missionsAvailable);
             actMission.setAdapter(missionAdapter);
         }
     }
@@ -116,7 +119,11 @@ public class EditTravelActivity extends AppCompatActivity {
             }
         };
 
-        findStationAsync.execute(new GetStationForLineParams(this, currentTravel.getTravel().getLine(), null));
+        String missionFilter = null;
+        if (actMission.getText().length() == 4 && missionsAvailable.indexOf(actMission.getText().toString()) >= 0)
+            missionFilter = actMission.getText().toString();
+
+        findStationAsync.execute(new GetStationForLineParams(this, currentTravel.getTravel().getLine(), null, missionFilter));
     }
 
 

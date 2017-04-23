@@ -5,8 +5,10 @@ import android.content.Context;
 import android.database.Cursor;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
+import me.arbogast.trainponctuality.model.Line;
 import me.arbogast.trainponctuality.model.Trips;
 
 /**
@@ -75,7 +77,7 @@ public class TripsDAO extends DAOImportBase<Trips> {
         return null;
     }
 
-    public List<String> getTripsForLine(String line){
+    public List<String> getTripsForLine(String line) {
         openRead();
         List<String> listT = new ArrayList<>();
         String query = "SELECT " + COLUMN_TRIP_HEADSIGN + " FROM " + RoutesDAO.TABLE_NAME +
@@ -84,10 +86,29 @@ public class TripsDAO extends DAOImportBase<Trips> {
                 " AND " + TABLE_NAME + "." + COLUMN_TRIP_HEADSIGN + " REGEXP '[A-Z]{4}'" +
                 " GROUP BY " + COLUMN_TRIP_HEADSIGN +
                 " ORDER BY " + COLUMN_TRIP_HEADSIGN + ";";
-        try(Cursor c = mDb.rawQuery(query, new String[]{line})) {
+        try (Cursor c = mDb.rawQuery(query, new String[]{line})) {
 
             while (c.moveToNext())
                 listT.add(c.getString(0));
+        }
+
+        return listT;
+    }
+
+    public List<Trips> findMatchingTrips(String missionCode, String departurePoint, Date departureDate) {
+        openRead();
+        List<Trips> listT = new ArrayList<>();
+        String query = "SELECT " + SELECT_ALL + " FROM " + TABLE_NAME +
+                " INNER JOIN " + StopTimesDAO.TABLE_NAME + " ON (" + TABLE_NAME + "." + COLUMN_ID + " = " + StopTimesDAO.TABLE_NAME + "." + StopTimesDAO.COLUMN_TRIP_ID + ") " +
+                " INNER JOIN " + StopsDAO.TABLE_NAME + " ON (" + StopTimesDAO.TABLE_NAME + "." + StopTimesDAO.COLUMN_STOP_ID + " = " + StopsDAO.TABLE_NAME + "." + StopsDAO.COLUMN_ID + ") " +
+                " WHERE " + TABLE_NAME + "." + COLUMN_TRIP_HEADSIGN + " = ? " +
+                " AND " + StopTimesDAO.TABLE_NAME + "." + StopTimesDAO.COLUMN_STOP_ID + " = ?;";
+        // select * from trips inner join stop_times on trips.tri_id = stop_times.stt_trip_id where tri_trip_headsign = 'UJUR' and stt_stop_id = 'StopPoint:DUA8738641';
+
+        try (Cursor c = mDb.rawQuery(query, new String[]{missionCode, departurePoint})) {
+
+            while (c.moveToNext())
+                listT.add(getItem(c));
         }
 
         return listT;

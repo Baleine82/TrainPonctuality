@@ -42,4 +42,5 @@
     <string name="titleEditTravel">Modifier le voyage</string>
     <string name="txtValidate">Valider</string>
     <string name="txtCancel">Annuler</string>
+    <string name="txtAttachToTrip">Voyage théorique</string>
 </resources>

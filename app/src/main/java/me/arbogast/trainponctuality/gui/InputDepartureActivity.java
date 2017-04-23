@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -18,6 +20,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -42,6 +45,7 @@ public class InputDepartureActivity extends AppCompatActivity {
 
     private Stops departureStation;
     private Line selectedLine;
+    private List<String> missionsAvailable;
 
     private Observer locationObserver;
     private ArrayList<Stops> stationList;
@@ -66,6 +70,22 @@ public class InputDepartureActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 InputMethodManager in = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 in.hideSoftInputFromInputMethod(view.getApplicationWindowToken(), 0);
+            }
+        });
+
+        actMission.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                manualStationSelected = false;
+                autoSelectStation();
             }
         });
 
@@ -150,10 +170,16 @@ public class InputDepartureActivity extends AppCompatActivity {
             }
         };
 
-        findStationAsync.execute(new GetStationForLineParams(this, selectedLine.getCode(), LocationProxy.getInstance().getLastBest()));
+        String missionFilter = null;
+
+        if (actMission.getText().length() == 4 && missionsAvailable.indexOf(actMission.getText().toString()) >= 0)
+            missionFilter = actMission.getText().toString();
+
+        findStationAsync.execute(new GetStationForLineParams(this, selectedLine.getCode(), LocationProxy.getInstance().getLastBest(), missionFilter));
     }
 
     private void setSelectedLine(Line value) {
+        manualStationSelected = false;
         stationList = null;
         selectedLine = value;
         autoSelectStation();
@@ -208,14 +234,15 @@ public class InputDepartureActivity extends AppCompatActivity {
             actMission.setAdapter(null);
         else {
             try (TripsDAO dbTrips = new TripsDAO(this)) {
-                ArrayAdapter missionAdapter = new ArrayAdapter<>(this, R.layout.spinner_row_text, dbTrips.getTripsForLine(selectedLine.getCode()));
+                missionsAvailable = dbTrips.getTripsForLine(selectedLine.getCode());
+                ArrayAdapter missionAdapter = new ArrayAdapter<>(this, R.layout.spinner_row_text, missionsAvailable);
                 actMission.setAdapter(missionAdapter);
             }
         }
     }
 
     private void addTravel() {
-        if (departureStation == null || selectedLine == null || actMission.getText().toString().equals(""))
+        if (departureInputInvalid())
             return;
 
         Travel departure = new Travel(departureDate.getTime(), selectedLine.getCode(), actMission.getText().toString(), departureStation.getId());
@@ -224,6 +251,10 @@ public class InputDepartureActivity extends AppCompatActivity {
             dbTravel.insert(departure);
         }
         finish();
+    }
+
+    private boolean departureInputInvalid() {
+        return departureStation == null || selectedLine == null || actMission.getText().toString().equals("");
     }
 
     public void ValidateDeparture(View view) {
@@ -290,5 +321,12 @@ public class InputDepartureActivity extends AppCompatActivity {
         intent.putExtra("date", departureDate.getTimeInMillis());
         intent.putExtra("color", R.color.dateSelection);
         startActivityForResult(intent, Utils.RESULT_GET_DEPARTURE_TIME);
+    }
+
+    public void findTheoricTravel(View view) {
+//        if (departureInputInvalid())
+//            return;
+
+
     }
 }

@@ -26,7 +26,7 @@ class GetStationForLineAsync extends AsyncTask<GetStationForLineParams, Integer,
         Log.d(TAG, "doInBackground: Started Task");
         try (StopsDAO dbStops = new StopsDAO(params[0].context)) {
             Log.d(TAG, "doInBackground: Database is ready : " + String.valueOf(System.nanoTime() - started));
-            stops = dbStops.getStopsForLine(params[0].line);
+            stops = dbStops.getStopsForLine(params[0].line, params[0].mission);
             Log.d(TAG, "doInBackground: List has been retrieved : " + String.valueOf(System.nanoTime() - started));
         }
 
@@ -47,10 +47,12 @@ class GetStationForLineParams {
     Context context;
     String line;
     Location loc;
+    String mission;
 
-    GetStationForLineParams(Context ctx, String code, Location foundLocation) {
+    GetStationForLineParams(Context ctx, String code, Location foundLocation, String missionCode) {
         context = ctx;
         line = code;
         loc = foundLocation;
+        mission = missionCode;
     }
 }
