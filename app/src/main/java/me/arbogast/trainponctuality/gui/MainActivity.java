@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -98,12 +99,16 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        ImageView imgLine = (ImageView) findViewById(R.id.imgLine);
-        TextView txtDate = (TextView) findViewById(R.id.txtDate);
-        TextView txtMission = (TextView) findViewById(R.id.txtMission);
-        TextView txtDepartureDate = (TextView) findViewById(R.id.txtDepartureDate);
-        TextView txtDepartureStation = (TextView) findViewById(R.id.txtDepartureStation);
-        TextView txtArrivalDate = (TextView) findViewById(R.id.txtArrivalDate);
+        FrameLayout lytTravelContent = (FrameLayout)findViewById(R.id.lytTravelContent);
+        FrameLayout.inflate(this, R.layout.show_history_row, lytTravelContent);
+
+        ImageView imgLine = (ImageView) lytTravelContent.findViewById(R.id.imgLine);
+        TextView txtDate = (TextView) lytTravelContent.findViewById(R.id.txtDate);
+        TextView txtMission = (TextView) lytTravelContent.findViewById(R.id.txtMission);
+        TextView txtDepartureDate = (TextView) lytTravelContent.findViewById(R.id.txtDepartureDate);
+        TextView txtDepartureStation = (TextView) lytTravelContent.findViewById(R.id.txtDepartureStation);
+        TextView txtArrivalDate = (TextView) lytTravelContent.findViewById(R.id.txtArrivalDate);
+        TextView txtTravelInProgress = (TextView)lytTravelContent.findViewById(R.id.txtTravelInProgress);
 
         txtDate.setText(Utils.dateToString(currentTravel.getTravel().getDepartureDate()));
         imgLine.setImageResource(getResources().getIdentifier(currentTravel.getTravel().getLine().toLowerCase(), "drawable", getPackageName()));
@@ -111,6 +116,7 @@ public class MainActivity extends AppCompatActivity {
         txtDepartureDate.setText(Utils.timeToString(currentTravel.getTravel().getDepartureDate()));
         txtDepartureStation.setText(currentTravel.getDepartureStation());
         txtArrivalDate.setText(Utils.timeToString(GregorianCalendar.getInstance().getTime()));
+        txtTravelInProgress.setVisibility(View.VISIBLE);
 
         layoutProgress.setVisibility(View.VISIBLE);
     }

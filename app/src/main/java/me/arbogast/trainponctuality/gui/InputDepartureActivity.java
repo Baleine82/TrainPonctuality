@@ -324,9 +324,14 @@ public class InputDepartureActivity extends AppCompatActivity {
     }
 
     public void findTheoricTravel(View view) {
-//        if (departureInputInvalid())
-//            return;
+        if (departureInputInvalid())
+            return;
 
-
+        Intent intent = new Intent(this, FindTheoricTravelActivity.class);
+        intent.putExtra("line", selectedLine.getCode());
+        intent.putExtra("mission", actMission.getText().toString());
+        intent.putExtra("departureStation", departureStation);
+        intent.putExtra("departureDate", departureDate.getTimeInMillis());
+        startActivityForResult(intent, Utils.RESULT_FIND_THEORIC_TRAVEL);
     }
 }

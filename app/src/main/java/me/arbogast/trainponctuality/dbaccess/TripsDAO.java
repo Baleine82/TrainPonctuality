@@ -5,10 +5,15 @@ import android.content.Context;
 import android.database.Cursor;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
-import me.arbogast.trainponctuality.model.Line;
+import me.arbogast.trainponctuality.gui.Utils;
+import me.arbogast.trainponctuality.model.History;
+import me.arbogast.trainponctuality.model.Stops;
+import me.arbogast.trainponctuality.model.Travel;
 import me.arbogast.trainponctuality.model.Trips;
 
 /**
@@ -95,20 +100,32 @@ public class TripsDAO extends DAOImportBase<Trips> {
         return listT;
     }
 
-    public List<Trips> findMatchingTrips(String missionCode, String departurePoint, Date departureDate) {
+    @SuppressWarnings("deprecation")
+    public List<History> findMatchingTrips(String line, String missionCode, Stops departurePoint, Date departureDate) {
         openRead();
-        List<Trips> listT = new ArrayList<>();
-        String query = "SELECT " + SELECT_ALL + " FROM " + TABLE_NAME +
+        List<History> listT = new ArrayList<>();
+        String query = "SELECT " + StopTimesDAO.TABLE_NAME + "." + StopTimesDAO.COLUMN_ID + ", strftime('%s'," + StopTimesDAO.TABLE_NAME + "." + StopTimesDAO.COLUMN_DEPARTURE_TIME + "), " +
+                TABLE_NAME + "." + COLUMN_ID +
+                " FROM " + TABLE_NAME +
                 " INNER JOIN " + StopTimesDAO.TABLE_NAME + " ON (" + TABLE_NAME + "." + COLUMN_ID + " = " + StopTimesDAO.TABLE_NAME + "." + StopTimesDAO.COLUMN_TRIP_ID + ") " +
-                " INNER JOIN " + StopsDAO.TABLE_NAME + " ON (" + StopTimesDAO.TABLE_NAME + "." + StopTimesDAO.COLUMN_STOP_ID + " = " + StopsDAO.TABLE_NAME + "." + StopsDAO.COLUMN_ID + ") " +
+                " INNER JOIN " + StopsDAO.TABLE_NAME + " ON (" + StopTimesDAO.TABLE_NAME + "." + StopTimesDAO.COLUMN_STOP_ID + " = " + StopsDAO.TABLE_NAME + "." + StopsDAO.COLUMN_ID + ") " +
                 " WHERE " + TABLE_NAME + "." + COLUMN_TRIP_HEADSIGN + " = ? " +
-                " AND " + StopTimesDAO.TABLE_NAME + "." + StopTimesDAO.COLUMN_STOP_ID + " = ?;";
+                " AND " + StopTimesDAO.TABLE_NAME + "." + StopTimesDAO.COLUMN_STOP_ID + " = ?" +
+                " ORDER BY ABS(CAST((JULIANDAY(" + StopTimesDAO.TABLE_NAME + "." + StopTimesDAO.COLUMN_DEPARTURE_TIME + ") - JULIANDAY(?)) * 24 * 60 AS INTEGER)) ASC;";
         // select * from trips inner join stop_times on trips.tri_id = stop_times.stt_trip_id where tri_trip_headsign = 'UJUR' and stt_stop_id = 'StopPoint:DUA8738641';
 
-        try (Cursor c = mDb.rawQuery(query, new String[]{missionCode, departurePoint})) {
+        try (Cursor c = mDb.rawQuery(query, new String[]{missionCode, departurePoint.getId(), Utils.dbTimeToString(departureDate)})) {
 
-            while (c.moveToNext())
-                listT.add(getItem(c));
+            Calendar depTheory = GregorianCalendar.getInstance();
+            depTheory.setTimeInMillis(departureDate.getTime());
+
+            while (c.moveToNext()) {
+                Date travel = new Date(Utils.getEpochFromDb(c.getLong(1)));
+                depTheory.set(Calendar.HOUR_OF_DAY, travel.getHours());
+                depTheory.set(Calendar.MINUTE, travel.getMinutes());
+
+                listT.add(new History(new Travel(depTheory.getTime(), line, missionCode, departurePoint.getId()), departurePoint.getName(), null));
+            }
         }
 
         return listT;

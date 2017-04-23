@@ -21,6 +21,7 @@ public class Utils {
     static final int RESULT_GET_ARRIVAL_DATE = 4;
     static final int RESULT_GET_ARRIVAL_TIME = 5;
     static final int RESULT_EDIT_TRAVEL = 6;
+    static final int RESULT_FIND_THEORIC_TRAVEL = 7;
 
 
     private static final String TAG = "Utils";
@@ -28,6 +29,8 @@ public class Utils {
     private static DateFormat dateFormat = SimpleDateFormat.getDateInstance(SimpleDateFormat.SHORT);
     @SuppressLint("SimpleDateFormat")
     private static DateFormat timeFormat = SimpleDateFormat.getTimeInstance(SimpleDateFormat.SHORT);
+    @SuppressLint("SimpleDateFormat")
+    private static DateFormat dbTimeFormat = new SimpleDateFormat("HH:mm:ss");
 
     public static String dateToString(Date d)
     {
@@ -38,9 +41,17 @@ public class Utils {
         return timeFormat.format(d);
     }
 
+    public static String dbTimeToString(Date d){
+        return dbTimeFormat.format(d);
+    }
+
     static Date millisToDate(Long millis){
         Calendar ret = GregorianCalendar.getInstance();
         ret.setTimeInMillis(millis);
         return ret.getTime();
+    }
+
+    public static long getEpochFromDb(long aLong) {
+        return aLong * 1000 - 946684800000L;
     }
 }

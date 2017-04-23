@@ -1,6 +1,7 @@
 package me.arbogast.trainponctuality.model;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
@@ -12,7 +13,6 @@ import android.widget.TextView;
 
 import java.util.List;
 
-import me.arbogast.trainponctuality.gui.ShowHistoryActivity;
 import me.arbogast.trainponctuality.gui.Utils;
 import me.arbogast.trainponctuality.R;
 
@@ -40,7 +40,7 @@ public class HistoryAdapter extends ArrayAdapter<History> {
         HistoryHolder holder;
 
         if (convertView == null) {
-            LayoutInflater inflater = ((ShowHistoryActivity) context).getLayoutInflater();
+            LayoutInflater inflater = ((Activity) context).getLayoutInflater();
             convertView = inflater.inflate(resource, parent, false);
 
             holder = new HistoryHolder();
