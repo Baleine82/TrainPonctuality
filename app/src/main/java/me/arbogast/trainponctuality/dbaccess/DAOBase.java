@@ -18,7 +18,7 @@ import me.arbogast.trainponctuality.model.IGetId;
 public abstract class DAOBase<T extends IGetId> implements AutoCloseable {
     private static final String TAG = "DAOBase";
 
-    private final static int VERSION = 1;
+    private final static int VERSION = 2;
     private final static String NOM = "database.db";
 
     SQLiteDatabase mDb = null;

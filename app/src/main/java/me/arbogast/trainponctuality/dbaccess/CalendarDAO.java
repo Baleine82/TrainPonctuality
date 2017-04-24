@@ -4,6 +4,10 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+
 import me.arbogast.trainponctuality.model.CalendarTrip;
 
 /**
@@ -25,6 +29,8 @@ public class CalendarDAO extends DAOImportBase<CalendarTrip> {
     static final String COLUMN_SUNDAY = "cal_sunday";
     static final String COLUMN_START_DATE = "cal_start_date";
     static final String COLUMN_END_DATE = "cal_end_date";
+
+    private static List<String> ColumnForDay = Arrays.asList(COLUMN_SUNDAY, COLUMN_MONDAY, COLUMN_TUESDAY, COLUMN_WEDNESDAY, COLUMN_THURSDAY, COLUMN_FRIDAY, COLUMN_SATURDAY);
 
     public CalendarDAO(Context pContext) {
         super(pContext);
@@ -82,5 +88,10 @@ public class CalendarDAO extends DAOImportBase<CalendarTrip> {
     @Override
     protected CalendarTrip getItem(Cursor c) {
         return null;
+    }
+
+    @SuppressWarnings("deprecation")
+    static String getDayColumnForDate(Date departureDate) {
+        return ColumnForDay.get(departureDate.getDay());
     }
 }

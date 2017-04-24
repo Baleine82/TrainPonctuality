@@ -26,9 +26,10 @@ public class TravelDAO extends DAOBase<Travel> {
     static final String COLUMN_ARRIVAL_STATION = "tra_arrivalStation";
     static final String COLUMN_LINE = "tra_line";
     static final String COLUMN_MISSION = "tra_mission";
+    static final String COLUMN_TRIP_ID = "tra_trip_id";
 
     private static final String SELECT_ALL = COLUMN_ID + ", " + COLUMN_DEPARTURE_DATE + ", " + COLUMN_DEPARTURE_STATION + ", " +
-            COLUMN_ARRIVAL_DATE + ", " + COLUMN_ARRIVAL_STATION + ", " + COLUMN_LINE + ", " + COLUMN_MISSION;
+            COLUMN_ARRIVAL_DATE + ", " + COLUMN_ARRIVAL_STATION + ", " + COLUMN_LINE + ", " + COLUMN_MISSION + ", " + COLUMN_TRIP_ID;
 
     public TravelDAO(Context pContext) {
         super(pContext);
@@ -58,6 +59,7 @@ public class TravelDAO extends DAOBase<Travel> {
         }
         value.put(COLUMN_LINE, t.getLine());
         value.put(COLUMN_MISSION, t.getMissionCode());
+        value.put(COLUMN_TRIP_ID, t.getTripId());
 
         return value;
     }
@@ -79,14 +81,14 @@ public class TravelDAO extends DAOBase<Travel> {
                 " INNER JOIN " + StopsDAO.TABLE_NAME + " AS depStop ON (" + TABLE_NAME + "." + COLUMN_DEPARTURE_STATION + " = depStop." + StopsDAO.COLUMN_ID + ") " +
                 " WHERE " + COLUMN_ARRIVAL_DATE + " IS NULL LIMIT 1", null)) {
             if (c.moveToFirst())
-                return new History(getItem(c), c.getString(7), null);
+                return new History(getItem(c), c.getString(8), null);
             else
                 return null;
         }
     }
 
     protected Travel getItem(Cursor c) {
-        return new Travel(c.getLong(0), new Date(c.getLong(1)), c.getString(2), new Date(c.getLong(3)), c.getString(4), c.getString(5), c.getString(6));
+        return new Travel(c.getLong(0), new Date(c.getLong(1)), c.getString(2), new Date(c.getLong(3)), c.getString(4), c.getString(5), c.getString(6), c.getString(7));
     }
 
     public ArrayList<History> selectHistory() {
@@ -99,7 +101,7 @@ public class TravelDAO extends DAOBase<Travel> {
                 " ORDER BY " + COLUMN_DEPARTURE_DATE + ";", null)) {
 
             while (c.moveToNext())
-                listT.add(new History(getItem(c), c.getString(7), c.getString(8)));
+                listT.add(new History(getItem(c), c.getString(8), c.getString(9)));
         }
 
         return listT;

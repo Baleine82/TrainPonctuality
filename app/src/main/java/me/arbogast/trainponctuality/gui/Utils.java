@@ -31,6 +31,8 @@ public class Utils {
     private static DateFormat timeFormat = SimpleDateFormat.getTimeInstance(SimpleDateFormat.SHORT);
     @SuppressLint("SimpleDateFormat")
     private static DateFormat dbTimeFormat = new SimpleDateFormat("HH:mm:ss");
+    @SuppressLint("SimpleDateFormat")
+    private static DateFormat dbDateFormat = new SimpleDateFormat("yyyyMMdd");
 
     public static String dateToString(Date d)
     {
@@ -43,6 +45,10 @@ public class Utils {
 
     public static String dbTimeToString(Date d){
         return dbTimeFormat.format(d);
+    }
+
+    public static String dbDateToString(Date d){
+        return dbDateFormat.format(d);
     }
 
     static Date millisToDate(Long millis){

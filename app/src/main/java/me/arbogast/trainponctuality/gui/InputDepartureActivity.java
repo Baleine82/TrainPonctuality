@@ -51,6 +51,7 @@ public class InputDepartureActivity extends AppCompatActivity {
     private ArrayList<Stops> stationList;
     private boolean manualStationSelected = false;
     private Calendar departureDate;
+    private String tripId = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -172,7 +173,7 @@ public class InputDepartureActivity extends AppCompatActivity {
 
         String missionFilter = null;
 
-        if (actMission.getText().length() == 4 && missionsAvailable.indexOf(actMission.getText().toString()) >= 0)
+        if (actMission.getText().length() == 4 && missionsAvailable != null && missionsAvailable.indexOf(actMission.getText().toString()) >= 0)
             missionFilter = actMission.getText().toString();
 
         findStationAsync.execute(new GetStationForLineParams(this, selectedLine.getCode(), LocationProxy.getInstance().getLastBest(), missionFilter));
@@ -213,6 +214,7 @@ public class InputDepartureActivity extends AppCompatActivity {
         outState.putParcelable("departureStation", departureStation);
         outState.putString("selectedLine", selectedLine.getCode());
         outState.putLong("departureDate", departureDate.getTimeInMillis());
+        outState.putString("trip", tripId);
     }
 
     @Override
@@ -225,7 +227,11 @@ public class InputDepartureActivity extends AppCompatActivity {
         setDepartureStation((Stops) savedInstanceState.getParcelable("departureStation"));
 
         setDepartureDateTime(savedInstanceState.getLong("departureDate"));
+        String mission = actMission.getText().toString();
         populateMissions();
+        actMission.setText(mission);
+
+        tripId = savedInstanceState.getString("trip");
     }
 
     private void populateMissions() {
@@ -245,7 +251,7 @@ public class InputDepartureActivity extends AppCompatActivity {
         if (departureInputInvalid())
             return;
 
-        Travel departure = new Travel(departureDate.getTime(), selectedLine.getCode(), actMission.getText().toString(), departureStation.getId());
+        Travel departure = new Travel(departureDate.getTime(), selectedLine.getCode(), actMission.getText().toString(), departureStation.getId(), tripId);
 
         try (TravelDAO dbTravel = new TravelDAO(this)) {
             dbTravel.insert(departure);
@@ -293,6 +299,10 @@ public class InputDepartureActivity extends AppCompatActivity {
             case Utils.RESULT_GET_DEPARTURE_DATE:
             case Utils.RESULT_GET_DEPARTURE_TIME:
                 setDepartureDateTime(data.getExtras().getLong("date"));
+                break;
+
+            case Utils.RESULT_FIND_THEORIC_TRAVEL:
+                tripId = data.getExtras().getString("trip");
                 break;
         }
     }

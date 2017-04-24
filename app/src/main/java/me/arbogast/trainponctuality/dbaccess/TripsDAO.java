@@ -102,19 +102,29 @@ public class TripsDAO extends DAOImportBase<Trips> {
 
     @SuppressWarnings("deprecation")
     public List<History> findMatchingTrips(String line, String missionCode, Stops departurePoint, Date departureDate) {
+
+        String dayColumn = CalendarDAO.getDayColumnForDate(departureDate);
         openRead();
         List<History> listT = new ArrayList<>();
-        String query = "SELECT " + StopTimesDAO.TABLE_NAME + "." + StopTimesDAO.COLUMN_ID + ", strftime('%s'," + StopTimesDAO.TABLE_NAME + "." + StopTimesDAO.COLUMN_DEPARTURE_TIME + "), " +
+        String query = "SELECT " + StopTimesDAO.TABLE_NAME + "." + StopTimesDAO.COLUMN_ID + ", strftime('%s'," + StopTimesDAO.TABLE_NAME + "." + StopTimesDAO.COLUMN_DEPARTURE_TIME + ", 'utc'), " +
                 TABLE_NAME + "." + COLUMN_ID +
-                " FROM " + TABLE_NAME +
+                " FROM " + RoutesDAO.TABLE_NAME +
+                " INNER JOIN " + TABLE_NAME + " ON (" + RoutesDAO.TABLE_NAME + "." + RoutesDAO.COLUMN_ID + " = " + TABLE_NAME + "." + COLUMN_ROUTE_ID + ") " +
+                " INNER JOIN " + CalendarDAO.TABLE_NAME + " ON (" + TABLE_NAME + "." + COLUMN_SERVICE_ID + " = " + CalendarDAO.TABLE_NAME + "." + CalendarDAO.COLUMN_ID + ") " +
                 " INNER JOIN " + StopTimesDAO.TABLE_NAME + " ON (" + TABLE_NAME + "." + COLUMN_ID + " = " + StopTimesDAO.TABLE_NAME + "." + StopTimesDAO.COLUMN_TRIP_ID + ") " +
                 " INNER JOIN " + StopsDAO.TABLE_NAME + " ON (" + StopTimesDAO.TABLE_NAME + "." + StopTimesDAO.COLUMN_STOP_ID + " = " + StopsDAO.TABLE_NAME + "." + StopsDAO.COLUMN_ID + ") " +
-                " WHERE " + TABLE_NAME + "." + COLUMN_TRIP_HEADSIGN + " = ? " +
-                " AND " + StopTimesDAO.TABLE_NAME + "." + StopTimesDAO.COLUMN_STOP_ID + " = ?" +
+                " WHERE " + RoutesDAO.TABLE_NAME + "." + RoutesDAO.COLUMN_SHORT_NAME + " = ? AND " + TABLE_NAME + "." + COLUMN_TRIP_HEADSIGN + " = ? " +
+                " AND " + CalendarDAO.TABLE_NAME + "." + dayColumn + " = 1 AND ? BETWEEN " + CalendarDAO.TABLE_NAME + "." + CalendarDAO.COLUMN_START_DATE + " and " + CalendarDAO.TABLE_NAME + "." + CalendarDAO.COLUMN_END_DATE +
+                " AND " + StopsDAO.TABLE_NAME + "." + StopsDAO.COLUMN_ID + " = ?" +
                 " ORDER BY ABS(CAST((JULIANDAY(" + StopTimesDAO.TABLE_NAME + "." + StopTimesDAO.COLUMN_DEPARTURE_TIME + ") - JULIANDAY(?)) * 24 * 60 AS INTEGER)) ASC;";
-        // select * from trips inner join stop_times on trips.tri_id = stop_times.stt_trip_id where tri_trip_headsign = 'UJUR' and stt_stop_id = 'StopPoint:DUA8738641';
+        // select * from routes
+        // inner join trips on routes.rte_id = trips.tri_route_id
+        // inner join calendar on trips.tri_service_id = calendar.cal_service_id
+        // inner join stop_times on trips.tri_id = stop_times.stt_trip_id inner
+        // join stops on stop_times.stt_stop_id = stops.sto_id
+        // where routes.rte_route_short_name = 'A' AND trips.tri_trip_headsign = 'TPUR' and stops.stop_id = 'StopPoint:DUA8738641';
 
-        try (Cursor c = mDb.rawQuery(query, new String[]{missionCode, departurePoint.getId(), Utils.dbTimeToString(departureDate)})) {
+        try (Cursor c = mDb.rawQuery(query, new String[]{line, missionCode, Utils.dbDateToString(departureDate), departurePoint.getId(), Utils.dbTimeToString(departureDate)})) {
 
             Calendar depTheory = GregorianCalendar.getInstance();
             depTheory.setTimeInMillis(departureDate.getTime());
@@ -124,7 +134,7 @@ public class TripsDAO extends DAOImportBase<Trips> {
                 depTheory.set(Calendar.HOUR_OF_DAY, travel.getHours());
                 depTheory.set(Calendar.MINUTE, travel.getMinutes());
 
-                listT.add(new History(new Travel(depTheory.getTime(), line, missionCode, departurePoint.getId()), departurePoint.getName(), null));
+                listT.add(new History(new Travel(depTheory.getTime(), line, missionCode, departurePoint.getId(), c.getString(0)), departurePoint.getName(), null));
             }
         }
 

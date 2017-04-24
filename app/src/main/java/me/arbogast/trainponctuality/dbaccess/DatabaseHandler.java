@@ -59,6 +59,7 @@ class DatabaseHandler extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        db.execSQL("alter table " + TravelDAO.TABLE_NAME + " add column " + TravelDAO.COLUMN_TRIP_ID + " VARCHAR(26);");
     }
 
     protected void finalize() throws Throwable {

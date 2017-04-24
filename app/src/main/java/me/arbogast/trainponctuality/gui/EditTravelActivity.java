@@ -154,7 +154,7 @@ public class EditTravelActivity extends AppCompatActivity {
 
     public void ValidateEdition(MenuItem item) {
         currentTravel.getTravel().setMissionCode(actMission.getText().toString());
-        if (currentTravel.getTravel().isInValidTravel())
+        if (!currentTravel.getTravel().isValidTravel())
             return;
 
         try (TravelDAO dbTravel = new TravelDAO(this)) {

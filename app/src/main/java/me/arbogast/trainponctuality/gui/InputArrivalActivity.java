@@ -148,7 +148,7 @@ public class InputArrivalActivity extends AppCompatActivity {
     }
 
     private void validateArrival() {
-        if (currentTravel.isInValidTravel())
+        if (!currentTravel.isValidTravel())
             return;
 
         try (TravelDAO dbTravel = new TravelDAO(this)) {

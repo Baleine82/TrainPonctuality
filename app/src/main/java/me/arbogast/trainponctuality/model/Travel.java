@@ -20,14 +20,15 @@ public class Travel implements Parcelable, IGetId {
     private String arrivalStation;
     private String tripId;
 
-    public Travel(Date date, String line, String missionCode, String station) {
+    public Travel(Date date, String line, String missionCode, String station, String trip) {
         this.departureDate = date;
         this.line = line;
         this.missionCode = missionCode;
         this.departureStation = station;
+        this.tripId = trip;
     }
 
-    public Travel(long id, Date departureDate, String departureStation, Date arrivalDate, String arrivalStation, String line, String missionCode) {
+    public Travel(long id, Date departureDate, String departureStation, Date arrivalDate, String arrivalStation, String line, String missionCode, String trip) {
         this.id = id;
         this.departureDate = departureDate;
         this.departureStation = departureStation;
@@ -35,6 +36,7 @@ public class Travel implements Parcelable, IGetId {
         this.arrivalStation = arrivalStation;
         this.line = line;
         this.missionCode = missionCode;
+        this.tripId = trip;
     }
 
     public String getArrivalStation() {
@@ -85,6 +87,9 @@ public class Travel implements Parcelable, IGetId {
         this.departureStation = departureStation;
     }
 
+    public String getTripId() {
+        return tripId;
+    }
 
     public String getId() {
         return Long.toString(id);
@@ -123,6 +128,7 @@ public class Travel implements Parcelable, IGetId {
         dest.writeString(missionCode);
         dest.writeString(departureStation);
         dest.writeString(arrivalStation);
+        dest.writeString(tripId);
     }
 
     @SuppressWarnings("unused")
@@ -144,9 +150,9 @@ public class Travel implements Parcelable, IGetId {
                 departureStation != null && !departureStation.equals("");
     }
 
-    public boolean isInValidTravel() {
-        return !(isValidDeparture() ||
-                arrivalStation != null && !arrivalStation.equals(""));
+    public boolean isValidTravel() {
+        return isValidDeparture() &&
+                arrivalStation != null && !arrivalStation.equals("");
     }
 
     //endregion
